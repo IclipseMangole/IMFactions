@@ -16,15 +16,15 @@ import java.sql.*;
  */
 public class MySQL {
 
-    public File getMySQLFile() {
+    private File getMySQLFile() {
         return new File("plugins/" + IMFactions.getInstance().getDescription().getName(), "mysql.yml");
     }
 
-    public FileConfiguration getMySQLFileConfiguration() {
+    private FileConfiguration getMySQLFileConfiguration() {
         return YamlConfiguration.loadConfiguration(getMySQLFile());
     }
 
-    public void setStandardMySQL() {
+    private void setStandardMySQL() {
         FileConfiguration cfg = getMySQLFileConfiguration();
         cfg.options().copyDefaults(true);
         cfg.addDefault("host", "localhost");
@@ -40,7 +40,7 @@ public class MySQL {
         }
     }
 
-    public void readMySQL() {
+    private void readMySQL() {
         FileConfiguration cfg = getMySQLFileConfiguration();
         HOST = cfg.getString("host");
         DATABASE = cfg.getString("database");
@@ -57,22 +57,12 @@ public class MySQL {
     private String prefix;
     private int disable;
 
-    public Connection conn;
+    private Connection conn;
 
     public MySQL() {
         setStandardMySQL();
         readMySQL();
         connect();
-        Bukkit.getScheduler().runTaskTimerAsynchronously(IMFactions.getInstance(), new Runnable() {
-            @Override
-            public void run() {
-                if (disable > 0) {
-                    disable--;
-                } else {
-                    close();
-                }
-            }
-        }, 0, 20);
     }
 
     public void connect() {
@@ -80,6 +70,16 @@ public class MySQL {
             disable = 100;
             conn = DriverManager.getConnection("jdbc:mysql://" + HOST + ":3306/" + DATABASE + "?autoReconnect=false", USER, PASSWORD);
             System.out.println(prefix + "Verbunden!");
+            Bukkit.getScheduler().runTaskTimerAsynchronously(IMFactions.getInstance(), new Runnable() {
+                @Override
+                public void run() {
+                    if (disable > 0) {
+                        disable--;
+                    } else {
+                        close();
+                    }
+                }
+            }, 0, 20);
         } catch (SQLException e) {
             System.out.println(prefix + "Keine Verbindung! Fehler: " + e.getMessage());
         }
@@ -128,7 +128,7 @@ public class MySQL {
         return rs;
     }
 
-    public void checkConnection() throws SQLException {
+    private void checkConnection() throws SQLException {
         if (conn == null || conn.isClosed()) {
             connect();
         }

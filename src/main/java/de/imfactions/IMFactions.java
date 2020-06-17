@@ -1,7 +1,8 @@
 package de.imfactions;
 
-import de.imfactions.util.Command.CommandRegistration;
-import de.imfactions.util.MySQL;
+import de.imfactions.commands.Ether;
+import de.imfactions.listener.JoinListener;
+import de.imfactions.listener.QuitListener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class IMFactions extends JavaPlugin {
@@ -12,39 +13,28 @@ public class IMFactions extends JavaPlugin {
         return instance;
     }
 
-
     private Data data;
-    private CommandRegistration registration;
-    private MySQL mysql;
 
     @Override
     public void onLoad() {
         instance = this;
         data = new Data();
-        mysql = new MySQL();
-        registration = new CommandRegistration();
     }
 
     @Override
     public void onEnable() {
-
+        registerCommands();
+        registerListener();
     }
 
     @Override
     public void onDisable() {
-        mysql.close();
+        data.getUserManager().saveUsers();
+        data.getMySQL().close();
     }
 
     public Data getData() {
         return data;
-    }
-
-    public MySQL getMySQL() {
-        return mysql;
-    }
-
-    public CommandRegistration getRegistration() {
-        return registration;
     }
 
 
@@ -53,15 +43,12 @@ public class IMFactions extends JavaPlugin {
     }
 
     public void registerCommands() {
-
+        data.getRegistration().register(new Ether(), this);
     }
 
     public void registerListener() {
-
-    }
-
-    public void createTables() {
-
+        data.getRegistration().register(new JoinListener(), this);
+        data.getRegistration().register(new QuitListener(), this);
     }
 
 
