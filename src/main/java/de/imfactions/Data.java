@@ -1,6 +1,10 @@
 package de.imfactions;
 
 import de.imfactions.database.*;
+import de.imfactions.database.faction.FactionManager;
+import de.imfactions.database.faction.FactionPlotManager;
+import de.imfactions.database.faction.FactionPlotTable;
+import de.imfactions.database.faction.FactionUserManager;
 import de.imfactions.functions.UserSettingsManager;
 import de.imfactions.util.Command.CommandRegistration;
 import de.imfactions.util.MySQL;

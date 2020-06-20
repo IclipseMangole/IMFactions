@@ -1,13 +1,11 @@
 package de.imfactions.commands;
 
 import de.imfactions.IMFactions;
-import de.imfactions.database.FactionManager;
-import de.imfactions.database.FactionUserManager;
+import de.imfactions.database.faction.FactionManager;
+import de.imfactions.database.faction.FactionUserManager;
 import de.imfactions.database.UserManager;
 import de.imfactions.util.Command.IMCommand;
 import de.imfactions.util.UUIDFetcher;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;

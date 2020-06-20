@@ -1,4 +1,4 @@
-package de.imfactions.database;
+package de.imfactions.database.faction;
 
 import com.mysql.fabric.xmlrpc.base.Array;
 import de.imfactions.IMFactions;

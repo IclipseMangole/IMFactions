@@ -1,4 +1,4 @@
-package de.imfactions.database;
+package de.imfactions.database.faction;
 
 import de.imfactions.IMFactions;
 import de.imfactions.functions.plots.FactionPlot;

@@ -1,4 +1,4 @@
-package de.imfactions.database;
+package de.imfactions.database.faction;
 
 import org.bukkit.Location;
 
