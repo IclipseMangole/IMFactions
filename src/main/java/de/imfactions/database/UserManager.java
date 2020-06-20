@@ -96,7 +96,7 @@ public class UserManager {
         private Date firstJoin;
         private long lastSeen;
 
-        public User(UUID uuid, int ether, long onlinetime, Date firstJoin, long lastSeen) {
+        private User(UUID uuid, int ether, long onlinetime, Date firstJoin, long lastSeen) {
             this.uuid = uuid;
             this.ether = ether;
             this.onlinetime = onlinetime;
@@ -104,7 +104,7 @@ public class UserManager {
             this.firstJoin = firstJoin;
         }
 
-        public User(UUID uuid) {
+        private User(UUID uuid) {
             this(uuid, 0, 0, Date.from(Instant.now()), -1);
             save();
         }
