@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 
 public class Actionbar {
     public static void online(String message, boolean prefix) {
-        Bukkit.getOnlinePlayers().forEach(p -> send(p, prefix ? IMFactions.getInstance().getData().prefix : "" + message));
+        Bukkit.getOnlinePlayers().forEach(p -> send(p, prefix ? IMFactions.getInstance().getData().getPrefix() : "" + message));
     }
 
     public static void online(String message) {
@@ -18,7 +18,7 @@ public class Actionbar {
     }
 
     public static void send(Player p, String message, boolean prefix) {
-        send(p, prefix ? IMFactions.getInstance().getData().prefix : "" + message);
+        send(p, prefix ? IMFactions.getInstance().getData().getPrefix() : "" + message);
     }
 
     public static void send(Player p, String message) {

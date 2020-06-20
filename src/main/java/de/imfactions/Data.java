@@ -1,7 +1,6 @@
 package de.imfactions;
 
-import de.imfactions.database.UserManager;
-import de.imfactions.database.UserSettingsTable;
+import de.imfactions.database.*;
 import de.imfactions.functions.UserSettingsManager;
 import de.imfactions.util.Command.CommandRegistration;
 import de.imfactions.util.MySQL;
@@ -15,6 +14,10 @@ public class Data {
     //Tables
     private UserManager userManager;
     private UserSettingsTable userSettingsTable;
+    private FactionManager factionManager;
+    private FactionUserManager factionUserManager;
+    private FactionPlotManager factionPlotManager;
+    private FactionPlotTable factionPlotTable;
 
 
     public Data() {
@@ -25,6 +28,10 @@ public class Data {
         //Tables
         userManager = new UserManager();
         userSettingsTable = new UserSettingsTable();
+        factionManager = new FactionManager();
+        factionUserManager = new FactionUserManager();
+        factionPlotManager = new FactionPlotManager();
+        factionPlotTable = new FactionPlotTable();
     }
 
 
@@ -72,5 +79,21 @@ public class Data {
 
     public UserSettingsTable getUserSettingsTable() {
         return userSettingsTable;
+    }
+
+    public FactionManager getFactionManager(){
+        return factionManager;
+    }
+
+    public FactionPlotManager getFactionPlotManager() {
+        return factionPlotManager;
+    }
+
+    public FactionPlotTable getFactionPlotTable() {
+        return factionPlotTable;
+    }
+
+    public FactionUserManager getFactionUserManager() {
+        return factionUserManager;
     }
 }

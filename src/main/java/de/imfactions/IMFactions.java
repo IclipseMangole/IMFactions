@@ -1,6 +1,7 @@
 package de.imfactions;
 
 import de.imfactions.commands.Ether;
+import de.imfactions.commands.Faction;
 import de.imfactions.listener.JoinListener;
 import de.imfactions.listener.QuitListener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -30,6 +31,8 @@ public class IMFactions extends JavaPlugin {
     @Override
     public void onDisable() {
         data.getUserManager().saveUsers();
+        data.getFactionManager().saveFactions();
+        data.getFactionUserManager().saveFactionUsers();
         data.getMySQL().close();
     }
 
@@ -44,6 +47,7 @@ public class IMFactions extends JavaPlugin {
 
     public void registerCommands() {
         data.getRegistration().register(new Ether(), this);
+        data.getRegistration().register(new Faction(), this);
     }
 
     public void registerListener() {

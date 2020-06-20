@@ -116,7 +116,7 @@ public class UserManager {
 
         public void save() {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            IMFactions.getInstance().getData().getMySQL().update("UPDATE user SET ether = " + ether + ", onlinetime = " + onlinetime + ", firstJoin = '" + sdf.format(firstJoin) + ", lastSeen = " + lastSeen + "WHERE uuid = '" + uuid + "'");
+            IMFactions.getInstance().getData().getMySQL().update("UPDATE user SET ether = " + ether + ", onlinetime = " + onlinetime + ", firstJoin = '" + sdf.format(firstJoin) + ", lastSeen = " + lastSeen + " WHERE uuid = '" + uuid + "'");
         }
 
         public UUID getUUID() {
