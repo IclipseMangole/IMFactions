@@ -54,12 +54,12 @@ public class CommandProcessor<S> {
 
     public void process(S sender, FlagList.FilterResult flags, int wildcards, String[] args) {
         if (command.noConsole() && !masterCommand.getPlayerClass().isInstance(sender)) {
-            ((CommandSender) sender).sendMessage(IMFactions.getInstance().getData().noConsole);
+            ((CommandSender) sender).sendMessage(IMFactions.getInstance().getData().getNoConsole());
             return;
         }
 
         if (command.requiresConsole() && masterCommand.getPlayerClass().isInstance(sender)) {
-            ((CommandSender) sender).sendMessage(IMFactions.getInstance().getData().consoleOnly);
+            ((CommandSender) sender).sendMessage(IMFactions.getInstance().getData().getNoConsole());
             return;
         }
 
@@ -79,7 +79,7 @@ public class CommandProcessor<S> {
             hasPermission = masterCommand.checkPermission(sender, "im.cmd." + permission);
         }
         if (!hasPermission) {
-            ((CommandSender) sender).sendMessage(IMFactions.getInstance().getData().noperm);
+            ((CommandSender) sender).sendMessage(IMFactions.getInstance().getData().getNoperm());
             return;
         }
 
