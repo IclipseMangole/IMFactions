@@ -15,7 +15,7 @@ public class FactionUserManager {
     private ArrayList<FactionUser> factionUsers;
 
     public FactionUserManager() {
-        IMFactions.getInstance().getData().getMySQL().update("CREATE TABLE IF NOT EXISTS factionUser (uuid VARCHAR(64), factionId INT(10), rank INT(10), PRIMARY KEY(uuid))");
+        IMFactions.getInstance().getData().getMySQL().update("CREATE TABLE IF NOT EXISTS factionUser (`uuid` VARCHAR(64), `factionId` INT(10), `rank` INT(10), PRIMARY KEY(`uuid`))");
         factionUsers = new ArrayList<>();
         loadFactionUser();
         Bukkit.getScheduler().runTaskTimerAsynchronously(IMFactions.getInstance(), new Runnable() {
@@ -33,13 +33,13 @@ public class FactionUserManager {
 
     public void createFactionUser(UUID uuid, int factionId, int rank) {
         if (!isFactionUserExists(uuid)) {
-            IMFactions.getInstance().getData().getMySQL().update("INSERT INTO factionUser (uuid, factionId, rank) VALUES ('" + uuid + "', '" + factionId + "', '" + rank + "')");
+            IMFactions.getInstance().getData().getMySQL().update("INSERT INTO factionUser (`uuid`, `factionId`, `rank`) VALUES ('" + uuid + "', '" + factionId + "', '" + rank + "')");
         }
     }
 
     private void loadFactionUser() {
         try {
-            ResultSet rs = IMFactions.getInstance().getData().getMySQL().querry("SELECT uuid, factionId, rank FROM factionUser WHERE 1");
+            ResultSet rs = IMFactions.getInstance().getData().getMySQL().querry("SELECT `uuid`, `factionId`, `rank` FROM factionUser WHERE 1");
             while (rs.next()) {
                 factionUsers.add(new FactionUser(UUID.fromString(rs.getString("uuid")), rs.getInt("factionId"), rs.getInt("rank")));
             }
@@ -196,11 +196,11 @@ public class FactionUserManager {
         }
 
         public void save() {
-            IMFactions.getInstance().getData().getMySQL().update("UPDATE factionUser SET factionId = '" + this.factionId + "', rank = '" + rank + "' WHERE uuid = '" + this.uuid.toString() + "'");
+            IMFactions.getInstance().getData().getMySQL().update("UPDATE factionUser SET `factionId` = '" + this.factionId + "', `rank` = '" + rank + "' WHERE `uuid` = '" + this.uuid.toString() + "'");
         }
 
         public void delete() {
-            IMFactions.getInstance().getData().getMySQL().update("DELETE FROM factionUser WHERE uuid = '" + this.uuid.toString() + "'");
+            IMFactions.getInstance().getData().getMySQL().update("DELETE FROM factionUser WHERE `uuid` = '" + this.uuid.toString() + "'");
             factionUsers.remove(this);
         }
     }

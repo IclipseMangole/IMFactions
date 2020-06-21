@@ -39,16 +39,17 @@ public class Faction {
         if (sender.hasPermission("im.factions.faction.*")) {
             builder = new StringBuilder();
             builder.append("Overview" + "\n");
-            add("faction found <Name>", "Makes the Player King of a new Faction");
-            add("faction leave", "The Player leaves a Faction");
-            add("faction invite <Player>", "Invites a new Player to the Faction");
-            add("faction accept <Name>", "Accepts a Faction Invite");
-            add("faction kick <Player>", "Kicks a Player from the Faction");
-            add("faction promote <Player>", "The Player gets a higher Rank");
-            add("faction demote <Player>", "The Player gets a lower Rank");
-            add("faction info", "Lists all informations about your Faction or Invites from Factions");
-            add("faction home", "The player gets teleported to the Faction´s Plot");
-            add("faction sethome", "Sets the Home-Spawnpoint for the Faction");
+            add("/faction found <Name>", "Makes the Player King of a new Faction");
+            add("/faction leave", "The Player leaves a Faction");
+            add("/faction invite <Player>", "Invites a new Player to the Faction");
+            add("/faction accept <Name>", "Accepts a Faction Invite");
+            add("/faction kick <Player>", "Kicks a Player from the Faction");
+            add("/faction promote <Player>", "The Player gets a higher Rank");
+            add("/faction demote <Player>", "The Player gets a lower Rank");
+            add("/faction info", "Lists all informations about your Faction or Invites from Factions");
+            add("/faction home", "The player gets teleported to the Faction´s Plot");
+            add("/faction sethome", "Sets the Home-Spawnpoint for the Faction");
+            sender.sendMessage(String.valueOf(builder));
         }
     }
 
@@ -132,6 +133,7 @@ public class Faction {
                 if (!factionUserManager.isFactionUserInFaction(uuidInvite)) {
                     factionUserManager.createFactionUser(uuidInvite, factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId(), -1, true);
                     player.sendMessage("§aYou invited §e" + name + "§a to join your Faction");
+                    Bukkit.getPlayer(uuidInvite).sendMessage("§e" + player.getName() + "§a has invited you to his Faction. Do §e/faction accept " + name + " §ato join the Faction");
                 } else {
                     player.sendMessage("§cThis Player is already member of a Faction");
                 }
