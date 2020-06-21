@@ -1,6 +1,7 @@
 package de.imfactions;
 
-import de.imfactions.database.*;
+import de.imfactions.database.UserManager;
+import de.imfactions.database.UserSettingsTable;
 import de.imfactions.database.faction.FactionManager;
 import de.imfactions.database.faction.FactionPlotManager;
 import de.imfactions.database.faction.FactionUserManager;
@@ -26,8 +27,9 @@ public class Data {
         registration = new CommandRegistration();
         mysql = new MySQL();
         userSettingsManager = new UserSettingsManager();
+    }
 
-        //Tables
+    public void createTables() {
         userManager = new UserManager();
         userSettingsTable = new UserSettingsTable();
         factionManager = new FactionManager();

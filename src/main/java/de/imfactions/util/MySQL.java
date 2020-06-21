@@ -62,7 +62,6 @@ public class MySQL {
     public MySQL() {
         setStandardMySQL();
         readMySQL();
-        connect();
     }
 
     public void connect() {
