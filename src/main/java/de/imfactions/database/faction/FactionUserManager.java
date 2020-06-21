@@ -15,7 +15,7 @@ public class FactionUserManager {
     private ArrayList<FactionUser> factionUsers;
 
     public FactionUserManager() {
-        IMFactions.getInstance().getData().getMySQL().update("CREATE TABLE IF NOT EXISTS factionUser (uuid VARCHAR(64), factionId INT(10), rank INT(10), PRIMARY KEY (uuid))");
+        IMFactions.getInstance().getData().getMySQL().update("CREATE TABLE IF NOT EXISTS factionUser (uuid VARCHAR(64), factionId INT(10), rank INT(10), PRIMARY KEY(uuid))");
         factionUsers = new ArrayList<>();
         loadFactionUser();
         Bukkit.getScheduler().runTaskTimerAsynchronously(IMFactions.getInstance(), new Runnable() {
@@ -39,7 +39,7 @@ public class FactionUserManager {
 
     private void loadFactionUser() {
         try {
-            ResultSet rs = IMFactions.getInstance().getData().getMySQL().querry("SELECT uuid, factionId, rank FROM `factionUser` WHERE 1");
+            ResultSet rs = IMFactions.getInstance().getData().getMySQL().querry("SELECT uuid, factionId, rank FROM factionUser WHERE 1");
             while (rs.next()) {
                 factionUsers.add(new FactionUser(UUID.fromString(rs.getString("uuid")), rs.getInt("factionId"), rs.getInt("rank")));
             }

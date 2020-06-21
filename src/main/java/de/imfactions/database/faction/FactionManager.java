@@ -1,10 +1,7 @@
 package de.imfactions.database.faction;
 
 import de.imfactions.IMFactions;
-import de.imfactions.functions.plots.FactionPlot;
-import io.netty.handler.codec.http.HttpContentEncoder;
 import org.bukkit.Bukkit;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -17,7 +14,7 @@ public class FactionManager {
     private ArrayList<Faction> factions;
 
     public FactionManager() {
-        IMFactions.getInstance().getData().getMySQL().update("CREATE TABLE IF NOT EXISTS factions (factionId MEDIUMINT NOT NULL AUTO_INCREMENT, userAmount INT(10), name VARCHAR(64), foundingDate DATETIME, raidProtection long, PRIMARY KEY (factionId))");
+        IMFactions.getInstance().getData().getMySQL().update("CREATE TABLE IF NOT EXISTS factions (factionId MEDIUMINT NOT NULL AUTO_INCREMENT, userAmount INT(10), name VARCHAR(64), foundingDate DATETIME, raidProtection long, PRIMARY KEY(factionId))");
         factions = new ArrayList<>();
         loadFactions();
         Bukkit.getScheduler().runTaskTimerAsynchronously(IMFactions.getInstance(), new Runnable() {
