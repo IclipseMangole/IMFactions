@@ -9,6 +9,7 @@ public class FactionPlotManager {
         int factionId;
         Location edgeDownFrontLeft;
         Location edgeUpBackRight;
+        Location home;
 
         public FactionPlot(){
 
