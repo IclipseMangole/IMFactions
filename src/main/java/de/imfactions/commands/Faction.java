@@ -133,7 +133,7 @@ public class Faction {
 
         if (factionUserManager.isFactionUserInFaction(UUIDFetcher.getUUID(player))) {
             if (factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getRank() > 0) {
-                if (!factionUserManager.isFactionUserInFaction(uuidInvite)) {
+                if (!factionUserManager.isFactionUserInFaction(uuidInvite) && factionUserManager.getFactionUser(uuidInvite) == null) {
                     factionUserManager.createFactionUser(uuidInvite, factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId(), -1, true);
                     player.sendMessage("§aYou invited §e" + name + "§a to join your Faction");
 
@@ -172,15 +172,8 @@ public class Faction {
         Player player = (Player) sender;
 
         if (factionUserManager.isFactionUserExists(UUIDFetcher.getUUID(player))) {
-            if (factionUserManager.isFactionUserInFaction(UUIDFetcher.getUUID(player))) {
+            if (!factionUserManager.isFactionUserInFaction(UUIDFetcher.getUUID(player))) {
                 if (factionManager.isFactionExists(name)) {
-                    boolean invited = false;
-                    for (FactionUserManager.FactionUser user : factionUserManager.getFactionInvites(UUIDFetcher.getUUID(player))) {
-                        if (user.getFactionId() == factionManager.getFaction(name).getId()) {
-                            invited = true;
-                        }
-                    }
-                    if (invited) {
                         ArrayList<FactionUserManager.FactionUser> factionUsers = factionUserManager.getFactionUsers(factionManager.getFaction(name).getId());
                         factionUsers.forEach(factionUser -> {
                             if (factionUser.getFactionId() != factionManager.getFaction(name).getId()) {
@@ -190,7 +183,6 @@ public class Faction {
 
                         factionUserManager.createFactionUser(UUIDFetcher.getUUID(player), factionManager.getFaction(name).getId(), 0, true);
                         player.sendMessage("§aYou joined the Faction '§e" + name + "§a'");
-                    }
                 } else {
                     player.sendMessage("§cThe Faction '§e" + name + "§c' doesn't exist");
                 }
@@ -217,7 +209,7 @@ public class Faction {
 
         if (factionUserManager.isFactionUserExists(UUIDFetcher.getUUID(player))) {
             if (factionUserManager.isFactionUserInFaction(UUIDFetcher.getUUID(player))) {
-                if (factionUserManager.getFactionUsers(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId()).contains(factionUserManager.getFactionUser(uuidKick))) {
+                if (factionUserManager.isFactionUserInFaction(uuidKick)) {
                     if (factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).isHigherRank(factionUserManager.getFactionUser(uuidKick).getRank())) {
                         factionUserManager.getFactionUser(uuidKick).delete();
                         player.sendMessage("§aYou kicked §e" + kick + " §aout of the Faction");
@@ -249,7 +241,7 @@ public class Faction {
         UUID uuidPromote = UUIDFetcher.getUUID(promote);
 
         if (factionUserManager.isFactionUserInFaction(UUIDFetcher.getUUID(player))) {
-            if (factionUserManager.getFactionUser(uuidPromote).getFactionId() == factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId()) {
+            if (factionUserManager.getFactionUser(uuidPromote) != null && factionUserManager.getFactionUser(uuidPromote).getFactionId() == factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId()) {
                 if (factionUserManager.getFactionUser(uuidPromote).equals(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)))) {
                     if (factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).isHigherRank(factionUserManager.getFactionUser(uuidPromote).getRank())) {
                         if (factionUserManager.getFactionUser(uuidPromote).getRank() < 2) {
@@ -291,7 +283,7 @@ public class Faction {
         UUID uuidDemote = UUIDFetcher.getUUID(demote);
 
         if (factionUserManager.isFactionUserInFaction(UUIDFetcher.getUUID(player))) {
-            if (factionUserManager.getFactionUser(uuidDemote).getFactionId() == (factionUserManager.getFactionUser(UUIDFetcher.getUUID(player))).getFactionId()) {
+            if (factionUserManager.getFactionUser(uuidDemote) != null && factionUserManager.getFactionUser(uuidDemote).getFactionId() == (factionUserManager.getFactionUser(UUIDFetcher.getUUID(player))).getFactionId()) {
                 if (factionUserManager.getFactionUser(uuidDemote).equals(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)))) {
                     if (factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).isHigherRank(factionUserManager.getFactionUser(uuidDemote).getRank())) {
                         if (factionUserManager.getFactionUser(uuidDemote).getRank() > 0) {

@@ -2,6 +2,7 @@ package de.imfactions.database.faction;
 
 import com.mysql.fabric.xmlrpc.base.Array;
 import de.imfactions.IMFactions;
+import de.imfactions.database.UserManager;
 import de.imfactions.util.UUIDFetcher;
 import org.bukkit.Bukkit;
 

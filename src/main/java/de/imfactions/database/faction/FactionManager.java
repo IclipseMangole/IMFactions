@@ -14,7 +14,7 @@ public class FactionManager {
     private ArrayList<Faction> factions;
 
     public FactionManager() {
-        IMFactions.getInstance().getData().getMySQL().update("CREATE TABLE IF NOT EXISTS factions (factionId MEDIUMINT NOT NULL AUTO_INCREMENT, userAmount INT(10), name VARCHAR(64), foundingDate DATETIME, raidProtection long, PRIMARY KEY(factionId))");
+        IMFactions.getInstance().getData().getMySQL().update("CREATE TABLE IF NOT EXISTS factions (factionId MEDIUMINT NOT NULL AUTO_INCREMENT, userAmount INT(10), name VARCHAR(64), foundingDate DATETIME, raidProtection BIGINT, PRIMARY KEY(factionId))");
         factions = new ArrayList<>();
         loadFactions();
         Bukkit.getScheduler().runTaskTimerAsynchronously(IMFactions.getInstance(), new Runnable() {
