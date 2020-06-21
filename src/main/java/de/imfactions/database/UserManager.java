@@ -45,7 +45,7 @@ public class UserManager {
                 return user;
             }
         }
-        return new User(uuid);
+        return null;
     }
 
     public User getUser(String name) {
@@ -54,6 +54,10 @@ public class UserManager {
 
     public User getUser(Player p) {
         return getUser(p.getName());
+    }
+
+    public User createUser(UUID uuid) {
+        return new User(uuid);
     }
 
     public boolean isUserExists(UUID uuid) {
@@ -75,7 +79,7 @@ public class UserManager {
             ResultSet rs = IMFactions.getInstance().getData().getMySQL().querry("SELECT uuid, ether, onlinetime, firstJoin, lastSeen FROM `user` WHERE 1");
             while (rs.next()) {
                 UUID uuid = UUID.fromString(rs.getString("uuid"));
-                User user = new User(uuid, rs.getInt("ether"), rs.getLong("onlinetime"), rs.getDate("firstJoin"), rs.getInt("lastSeen"));
+                User user = new User(uuid, rs.getInt("ether"), rs.getLong("onlinetime"), rs.getDate("firstJoin"), rs.getLong("lastSeen"));
                 users.add(user);
             }
         } catch (SQLException e) {
@@ -84,6 +88,7 @@ public class UserManager {
     }
 
     public void saveUsers() {
+        System.out.println("Save Users");
         for (User user : users) {
             user.save();
         }
@@ -106,7 +111,13 @@ public class UserManager {
 
         private User(UUID uuid) {
             this(uuid, 0, 0, Date.from(Instant.now()), -1);
-            save();
+            create();
+        }
+
+        public void create() {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            IMFactions.getInstance().getData().getMySQL().update("INSERT INTO user VALUES ('" + uuid + "', " + ether + ", " + onlinetime + ", '" + sdf.format(firstJoin) + "', " + lastSeen + ")");
+            users.add(this);
         }
 
 
@@ -116,7 +127,7 @@ public class UserManager {
 
         public void save() {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            IMFactions.getInstance().getData().getMySQL().update("UPDATE user SET ether = " + ether + ", onlinetime = " + onlinetime + ", firstJoin = '" + sdf.format(firstJoin) + ", lastSeen = " + lastSeen + " WHERE uuid = '" + uuid + "'");
+            IMFactions.getInstance().getData().getMySQL().update("UPDATE user SET ether = " + ether + ", onlinetime = " + onlinetime + ", firstJoin = '" + sdf.format(firstJoin) + "', lastSeen = " + lastSeen + " WHERE uuid = '" + uuid + "'");
         }
 
         public UUID getUUID() {

@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,27 +59,28 @@ public class MySQL {
     private int disable;
 
     private Connection conn;
+    private BukkitTask task;
 
     public MySQL() {
         setStandardMySQL();
         readMySQL();
+        disable = 300;
+        Bukkit.getScheduler().runTaskTimerAsynchronously(IMFactions.getInstance(), new Runnable() {
+            @Override
+            public void run() {
+                if (disable > 0) {
+                    disable--;
+                } else {
+                    close();
+                }
+            }
+        }, 0, 20);
     }
 
     public void connect() {
         try {
-            disable = 100;
             conn = DriverManager.getConnection("jdbc:mysql://" + HOST + ":3306/" + DATABASE + "?autoReconnect=false", USER, PASSWORD);
             System.out.println(prefix + "Verbunden!");
-            Bukkit.getScheduler().runTaskTimerAsynchronously(IMFactions.getInstance(), new Runnable() {
-                @Override
-                public void run() {
-                    if (disable > 0) {
-                        disable--;
-                    } else {
-                        close();
-                    }
-                }
-            }, 0, 20);
         } catch (SQLException e) {
             System.out.println(prefix + "Keine Verbindung! Fehler: " + e.getMessage());
         }
@@ -131,7 +133,7 @@ public class MySQL {
         if (conn == null || conn.isClosed()) {
             connect();
         }
-        disable = 100;
+        disable = 300;
     }
 
 }

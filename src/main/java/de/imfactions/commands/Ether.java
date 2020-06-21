@@ -28,14 +28,14 @@ public class Ether {
 
     @IMCommand(
             name = "ether",
-            usage = "ether.usage",
+            usage = "/ether",
             description = "ether.description",
             permissions = "im.factions.ether"
     )
     public void execute(CommandSender sender) {
         if (sender.hasPermission("im.factions.ether.*")) {
             builder = new StringBuilder();
-            builder.append("Overview" + "\n");
+            builder.append(IMFactions.getInstance().getData().getPrefix() + "§7Overview" + "\n");
             add("ether add <Name> <Amount>", "Adds Ether to a User");
             add("ether remove <Name> <Amount>", "Removes Ether from a User");
             add("ether set <Name> <Amount>", "Sets Ether of a User");
@@ -52,7 +52,7 @@ public class Ether {
 
     @IMCommand(
             name = "add",
-            usage = "ether add <Name> <Amount>",
+            usage = "/ether add <Name> <Amount>",
             description = "ether.add.description",
             maxArgs = 2,
             minArgs = 2,
@@ -71,7 +71,7 @@ public class Ether {
 
     @IMCommand(
             name = "remove",
-            usage = "ether remove <Name> <Amount>",
+            usage = "/ether remove <Name> <Amount>",
             description = "Removes Ether from a User",
             maxArgs = 2,
             minArgs = 2,
@@ -89,7 +89,7 @@ public class Ether {
 
     @IMCommand(
             name = "set",
-            usage = "ether set <Name> <Amount>",
+            usage = "/ether set <Name> <Amount>",
             description = "Sets Ether of a User",
             maxArgs = 2,
             minArgs = 2,
@@ -107,7 +107,7 @@ public class Ether {
 
     @IMCommand(
             name = "get",
-            usage = "ether get (Name)",
+            usage = "/ether get (Name)",
             description = "Gets Ether of a User",
             maxArgs = 1,
             minArgs = 0,
@@ -132,7 +132,7 @@ public class Ether {
 
 
     private void add(String usage, String description) {
-        builder.append("\n" + IMFactions.getInstance().getData().getSymbol() + "§e" + usage + "§8: §7 " + description + ChatColor.RESET);
+        builder.append("\n" + IMFactions.getInstance().getData().getSymbol() + "§e/" + usage + "§8: §7 " + description + ChatColor.RESET);
     }
 
 }

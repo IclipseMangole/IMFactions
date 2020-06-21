@@ -22,7 +22,6 @@ public class IMFactions extends JavaPlugin {
     @Override
     public void onLoad() {
         instance = this;
-        data = new Data();
         if (Bukkit.getWorlds().size() == 0) {
             WorldLoader.loadLobby();
         }
@@ -30,6 +29,7 @@ public class IMFactions extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        data = new Data();
         data.getMySQL().connect();
         data.createTables();
         registerCommands();
@@ -60,8 +60,8 @@ public class IMFactions extends JavaPlugin {
     }
 
     public void registerListener() {
-        data.getRegistration().register(new JoinListener(), this);
-        data.getRegistration().register(new QuitListener(), this);
+        Bukkit.getPluginManager().registerEvents(new JoinListener(), this);
+        Bukkit.getPluginManager().registerEvents(new QuitListener(), this);
     }
 
     public void updateGamerules() {

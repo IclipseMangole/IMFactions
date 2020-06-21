@@ -42,10 +42,12 @@ public class JoinListener implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         UUID uuid = UUIDFetcher.getUUID(player);
+        UserManager.User user;
         if (!manager.isUserExists(uuid)) {
-            //If the User is new
+            user = manager.createUser(uuid);
+        } else {
+            user = manager.getUser(uuid);
         }
-        UserManager.User user = manager.getUser(uuid);
         user.setLastSeen(System.currentTimeMillis());
 
 
