@@ -6,11 +6,14 @@ import de.imfactions.database.faction.FactionUserManager;
 import de.imfactions.database.UserManager;
 import de.imfactions.util.Command.IMCommand;
 import de.imfactions.util.UUIDFetcher;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Random;
@@ -133,7 +136,18 @@ public class Faction {
                 if (!factionUserManager.isFactionUserInFaction(uuidInvite)) {
                     factionUserManager.createFactionUser(uuidInvite, factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId(), -1, true);
                     player.sendMessage("§aYou invited §e" + name + "§a to join your Faction");
-                    Bukkit.getPlayer(uuidInvite).sendMessage("§e" + player.getName() + "§a has invited you to his Faction. Do §e/faction accept " + name + " §ato join the Faction");
+
+                    TextComponent command = new TextComponent("/faction accept name");
+                    command.setColor(net.md_5.bungee.api.ChatColor.YELLOW);
+                    command.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/faction accept " + name));
+                    command.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§ePress to join").create()));
+
+                    TextComponent text = new TextComponent("§e" + player.getName() + "invited you to join his Faction. Do ");
+                    text.setColor(net.md_5.bungee.api.ChatColor.GREEN);
+                    text.addExtra(command);
+                    text.addExtra(" to join his Faction");
+
+                    Bukkit.getPlayer(uuidInvite).spigot().sendMessage(text);
                 } else {
                     player.sendMessage("§cThis Player is already member of a Faction");
                 }
