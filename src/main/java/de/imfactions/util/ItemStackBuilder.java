@@ -31,6 +31,7 @@ public class ItemStackBuilder {
     private String localizedName = null;
     private String name = null;
     private List<String> lore = null;
+    private int customModelData = 0;
 
     // Features
     private boolean unbreakable = false;
@@ -54,6 +55,7 @@ public class ItemStackBuilder {
         builder.withAmount(stack.getAmount());
         builder.withData(((Damageable) stack.getItemMeta()).getDamage());
         builder.withLore(stack.getItemMeta().getLore());
+        builder.withCustomModelData(stack.getItemMeta().getCustomModelData());
         builder.withEnchantments(stack.getEnchantments());
         builder.withItemFlags(stack.getItemMeta().getItemFlags());
         if (stack.getType().equals(Material.PLAYER_HEAD)) {
@@ -115,6 +117,11 @@ public class ItemStackBuilder {
 
     public ItemStackBuilder withLore(String... lines) {
         return withLore(Arrays.asList(lines));
+    }
+
+    public ItemStackBuilder withCustomModelData(int customModelData) {
+        this.customModelData = customModelData;
+        return this;
     }
 
     // Just calls ItemMeta#setUnbreakable(true), don't know if compatible with old versions
@@ -186,6 +193,10 @@ public class ItemStackBuilder {
         // Set lore if it is not null nor empty
         if (lore != null && !lore.isEmpty()) {
             itemMeta.setLore(lore.stream().map(ItemStackBuilder::parseColor).collect(Collectors.toList()));
+        }
+        //Set CustomModelData
+        if (customModelData != 0) {
+            itemMeta.setCustomModelData(customModelData);
         }
         // Add enchantments if any
         if (enchantments != null && !enchantments.isEmpty()) {
