@@ -3,7 +3,6 @@ package de.imfactions;
 import de.imfactions.database.*;
 import de.imfactions.database.faction.FactionManager;
 import de.imfactions.database.faction.FactionPlotManager;
-import de.imfactions.database.faction.FactionPlotTable;
 import de.imfactions.database.faction.FactionUserManager;
 import de.imfactions.functions.UserSettingsManager;
 import de.imfactions.util.Command.CommandRegistration;
@@ -21,7 +20,6 @@ public class Data {
     private FactionManager factionManager;
     private FactionUserManager factionUserManager;
     private FactionPlotManager factionPlotManager;
-    private FactionPlotTable factionPlotTable;
 
 
     public Data() {
@@ -35,7 +33,6 @@ public class Data {
         factionManager = new FactionManager();
         factionUserManager = new FactionUserManager();
         factionPlotManager = new FactionPlotManager();
-        factionPlotTable = new FactionPlotTable();
     }
 
 
@@ -91,10 +88,6 @@ public class Data {
 
     public FactionPlotManager getFactionPlotManager() {
         return factionPlotManager;
-    }
-
-    public FactionPlotTable getFactionPlotTable() {
-        return factionPlotTable;
     }
 
     public FactionUserManager getFactionUserManager() {

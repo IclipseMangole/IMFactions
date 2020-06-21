@@ -5,10 +5,10 @@ import org.bukkit.Location;
 public class FactionPlotManager {
 
     public class FactionPlot{
+
         int factionId;
-        Location edgeDownFront;
-        Location edgeUpBack;
-        long raidProtection;
+        Location edgeDownFrontLeft;
+        Location edgeUpBackRight;
 
         public FactionPlot(){
 

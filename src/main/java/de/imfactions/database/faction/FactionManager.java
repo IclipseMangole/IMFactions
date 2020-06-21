@@ -17,7 +17,7 @@ public class FactionManager {
     private ArrayList<Faction> factions;
 
     public FactionManager() {
-        IMFactions.getInstance().getData().getMySQL().update("CREATE TABLE IF NOT EXISTS factions (factionId id MEDIUMINT NOT NULL AUTO_INCREMENT, userAmount INT(10), name VARCHAR(64), raidsWon INT(10), foundingDate DATETIME, raidProtection BIGINT, PRIMARY KEY (factionId))");
+        IMFactions.getInstance().getData().getMySQL().update("CREATE TABLE IF NOT EXISTS factions (factionId MEDIUMINT NOT NULL AUTO_INCREMENT, userAmount INT(10), name VARCHAR(64), foundingDate DATETIME, raidProtection long, PRIMARY KEY (factionId))");
         factions = new ArrayList<>();
         loadFactions();
         Bukkit.getScheduler().runTaskTimerAsynchronously(IMFactions.getInstance(), new Runnable() {
@@ -28,10 +28,10 @@ public class FactionManager {
         }, 0, 10 * 60 * 20);
     }
 
-    public void createFaction(String name, int userAmount, int raidsWon, Date foundingDate, long raidProtection) {
+    public void createFaction(String name, int userAmount, Date foundingDate, long raidProtection) {
         if (!isFactionExists(name)) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            IMFactions.getInstance().getData().getMySQL().update("INSERT INTO factions (userAmount, name, raidsWon, foundingDate, raidProtection) VALUES ('" + userAmount + "', '" + name + "', '" + raidsWon + "', '" + sdf.format(foundingDate) + "', '" + raidProtection + "')");
+            IMFactions.getInstance().getData().getMySQL().update("INSERT INTO factions (userAmount, name, raidsWon, foundingDate, raidProtection) VALUES ('" + userAmount + "', '" + name + "', '" + sdf.format(foundingDate) + "', '" + raidProtection + "')");
         }
     }
 
@@ -77,9 +77,9 @@ public class FactionManager {
 
     public void loadFactions() {
         try {
-            ResultSet rs = IMFactions.getInstance().getData().getMySQL().querry("SELECT factionId, userAmount, name, raidsWon, foundingDate, raidProtection FROM `factions` WHERE 1");
+            ResultSet rs = IMFactions.getInstance().getData().getMySQL().querry("SELECT factionId, userAmount, name, foundingDate, raidProtection FROM `factions` WHERE 1");
             while (rs.next()) {
-                Faction faction = new Faction(rs.getInt("factionId"), rs.getString("name"), rs.getInt("userAmount"), rs.getInt("raidsWon"), rs.getDate("foundingDate"), rs.getLong("raidProtection"));
+                Faction faction = new Faction(rs.getInt("factionId"), rs.getString("name"), rs.getInt("userAmount"), rs.getDate("foundingDate"), rs.getLong("raidProtection"));
                 factions.add(faction);
             }
         } catch (SQLException e) {
@@ -96,9 +96,9 @@ public class FactionManager {
     public ArrayList<Faction> getFactions() {
         ArrayList<Faction> factions = new ArrayList<>();
         try {
-            ResultSet rs = IMFactions.getInstance().getData().getMySQL().querry("SELECT factionId, userAmount, name, raidsWon, foundingDate FROM `factions` WHERE 1");
+            ResultSet rs = IMFactions.getInstance().getData().getMySQL().querry("SELECT factionId, userAmount, name, foundingDate, raidProtection FROM `factions` WHERE 1");
             while (rs.next()) {
-                Faction faction = new Faction(rs.getInt("factionId"), rs.getString("name"), rs.getInt("userAmount"), rs.getInt("raidsWon"), rs.getDate("foundingDate"), rs.getLong("raidProtection"));
+                Faction faction = new Faction(rs.getInt("factionId"), rs.getString("name"), rs.getInt("userAmount"), rs.getDate("foundingDate"), rs.getLong("raidProtection"));
                 factions.add(faction);
             }
         } catch (SQLException e) {
@@ -124,15 +124,13 @@ public class FactionManager {
         private int factionId;
         private int userAmount;
         private String name;
-        private int raidsWon;
         private Date foundingDate;
         private long raidProtection;
 
-        private Faction(int factionId, String name, int userAmount, int raidsWon, Date foundingDate, long raidProtection) {
+        private Faction(int factionId, String name, int userAmount, Date foundingDate, long raidProtection) {
             this.factionId = factionId;
             this.name = name;
             this.userAmount = userAmount;
-            this.raidsWon = raidsWon;
             this.foundingDate = foundingDate;
             this.raidProtection = raidProtection;
         }
@@ -141,10 +139,9 @@ public class FactionManager {
             this.factionId = factionId;
             this.name = name;
             userAmount = 1;
-            raidsWon = 0;
             foundingDate = Date.from(Instant.now());
-            raidProtection = 3600 * 24;
-            createFaction(name, userAmount, raidsWon, foundingDate, raidProtection);
+            raidProtection = System.currentTimeMillis() + 12*60*60*1000;
+            createFaction(name, userAmount, foundingDate, raidProtection);
             save();
         }
 
@@ -154,10 +151,6 @@ public class FactionManager {
 
         public int getId() {
             return factionId;
-        }
-
-        public int getRaidsWon() {
-            return raidsWon;
         }
 
         public int getUserAmount() {
@@ -192,17 +185,13 @@ public class FactionManager {
             this.factionId = factionId;
         }
 
-        public void setRaidsWon(int raidsWon) {
-            this.raidsWon = raidsWon;
-        }
-
         public void setUserAmount(int userAmount) {
             this.userAmount = userAmount;
         }
 
         public void save() {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            IMFactions.getInstance().getData().getMySQL().update("UPDATE factions SET name = " + name + ", userAmount = '" + userAmount + ", raidsWon = " + raidsWon + ", foundingDate = " + sdf.format(foundingDate) + ", raidProtection = " + raidProtection + " WHERE factionId = '" + factionId + "'");
+            IMFactions.getInstance().getData().getMySQL().update("UPDATE factions SET name = " + name + ", userAmount = '" + userAmount + ", foundingDate = " + sdf.format(foundingDate) + ", raidProtection = " + raidProtection + " WHERE factionId = '" + factionId + "'");
         }
 
         public void deleteFaction() {

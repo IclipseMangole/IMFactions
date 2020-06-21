@@ -323,8 +323,6 @@ public class Faction {
                     members.append("§7[").append(factionUser.getRankname()).append("§7] §e" + UUIDFetcher.getName(factionUser.getUuid()) + "§7, ");
                 }
                 player.sendMessage(members.toString());
-                //RaidsWon
-                player.sendMessage("§aRaidsWon: §e" + factionManager.getFaction(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId()).getRaidsWon());
                 //RaidProtection
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd HH:mm:ss");
                 player.sendMessage("§aRaidProtection: " + simpleDateFormat.format(factionManager.getFaction(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId()).getRaidProtection()));
