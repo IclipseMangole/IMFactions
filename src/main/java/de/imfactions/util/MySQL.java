@@ -79,7 +79,7 @@ public class MySQL {
 
     public void connect() {
         try {
-            conn = DriverManager.getConnection("jdbc:mysql://" + HOST + ":3306/" + DATABASE + "?autoReconnect=false", USER, PASSWORD);
+            conn = DriverManager.getConnection("jdbc:mysql://" + HOST + ":3306/" + DATABASE + "?autoReconnect=false&useSSL=false", USER, PASSWORD);
             System.out.println(prefix + "Verbunden!");
         } catch (SQLException e) {
             System.out.println(prefix + "Keine Verbindung! Fehler: " + e.getMessage());
