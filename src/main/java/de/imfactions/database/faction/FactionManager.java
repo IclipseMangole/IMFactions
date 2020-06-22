@@ -25,10 +25,10 @@ public class FactionManager {
         }, 0, 10 * 60 * 20);
     }
 
-    public void createFaction(String name, int userAmount, Date foundingDate, long raidProtection) {
-        if (!isFactionExists(name)) {
+    public void createFaction(int factionId, String name, int userAmount, Date foundingDate, long raidProtection) {
+        if (!isFactionExists(factionId)) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            IMFactions.getInstance().getData().getMySQL().update("INSERT INTO factions (userAmount, name, raidsWon, foundingDate, raidProtection) VALUES ('" + userAmount + "', '" + name + "', '" + sdf.format(foundingDate) + "', '" + raidProtection + "')");
+            IMFactions.getInstance().getData().getMySQL().update("INSERT INTO factions (factionId, userAmount, name, foundingDate, raidProtection) VALUES ('" +factionId + "', '" + userAmount + "', '" + name + "', '" + sdf.format(foundingDate) + "', '" + raidProtection + "')");
         }
     }
 
@@ -138,7 +138,8 @@ public class FactionManager {
             userAmount = 1;
             foundingDate = Date.from(Instant.now());
             raidProtection = System.currentTimeMillis() + 12*60*60*1000;
-            createFaction(name, userAmount, foundingDate, raidProtection);
+            createFaction(factionId, name, userAmount, foundingDate, raidProtection);
+            factions.add(this);
             save();
         }
 

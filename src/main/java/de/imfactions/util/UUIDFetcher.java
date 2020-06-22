@@ -56,7 +56,11 @@ public class UUIDFetcher {
      * @return The uuid
      */
     public static UUID getUUID(String name) {
-        return getUUIDAt(name, System.currentTimeMillis());
+        if (getUUIDAt(name, System.currentTimeMillis()) != null) {
+            return getUUIDAt(name, System.currentTimeMillis());
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -101,6 +105,7 @@ public class UUIDFetcher {
             nameCache.put(data.id, data.name);
 
             return data.id;
+
         } catch (Exception e) {
             e.printStackTrace();
         }

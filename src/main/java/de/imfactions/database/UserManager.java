@@ -70,7 +70,7 @@ public class UserManager {
     }
 
     public boolean isUserExists(String name) {
-        return isUserExists(UUIDFetcher.getUUID(name));
+            return isUserExists(UUIDFetcher.getUUID(name));
     }
 
 

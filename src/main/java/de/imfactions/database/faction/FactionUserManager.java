@@ -146,6 +146,7 @@ public class FactionUserManager {
             this.factionId = factionId;
             this.rank = rank;
             createFactionUser(uuid, factionId, rank);
+            factionUsers.add(this);
             save();
         }
 
