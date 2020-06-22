@@ -56,11 +56,7 @@ public class UUIDFetcher {
      * @return The uuid
      */
     public static UUID getUUID(String name) {
-        if (getUUIDAt(name, System.currentTimeMillis()) != null) {
-            return getUUIDAt(name, System.currentTimeMillis());
-        } else {
-            return null;
-        }
+        return getUUIDAt(name, System.currentTimeMillis());
     }
 
     /**

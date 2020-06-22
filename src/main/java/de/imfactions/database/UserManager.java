@@ -70,7 +70,11 @@ public class UserManager {
     }
 
     public boolean isUserExists(String name) {
+        try {
             return isUserExists(UUIDFetcher.getUUID(name));
+        } catch (NullPointerException e) {
+            return false;
+        }
     }
 
 
