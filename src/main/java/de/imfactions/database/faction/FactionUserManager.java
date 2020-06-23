@@ -117,7 +117,7 @@ public class FactionUserManager {
         int highest = 0;
         for (FactionUser factionUser : factionIdUsers) {
             if (factionUser.isHigherRank(highest)) {
-                highest = factionUser.rank;
+                highest = factionUser.getRank();
             }
         }
         for (FactionUser factionUser : factionIdUsers) {
