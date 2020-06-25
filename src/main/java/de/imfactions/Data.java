@@ -6,6 +6,7 @@ import de.imfactions.database.faction.FactionManager;
 import de.imfactions.database.faction.FactionPlotManager;
 import de.imfactions.database.faction.FactionUserManager;
 import de.imfactions.functions.UserSettingsManager;
+import de.imfactions.functions.plots.FactionPlot;
 import de.imfactions.util.Command.CommandRegistration;
 import de.imfactions.util.MySQL;
 
@@ -22,11 +23,17 @@ public class Data {
     private FactionUserManager factionUserManager;
     private FactionPlotManager factionPlotManager;
 
+    //
+    private FactionPlot factionPlot;
 
     public Data() {
         registration = new CommandRegistration();
         mysql = new MySQL();
         userSettingsManager = new UserSettingsManager();
+    }
+
+    public void Functions(){
+        factionPlot = new FactionPlot();
     }
 
     public void createTables() {
@@ -94,5 +101,9 @@ public class Data {
 
     public FactionUserManager getFactionUserManager() {
         return factionUserManager;
+    }
+
+    public FactionPlot getFactionPlotFunctions(){
+        return factionPlot;
     }
 }

@@ -8,6 +8,7 @@ package de.imfactions.functions;
 
 import de.imfactions.IMFactions;
 import de.imfactions.util.FileUtils;
+import org.bukkit.util.FileUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,5 +50,37 @@ public class WorldLoader {
             }
 
          */
+    }
+
+    public static void loadPVP(){
+        File from = new File("/home/IMNetzwerk/BuildServer/FactionPVP_world/region");
+        File to = new File(IMFactions.getInstance().getDataFolder().getParentFile().getParentFile().getAbsolutePath() + "/FactionPVP_world/region");
+
+        if(to.exists()){
+            FileUtils.deleteDirectory(new File(IMFactions.getInstance().getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPVP_world"));
+        }
+
+        try{
+            copyFilesInDirectory(from,to);
+            Files.copy(new File("/home/IMNetzwerk/BuildServer/FactionPVP_world/level.dat").toPath(), new File(IMFactions.getInstance().getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPVP_world/level.dat").toPath(), StandardCopyOption.REPLACE_EXISTING);
+        }catch(IOException oe){
+            oe.printStackTrace();
+        }
+    }
+
+    public static void loadPlots(){
+        File from = new File("/home/IMNetzwerk/BuildServer/FactionPlots_world/region");
+        File to = new File(IMFactions.getInstance().getDataFolder().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlots_world/region");
+
+        if(to.exists()){
+            FileUtils.deleteDirectory(new File(IMFactions.getInstance().getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlots_world"));
+        }
+
+        try{
+            copyFilesInDirectory(from,to);
+            Files.copy(new File("/home/IMNetzwerk/BuildServer/FactionPlots_world/level.dat").toPath(), new File(IMFactions.getInstance().getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlots_world/level.dat").toPath(), StandardCopyOption.REPLACE_EXISTING);
+        }catch(IOException oe){
+            oe.printStackTrace();
+        }
     }
 }

@@ -108,24 +108,20 @@ public class FactionUserManager {
     }
 
     public ArrayList<FactionUser> getHighestFactionUsers(int factionId) {
-        ArrayList<FactionUser> factionIdUsers = new ArrayList<>();
-        for (FactionUser factionUser : factionUsers) {
-            if (factionUser.getFactionId() == factionId) {
-                factionIdUsers.add(factionUser);
-            }
-        }
+        ArrayList<FactionUser> highestUsers = new ArrayList<>();
         int highest = 0;
-        for (FactionUser factionUser : factionIdUsers) {
-            if (factionUser.isHigherRank(highest)) {
-                highest = factionUser.getRank();
+        for(FactionUser factionUser : factionUsers){
+            if(factionUser.getFactionId() == factionId) {
+                if (factionUser.getRank() > highest) {
+                    highestUsers.clear();
+                    highestUsers.add(factionUser);
+                    highest = factionUser.getRank();
+                } else if (factionUser.getRank() == highest) {
+                    highestUsers.add(factionUser);
+                }
             }
         }
-        for (FactionUser factionUser : factionIdUsers) {
-            if (!(factionUser.getRank() == highest)) {
-                factionIdUsers.remove(factionUser);
-            }
-        }
-        return factionIdUsers;
+        return  highestUsers;
     }
 
     public class FactionUser {

@@ -24,6 +24,8 @@ public class IMFactions extends JavaPlugin {
         instance = this;
         if (Bukkit.getWorlds().size() == 0) {
             WorldLoader.loadLobby();
+            WorldLoader.loadPlots();
+            WorldLoader.loadPVP();
         }
     }
 
@@ -32,6 +34,7 @@ public class IMFactions extends JavaPlugin {
         data = new Data();
         data.getMySQL().connect();
         data.createTables();
+        data.Functions();
         registerCommands();
         registerListener();
         updateGamerules();

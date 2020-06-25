@@ -217,7 +217,8 @@ public class FactionManager {
         }
 
         public void save() {
-            IMFactions.getInstance().getData().getMySQL().update("UPDATE factions SET `name` = " + name + ", `shortcut` = " + shortcut + ", `userAmount` = '" + userAmount + ", `foundingDate` = " + foundingDate + ", `raidProtection` = " + raidProtection + " WHERE `factionId` = '" + factionId + "'");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            IMFactions.getInstance().getData().getMySQL().update("UPDATE factions SET `name` = " + name + ", `shortcut` = " + shortcut + ", `userAmount` = '" + userAmount + ", `foundingDate` = " + sdf.format(foundingDate) + ", `raidProtection` = " + raidProtection + " WHERE `factionId` = '" + factionId + "'");
         }
 
         public void deleteFaction() {
