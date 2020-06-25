@@ -23,7 +23,7 @@ public class Data {
     private FactionUserManager factionUserManager;
     private FactionPlotManager factionPlotManager;
 
-    //
+    //Functions
     private FactionPlot factionPlot;
 
     public Data() {

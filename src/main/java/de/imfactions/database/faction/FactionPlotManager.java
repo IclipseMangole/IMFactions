@@ -18,8 +18,8 @@ public class FactionPlotManager {
     private ArrayList<FactionPlot> factionPlots;
     private HashMap<FactionPlot, Integer> plotPositions;
 
-    public FactionPlotManager() {
-        IMFactions.getInstance().getData().getMySQL().update("CREATE TABLE IF NOT EXISTS `factionPlots` (`factionId` INT(10), `edgeDownFrontRight` VARCHAR(100), `edgeUpBackLeft` VARCHAR(100), `home` VARCHAR(100), `reachable` BIGINT, `position` INT(10) PRIMARY KEY(`factionId`))");
+    public  FactionPlotManager() {
+        IMFactions.getInstance().getData().getMySQL().update("CREATE TABLE IF NOT EXISTS factionPlots (`factionId` INT(10), `edgeDownFrontRight` VARCHAR(100), `edgeUpBackLeft` VARCHAR(100), `home` VARCHAR(100), `reachable` BIGINT, `position` INT(10) PRIMARY KEY(`factionId`))");
         factionPlots = new ArrayList<>();
         plotPositions = new HashMap<>();
         loadFactionPlots();
@@ -33,7 +33,7 @@ public class FactionPlotManager {
 
     public void createFactionPlot(int factionId, Location edgeDownFrontRight, Location edgeUpBackLeft, Location home, long reachable, int position) {
         if (!isFactionPlotExists(factionId)) {
-            IMFactions.getInstance().getData().getMySQL().update("INSERT INTO `factionPlots` (`factionId`, `edgeDownFrontRight`, `edgeUpBackLeft`, `home`, `reachable`, `position`) VALUES ('" + factionId + "', '" + edgeDownFrontRight + "', '" + edgeUpBackLeft + "', '" + home + "', '" + reachable + "', '" + position + "')");
+            IMFactions.getInstance().getData().getMySQL().update("INSERT INTO factionPlots (`factionId`, `edgeDownFrontRight`, `edgeUpBackLeft`, `home`, `reachable`, `position`) VALUES ('" + factionId + "', '" + edgeDownFrontRight + "', '" + edgeUpBackLeft + "', '" + home + "', '" + reachable + "', '" + position + "')");
             new FactionPlot(factionId, edgeDownFrontRight, edgeUpBackLeft, home, reachable, position);
         }
     }
@@ -58,7 +58,7 @@ public class FactionPlotManager {
 
     public void loadFactionPlots() {
         try {
-            ResultSet rs = IMFactions.getInstance().getData().getMySQL().querry("SELECT `factionId`, `edgeDownFrontRight`, `edgeUpBackLeft`, `home`, `reachable`, `position` FROM `factionPlots` WHERE 1");
+            ResultSet rs = IMFactions.getInstance().getData().getMySQL().querry("SELECT `factionId`, `edgeDownFrontRight`, `edgeUpBackLeft`, `home`, `reachable`, `position` FROM factionPlots WHERE 1");
             while (rs.next()) {
                 new FactionPlot(rs.getInt("factionId"), LocationBuilder.fromString(rs.getString("edgeDownFrontRight")), LocationBuilder.fromString(rs.getString("edgeUpBackLeft")), LocationBuilder.fromString(rs.getString("home")), rs.getLong("reachable"), rs.getInt("position"));
             }
@@ -77,7 +77,7 @@ public class FactionPlotManager {
     public ArrayList<FactionPlot> getFactionPlots() {
         ArrayList<FactionPlot> factionPlots = new ArrayList<>();
         try {
-            ResultSet rs = IMFactions.getInstance().getData().getMySQL().querry("SELECT `factionId`, `edgeDownFrontRight`, `edgeUpBackLeft`, `home`, `reachable`, `position` FROM `factionPlots` WHERE 1");
+            ResultSet rs = IMFactions.getInstance().getData().getMySQL().querry("SELECT `factionId`, `edgeDownFrontRight`, `edgeUpBackLeft`, `home`, `reachable`, `position` FROM factionPlots WHERE 1");
             while (rs.next()) {
                 FactionPlot factionPlot = new FactionPlot(rs.getInt("factionId"), LocationBuilder.fromString(rs.getString("edgeDownFrontRight")), LocationBuilder.fromString(rs.getString("edgeUpBackLeft")), LocationBuilder.fromString(rs.getString("home")), rs.getLong("reachable"), rs.getInt("position"));
                 factionPlots.add(factionPlot);
@@ -108,7 +108,7 @@ public class FactionPlotManager {
 
     public int getHighestFactionPlotId() {
         try {
-            ResultSet rs = IMFactions.getInstance().getData().getMySQL().querry("SELECT MAX(`factionId`) AS `factionId` FROM `factionPlots` WHERE 1");
+            ResultSet rs = IMFactions.getInstance().getData().getMySQL().querry("SELECT MAX(`factionId`) AS `factionId` FROM factionPlots WHERE 1");
             if (rs.next()) {
                 return rs.getInt("factionId");
             }
@@ -120,7 +120,7 @@ public class FactionPlotManager {
 
     public int getHighestFactionPosition() {
         try {
-            ResultSet rs = IMFactions.getInstance().getData().getMySQL().querry("SELECT MAX(`position`) AS `position` FROM `factionPlots` WHERE 1");
+            ResultSet rs = IMFactions.getInstance().getData().getMySQL().querry("SELECT MAX(`position`) AS `position` FROM factionPlots WHERE 1");
             if (rs.next()) {
                 return rs.getInt("position");
             }
@@ -200,11 +200,11 @@ public class FactionPlotManager {
         }
 
         public void save() {
-            IMFactions.getInstance().getData().getMySQL().update("UPDATE `factionPlots` SET `edgeDownFrontRight` = '" + LocationBuilder.toString(edgeDownFrontRight) + "', `edgeUpBackLeft` = '" + LocationBuilder.toString(edgeUpBackLeft) + "', `home` = '" + LocationBuilder.toString(home) + "', `reachable` = '" + reachable + "', `position` = '" + position + "' WHERE `factionId` = '" + factionId + "'");
+            IMFactions.getInstance().getData().getMySQL().update("UPDATE factionPlots SET `edgeDownFrontRight` = '" + LocationBuilder.toString(edgeDownFrontRight) + "', `edgeUpBackLeft` = '" + LocationBuilder.toString(edgeUpBackLeft) + "', `home` = '" + LocationBuilder.toString(home) + "', `reachable` = '" + reachable + "', `position` = '" + position + "' WHERE `factionId` = '" + factionId + "'");
         }
 
         public void deleteFactionPlot() {
-            IMFactions.getInstance().getData().getMySQL().update("DELETE FROM `factionPlots` WHERE `factionId` = '" + factionId + "'");
+            IMFactions.getInstance().getData().getMySQL().update("DELETE FROM factionPlots WHERE `factionId` = '" + factionId + "'");
             factionPlots.remove(this);
             plotPositions.remove(this);
         }
