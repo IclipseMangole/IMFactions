@@ -7,6 +7,7 @@ import de.imfactions.listener.JoinListener;
 import de.imfactions.listener.QuitListener;
 import org.bukkit.Bukkit;
 import org.bukkit.GameRule;
+import org.bukkit.WorldCreator;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class IMFactions extends JavaPlugin {
@@ -24,6 +25,10 @@ public class IMFactions extends JavaPlugin {
         instance = this;
         if (Bukkit.getWorlds().size() == 0) {
             WorldLoader.loadLobby();
+            //WorldLoader.loadPlots();
+            //WorldLoader.loadPVP();
+            new WorldCreator("FactionPVP_world").createWorld();
+            new WorldCreator("FactionPlots _world").createWorld();
         }
     }
 
@@ -32,6 +37,7 @@ public class IMFactions extends JavaPlugin {
         data = new Data();
         data.getMySQL().connect();
         data.createTables();
+        data.Functions();
         registerCommands();
         registerListener();
         updateGamerules();
@@ -43,6 +49,7 @@ public class IMFactions extends JavaPlugin {
         data.getFactionManager().saveFactions();
         data.getFactionUserManager().saveFactionUsers();
         data.getMySQL().close();
+       // WorldLoader.savePlots();
     }
 
     public Data getData() {
