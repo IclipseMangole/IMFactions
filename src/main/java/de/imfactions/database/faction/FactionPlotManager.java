@@ -14,6 +14,7 @@ import java.util.ArrayList;
 public class FactionPlotManager {
 
     private ArrayList<FactionPlot> factionPlots;
+    private IMFactions factions;
 
     public  FactionPlotManager(IMFactions factions) {
         this.factions = factions;
@@ -28,7 +29,7 @@ public class FactionPlotManager {
         }, 0, 10 * 60 * 20);
     }
 
-    public void createFactionPlot(int factionId, Location edgeDownFrontLeft, Location edgeUpBackRight, Location home) {
+    public void createFactionPlot(int factionId, Location edgeDownFrontRight, Location edgeUpBackLeft, Location home, long reachable, int position) {
         if (!isFactionPlotExists(factionId)) {
             factions.getData().getMySQL().update("INSERT INTO factionPlots (`factionId`, `edgeDownFrontRight`, `edgeUpBackLeft`, `home`, `reachable`, `position`) VALUES ('" + factionId + "', '" + edgeDownFrontRight + "', '" + edgeUpBackLeft + "', '" + home + "', '" + reachable + "', '" + position + "')");
             new FactionPlot(factionId, edgeDownFrontRight, edgeUpBackLeft, home, reachable, position);
@@ -95,12 +96,16 @@ public class FactionPlotManager {
         Location edgeDownFrontLeft;
         Location edgeUpBackRight;
         Location home;
+        long reachable;
+        int position;
 
-        public FactionPlot(int factionId, Location edgeDownFrontLeft, Location edgeUpBackRight, Location home) {
+        public FactionPlot(int factionId, Location edgeDownFrontLeft, Location edgeUpBackRight, Location home, long reachable, int position) {
             this.factionId = factionId;
             this.edgeDownFrontLeft = edgeDownFrontLeft;
             this.edgeUpBackRight = edgeUpBackRight;
             this.home = home;
+            this.reachable = reachable;
+            this.position = position;
         }
 
         public int getFactionId() {
@@ -135,24 +140,8 @@ public class FactionPlotManager {
             this.home = home;
         }
 
-        public Location getEdgeDownFrontRight() {
-            return edgeDownFrontRight;
-        }
-
-        public Location getEdgeUpBackLeft() {
-            return edgeUpBackLeft;
-        }
-
-        public void setEdgeDownFrontRight(Location edgeDownFrontRight) {
-            this.edgeDownFrontRight = edgeDownFrontRight;
-        }
-
-        public void setEdgeUpBackLeft(Location edgeUpBackLeft) {
-            this.edgeUpBackLeft = edgeUpBackLeft;
-        }
-
         public void save() {
-            factions.getData().getMySQL().update("UPDATE factionPlots SET `edgeDownFrontRight` = '" + LocationBuilder.toString(edgeDownFrontRight) + "', `edgeUpBackLeft` = '" + LocationBuilder.toString(edgeUpBackLeft) + "', `home` = '" + LocationBuilder.toString(home) + "', `reachable` = '" + reachable + "', `position` = '" + position + "' WHERE `factionId` = '" + factionId + "'");
+            factions.getData().getMySQL().update("UPDATE factionPlots SET `edgeDownFrontRight` = '" + LocationBuilder.toString(edgeDownFrontLeft) + "', `edgeUpBackLeft` = '" + LocationBuilder.toString(edgeUpBackRight) + "', `home` = '" + LocationBuilder.toString(home) + "', `reachable` = '" + reachable + "', `position` = '" + position + "' WHERE `factionId` = '" + factionId + "'");
         }
 
         public void deleteFactionPlot() {
@@ -160,6 +149,6 @@ public class FactionPlotManager {
             factionPlots.remove(this);
         }
 
-        */
+
     }
 }

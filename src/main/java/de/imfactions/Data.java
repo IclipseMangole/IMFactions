@@ -24,17 +24,17 @@ public class Data {
 
 
     public Data() {
-        registration = new CommandRegistration();
-        mysql = new MySQL();
-        userSettingsManager = new UserSettingsManager();
+        registration = new CommandRegistration(IMFactions.getInstance());
+        mysql = new MySQL(IMFactions.getInstance());
+        userSettingsManager = new UserSettingsManager(IMFactions.getInstance());
     }
 
     public void createTables() {
-        userManager = new UserManager();
-        userSettingsTable = new UserSettingsTable();
-        factionManager = new FactionManager();
-        factionUserManager = new FactionUserManager();
-        factionPlotManager = new FactionPlotManager();
+        userManager = new UserManager(IMFactions.getInstance());
+        userSettingsTable = new UserSettingsTable(IMFactions.getInstance());
+        factionManager = new FactionManager(IMFactions.getInstance());
+        factionUserManager = new FactionUserManager(IMFactions.getInstance());
+        factionPlotManager = new FactionPlotManager(IMFactions.getInstance());
     }
 
 

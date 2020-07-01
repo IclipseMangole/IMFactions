@@ -19,10 +19,10 @@ public class FactionPlot {
     }
 
     public boolean isPlayerInPlot(FactionPlotManager.FactionPlot factionPlot, Player player){
-        for(int x = (int) factionPlot.getEdgeDownFrontRight().getX(); x < factionPlot.getEdgeUpBackLeft().getX(); x++){
-            for(int y = (int) factionPlot.getEdgeDownFrontRight().getY(); y < factionPlot.getEdgeUpBackLeft().getY(); y++){
-                for(int z = (int) factionPlot.getEdgeDownFrontRight().getZ(); z < factionPlot.getEdgeUpBackLeft().getZ(); z++){
-                    if(player.getLocation().equals(new Location(factionPlot.getEdgeDownFrontRight().getWorld(), x, y, z))){
+        for(int x = (int) factionPlot.getEdgeDownFrontLeft().getX(); x < factionPlot.getEdgeUpBackRight().getX(); x++){
+            for(int y = (int) factionPlot.getEdgeDownFrontLeft().getY(); y < factionPlot.getEdgeUpBackRight().getY(); y++){
+                for(int z = (int) factionPlot.getEdgeDownFrontLeft().getZ(); z < factionPlot.getEdgeUpBackRight().getZ(); z++){
+                    if(player.getLocation().equals(new Location(factionPlot.getEdgeDownFrontLeft().getWorld(), x, y, z))){
                         return true;
                     }
                 }

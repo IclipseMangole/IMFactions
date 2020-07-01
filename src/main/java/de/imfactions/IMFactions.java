@@ -23,9 +23,7 @@ public class IMFactions extends JavaPlugin {
     public void onLoad() {
         instance = this;
         if (Bukkit.getWorlds().size() == 0) {
-            data.getWorldLoader().loadLobby();
-            WorldLoader.loadPlots();
-            WorldLoader.loadPVP();
+
         }
     }
 
@@ -57,13 +55,13 @@ public class IMFactions extends JavaPlugin {
     }
 
     public void registerCommands() {
-        data.getRegistration().register(new Ether(), this);
-        data.getRegistration().register(new Faction(), this);
+        data.getRegistration().register(new Ether(getInstance()), this);
+        data.getRegistration().register(new Faction(getInstance()), this);
     }
 
     public void registerListener() {
-        Bukkit.getPluginManager().registerEvents(new JoinListener(), this);
-        Bukkit.getPluginManager().registerEvents(new QuitListener(), this);
+        Bukkit.getPluginManager().registerEvents(new JoinListener(getInstance()), this);
+        Bukkit.getPluginManager().registerEvents(new QuitListener(getInstance()), this);
     }
 
     public void updateGamerules() {

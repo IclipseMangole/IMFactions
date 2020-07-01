@@ -2,6 +2,7 @@ package de.imfactions.commands;
 
 import de.imfactions.IMFactions;
 import de.imfactions.database.faction.FactionManager;
+import de.imfactions.database.faction.FactionPlotManager;
 import de.imfactions.database.faction.FactionUserManager;
 import de.imfactions.database.UserManager;
 import de.imfactions.functions.plots.FactionPlot;
@@ -26,7 +27,7 @@ public class Faction {
     private FactionManager factionManager;
     private FactionUserManager factionUserManager;
     private UserManager userManager;
-    FactionPlotManager factionPlotManager;
+    private FactionPlotManager factionPlotManager;
 
     public Faction(IMFactions factions) {
         this.factions = factions;
