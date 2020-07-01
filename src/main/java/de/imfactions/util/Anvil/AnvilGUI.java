@@ -27,7 +27,7 @@ import java.util.function.Consumer;
  */
 public class AnvilGUI {
 
-    private static Anvil_1_15 WRAPPER = new Anvil_1_15();
+    private static Anvil_1_16 WRAPPER = new Anvil_1_16();
 
     /**
      * The {@link Plugin} that this anvil GUI is associated with

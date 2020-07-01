@@ -18,11 +18,13 @@ import org.bukkit.entity.Player;
  * Created by Iclipse on 16.06.2020
  */
 public class Ether {
-    StringBuilder builder;
-    UserManager manager;
+    private StringBuilder builder;
+    private IMFactions factions;
+    private UserManager manager;
 
-    public Ether() {
-        manager = IMFactions.getInstance().getData().getUserManager();
+    public Ether(IMFactions factions) {
+        this.factions = factions;
+        manager = factions.getData().getUserManager();
     }
 
 
@@ -35,7 +37,7 @@ public class Ether {
     public void execute(CommandSender sender) {
         if (sender.hasPermission("im.factions.ether.*")) {
             builder = new StringBuilder();
-            builder.append(IMFactions.getInstance().getData().getPrefix() + "§7Overview" + "\n");
+            builder.append(factions.getData().getPrefix() + "§7Overview" + "\n");
             add("ether add <Name> <Amount>", "Adds Ether to a User");
             add("ether remove <Name> <Amount>", "Removes Ether from a User");
             add("ether set <Name> <Amount>", "Sets Ether of a User");
@@ -43,9 +45,9 @@ public class Ether {
             sender.sendMessage(builder.toString());
         } else {
             if (sender instanceof Player) {
-                sender.sendMessage(IMFactions.getInstance().getData().getPrefix() + "You have §e" + manager.getUser(UUIDFetcher.getUUID(sender.getName())).getEther() + " Ether");
+                sender.sendMessage(factions.getData().getPrefix() + "You have §e" + manager.getUser(UUIDFetcher.getUUID(sender.getName())).getEther() + " Ether");
             } else {
-                sender.sendMessage(IMFactions.getInstance().getData().getNoConsole());
+                sender.sendMessage(factions.getData().getNoConsole());
             }
         }
     }
@@ -65,7 +67,7 @@ public class Ether {
             user.addEther(ether);
             sender.sendMessage("§e" + ether + "§7 Ether has been added to §e" + name + "´s§7 account!");
         } else {
-            sender.sendMessage(IMFactions.getInstance().getData().getPrefix() + "§cThe player §e" + name + "§c doesn´t exist!");
+            sender.sendMessage(factions.getData().getPrefix() + "§cThe player §e" + name + "§c doesn´t exist!");
         }
     }
 
@@ -83,7 +85,7 @@ public class Ether {
             manager.getUser(name).removeEther(ether);
             sender.sendMessage("§e" + ether + "§7 Ether has been removed from §e" + name + "´s§7 account!");
         } else {
-            sender.sendMessage(IMFactions.getInstance().getData().getPrefix() + "§cThe player §e" + name + "§c doesn´t exist!");
+            sender.sendMessage(factions.getData().getPrefix() + "§cThe player §e" + name + "§c doesn´t exist!");
         }
     }
 
@@ -101,7 +103,7 @@ public class Ether {
             manager.getUser(name).setEther(ether);
             sender.sendMessage("§e" + name + "§7 has now §e" + ether + "§7 Ether");
         } else {
-            sender.sendMessage(IMFactions.getInstance().getData().getPrefix() + "§cThe player §e" + name + "§c doesn´t exist!");
+            sender.sendMessage(factions.getData().getPrefix() + "§cThe player §e" + name + "§c doesn´t exist!");
         }
     }
 
@@ -117,22 +119,22 @@ public class Ether {
     public void get(CommandSender sender, String name) {
         if (name == null) {
             if (sender instanceof Player) {
-                sender.sendMessage(IMFactions.getInstance().getData().getPrefix() + "You have §e" + manager.getUser(sender.getName()).getEther() + " Ether");
+                sender.sendMessage(factions.getData().getPrefix() + "You have §e" + manager.getUser(sender.getName()).getEther() + " Ether");
             } else {
-                sender.sendMessage(IMFactions.getInstance().getData().getNoConsole());
+                sender.sendMessage(factions.getData().getNoConsole());
             }
         } else {
             if (manager.isUserExists(name)) {
-                sender.sendMessage(IMFactions.getInstance().getData().getPrefix() + "§e" + name + "§7 has §e" + manager.getUser(name).getEther() + " Ether");
+                sender.sendMessage(factions.getData().getPrefix() + "§e" + name + "§7 has §e" + manager.getUser(name).getEther() + " Ether");
             } else {
-                sender.sendMessage(IMFactions.getInstance().getData().getPrefix() + "§cThe player §e" + name + "§c doesn´t exist!");
+                sender.sendMessage(factions.getData().getPrefix() + "§cThe player §e" + name + "§c doesn´t exist!");
             }
         }
     }
 
 
     private void add(String usage, String description) {
-        builder.append("\n" + IMFactions.getInstance().getData().getSymbol() + "§e/" + usage + "§8: §7 " + description + ChatColor.RESET);
+        builder.append("\n" + factions.getData().getSymbol() + "§e/" + usage + "§8: §7 " + description + ChatColor.RESET);
     }
 
 }

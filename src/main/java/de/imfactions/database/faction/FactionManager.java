@@ -2,6 +2,7 @@ package de.imfactions.database.faction;
 
 import de.imfactions.IMFactions;
 import org.bukkit.Bukkit;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -11,13 +12,15 @@ import java.util.Date;
 
 public class FactionManager {
 
-    private ArrayList<Faction> factions;
+    private IMFactions factions;
+    private ArrayList<Faction> factionList;
 
-    public FactionManager() {
-        IMFactions.getInstance().getData().getMySQL().update("CREATE TABLE IF NOT EXISTS factions (`factionId` MEDIUMINT NOT NULL AUTO_INCREMENT, `userAmount` INT(10), `name` VARCHAR(30), `shortcut` VARCHAR(3), `foundingDate` DATETIME, `raidProtection` BIGINT, PRIMARY KEY(`factionId`))");
-        factions = new ArrayList<>();
+    public FactionManager(IMFactions factions) {
+        this.factions = factions;
+        factions.getData().getMySQL().update("CREATE TABLE IF NOT EXISTS factions (`factionId` MEDIUMINT NOT NULL AUTO_INCREMENT, `userAmount` INT(10), `name` VARCHAR(30), `shortcut` VARCHAR(3), `foundingDate` DATETIME, `raidProtection` BIGINT, PRIMARY KEY(`factionId`))");
+        factionList = new ArrayList<>();
         loadFactions();
-        Bukkit.getScheduler().runTaskTimerAsynchronously(IMFactions.getInstance(), new Runnable() {
+        Bukkit.getScheduler().runTaskTimerAsynchronously(factions, new Runnable() {
             @Override
             public void run() {
                 saveFactions();
@@ -28,7 +31,7 @@ public class FactionManager {
     public void createFaction(int factionId, String name, String shortcut, int userAmount, Date foundingDate, long raidProtection) {
         if (!isFactionExists(factionId)) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            IMFactions.getInstance().getData().getMySQL().update("INSERT INTO factions (`factionId`, `userAmount`, `name`, `shortcut`, `foundingDate`, `raidProtection`) VALUES ('" +factionId + "', '" + userAmount + "', '" + name + "', '" + shortcut + "', '" + sdf.format(foundingDate) + "', '" + raidProtection + "')");
+            factions.getData().getMySQL().update("INSERT INTO factions (`factionId`, `userAmount`, `name`, `shortcut`, `foundingDate`, `raidProtection`) VALUES ('" + factionId + "', '" + userAmount + "', '" + name + "', '" + shortcut + "', '" + sdf.format(foundingDate) + "', '" + raidProtection + "')");
         }
     }
 
@@ -37,7 +40,7 @@ public class FactionManager {
     }
 
     public Faction getFaction(int factionId) {
-        for (Faction faction : factions) {
+        for (Faction faction : factionList) {
             if (faction.getId() == factionId) {
                 return faction;
             }
@@ -46,7 +49,7 @@ public class FactionManager {
     }
 
     public Faction getFaction(String name) {
-        for (Faction faction : factions) {
+        for (Faction faction : factionList) {
             if (faction.getName().equals(name)) {
                 return faction;
             }
@@ -54,18 +57,18 @@ public class FactionManager {
         return null;
     }
 
-    public String getFactionName(int factionId){
-        for(Faction faction : factions){
-            if(faction.getId() == factionId){
+    public String getFactionName(int factionId) {
+        for (Faction faction : factionList) {
+            if (faction.getId() == factionId) {
                 return faction.getName();
             }
         }
         return "";
     }
 
-    public int getFactionId(String name){
-        for(Faction faction : factions){
-            if(faction.name.equals(name)){
+    public int getFactionId(String name) {
+        for (Faction faction : factionList) {
+            if (faction.name.equals(name)) {
                 return faction.getId();
             }
         }
@@ -73,7 +76,7 @@ public class FactionManager {
     }
 
     public boolean isFactionExists(int factionId) {
-        for (Faction faction : factions) {
+        for (Faction faction : factionList) {
             if (faction.getId() == factionId) {
                 return true;
             }
@@ -82,7 +85,7 @@ public class FactionManager {
     }
 
     public boolean isFactionExists(String name) {
-        for (Faction faction : factions) {
+        for (Faction faction : factionList) {
             if (faction.getName().equals(name)) {
                 return true;
             }
@@ -92,10 +95,10 @@ public class FactionManager {
 
     public void loadFactions() {
         try {
-            ResultSet rs = IMFactions.getInstance().getData().getMySQL().querry("SELECT `factionId`, `userAmount`, `name`, `shortcut`, `foundingDate`, `raidProtection` FROM `factions` WHERE 1");
+            ResultSet rs = factions.getData().getMySQL().querry("SELECT `factionId`, `userAmount`, `name`, `shortcut`, `foundingDate`, `raidProtection` FROM `factions` WHERE 1");
             while (rs.next()) {
                 Faction faction = new Faction(rs.getInt("factionId"), rs.getString("name"), rs.getString("shortcut"), rs.getInt("userAmount"), rs.getDate("foundingDate"), rs.getLong("raidProtection"));
-                factions.add(faction);
+                factionList.add(faction);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -103,28 +106,28 @@ public class FactionManager {
     }
 
     public void saveFactions() {
-        for (Faction faction : factions) {
+        for (Faction faction : factionList) {
             faction.save();
         }
     }
 
-    public ArrayList<Faction> getFactions() {
-        ArrayList<Faction> factions = new ArrayList<>();
+    public ArrayList<Faction> getFactionList() {
+        ArrayList<Faction> list = new ArrayList<>();
         try {
-            ResultSet rs = IMFactions.getInstance().getData().getMySQL().querry("SELECT `factionId`, `userAmount`, `name`, `shortcut`, `foundingDate`, `raidProtection` FROM `factions` WHERE 1");
+            ResultSet rs = factions.getData().getMySQL().querry("SELECT `factionId`, `userAmount`, `name`, `shortcut`, `foundingDate`, `raidProtection` FROM `factions` WHERE 1");
             while (rs.next()) {
                 Faction faction = new Faction(rs.getInt("factionId"), rs.getString("name"), rs.getString("shortcut"), rs.getInt("userAmount"), rs.getDate("foundingDate"), rs.getLong("raidProtection"));
-                factions.add(faction);
+                list.add(faction);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return factions;
+        return list;
     }
 
     public int getHighestFactionId() {
         try {
-            ResultSet rs = IMFactions.getInstance().getData().getMySQL().querry("SELECT MAX(`factionId`) AS `factionId` FROM factions WHERE 1");
+            ResultSet rs = factions.getData().getMySQL().querry("SELECT MAX(`factionId`) AS `factionId` FROM factions WHERE 1");
             if (rs.next()) {
                 return rs.getInt("factionId");
             }
@@ -160,7 +163,7 @@ public class FactionManager {
             foundingDate = Date.from(Instant.now());
             raidProtection = System.currentTimeMillis() +  12*60*60*1000;
             createFaction(factionId, name, shortcut, userAmount, foundingDate, raidProtection);
-            factions.add(this);
+            factionList.add(this);
             save();
         }
 
@@ -217,12 +220,12 @@ public class FactionManager {
         }
 
         public void save() {
-            IMFactions.getInstance().getData().getMySQL().update("UPDATE factions SET `name` = " + name + ", `shortcut` = " + shortcut + ", `userAmount` = '" + userAmount + ", `foundingDate` = " + foundingDate + ", `raidProtection` = " + raidProtection + " WHERE `factionId` = '" + factionId + "'");
+            factions.getData().getMySQL().update("UPDATE factions SET `name` = " + name + ", `shortcut` = " + shortcut + ", `userAmount` = '" + userAmount + ", `foundingDate` = " + foundingDate + ", `raidProtection` = " + raidProtection + " WHERE `factionId` = '" + factionId + "'");
         }
 
         public void deleteFaction() {
-            IMFactions.getInstance().getData().getMySQL().update("DELETE FROM factions WHERE `factionId` = '" + factionId + "'");
-            factions.remove(this);
+            factions.getData().getMySQL().update("DELETE FROM factions WHERE `factionId` = '" + factionId + "'");
+            factionList.remove(this);
         }
     }
 }
