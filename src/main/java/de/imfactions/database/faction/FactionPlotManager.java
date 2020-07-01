@@ -6,18 +6,19 @@ import org.bukkit.Location;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class FactionPlotManager {
 
+    private IMFactions factions;
     private ArrayList<FactionPlot> factionPlots;
 
-    public FactionPlotManager() {
-        IMFactions.getInstance().getData().getMySQL().update("CREATE TABLE IF NOT EXISTS factionPlots (factionId INT(10), , PRIMARY KEY(factionId))");
+    public FactionPlotManager(IMFactions factions) {
+        this.factions = factions;
+        factions.getData().getMySQL().update("CREATE TABLE IF NOT EXISTS factionPlots (factionId INT(10), , PRIMARY KEY(factionId))");
         factionPlots = new ArrayList<>();
         loadFactionPlots();
-        Bukkit.getScheduler().runTaskTimerAsynchronously(IMFactions.getInstance(), new Runnable() {
+        Bukkit.getScheduler().runTaskTimerAsynchronously(factions, new Runnable() {
             @Override
             public void run() {
                 saveFactionPlots();
@@ -27,7 +28,7 @@ public class FactionPlotManager {
 
     public void createFactionPlot(int factionId, Location edgeDownFrontLeft, Location edgeUpBackRight, Location home) {
         if (!isFactionPlotExists(factionId)) {
-            IMFactions.getInstance().getData().getMySQL().update("INSERT INTO factions (factionId, ) VALUES ()");
+            factions.getData().getMySQL().update("INSERT INTO factions (factionId, ) VALUES ()");
         }
     }
 
@@ -55,7 +56,7 @@ public class FactionPlotManager {
 
     public void loadFactionPlots() {
         try {
-            ResultSet rs = IMFactions.getInstance().getData().getMySQL().querry("SELECT factionId, userAmount, name, foundingDate, raidProtection FROM `factions` WHERE 1");
+            ResultSet rs = factions.getData().getMySQL().querry("SELECT factionId, userAmount, name, foundingDate, raidProtection FROM `factions` WHERE 1");
             while (rs.next()) {
              //   FactionPlot factionPlot = new FactionPlot(rs.getInt("factionId"), rs.getString("name"), rs.getInt("userAmount"), rs.getDate("foundingDate"), rs.getLong("raidProtection"));
               //  factionPlots.add(factionPlot);
@@ -74,7 +75,7 @@ public class FactionPlotManager {
     public ArrayList<FactionPlot> getFactionPlots() {
         ArrayList<FactionPlot> factionPlots = new ArrayList<>();
         try {
-            ResultSet rs = IMFactions.getInstance().getData().getMySQL().querry("SELECT factionId, userAmount, name, foundingDate, raidProtection FROM `factions` WHERE 1");
+            ResultSet rs = factions.getData().getMySQL().querry("SELECT factionId, userAmount, name, foundingDate, raidProtection FROM `factions` WHERE 1");
             while (rs.next()) {
             //    FactionPlot factionPlot = new FactionPlot();
              //   factionPlots.add(factionPlot);
@@ -132,11 +133,11 @@ public class FactionPlotManager {
         }
 
        /* public void save() {
-            IMFactions.getInstance().getData().getMySQL().update("UPDATE factions SET  = "  " WHERE factionId = '" + factionId + "'");
+            factions.getData().getMySQL().update("UPDATE factions SET  = "  " WHERE factionId = '" + factionId + "'");
         }
 
         public void deleteFactionPlot() {
-            IMFactions.getInstance().getData().getMySQL().update("DELETE FROM factions WHERE factionId = '" + factionId + "'");
+            factions.getData().getMySQL().update("DELETE FROM factions WHERE factionId = '" + factionId + "'");
             factionPlots.remove(this);
         }
 

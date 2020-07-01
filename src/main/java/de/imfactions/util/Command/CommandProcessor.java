@@ -18,13 +18,15 @@ import java.util.stream.Collectors;
 
 
 public class CommandProcessor<S> {
+    private IMFactions factions;
     private GlobalCommand<S> masterCommand;
     private IMCommand command;
     private Object function;
     private Method method;
     private Class[] methodParameters;
 
-    public CommandProcessor(GlobalCommand<S> masterCommand, IMCommand command, Object function, Method method) {
+    public CommandProcessor(IMFactions factions, GlobalCommand<S> masterCommand, IMCommand command, Object function, Method method) {
+        this.factions = factions;
         this.masterCommand = masterCommand;
         this.command = command;
         this.function = function;
@@ -54,12 +56,12 @@ public class CommandProcessor<S> {
 
     public void process(S sender, FlagList.FilterResult flags, int wildcards, String[] args) {
         if (command.noConsole() && !masterCommand.getPlayerClass().isInstance(sender)) {
-            ((CommandSender) sender).sendMessage(IMFactions.getInstance().getData().getNoConsole());
+            ((CommandSender) sender).sendMessage(factions.getData().getNoConsole());
             return;
         }
 
         if (command.requiresConsole() && masterCommand.getPlayerClass().isInstance(sender)) {
-            ((CommandSender) sender).sendMessage(IMFactions.getInstance().getData().getNoConsole());
+            ((CommandSender) sender).sendMessage(factions.getData().getNoConsole());
             return;
         }
 
@@ -79,7 +81,7 @@ public class CommandProcessor<S> {
             hasPermission = masterCommand.checkPermission(sender, "im.cmd." + permission);
         }
         if (!hasPermission) {
-            ((CommandSender) sender).sendMessage(IMFactions.getInstance().getData().getNoperm());
+            ((CommandSender) sender).sendMessage(factions.getData().getNoperm());
             return;
         }
 

@@ -25,13 +25,15 @@ import java.util.UUID;
 
 public class UserManager {
 
+    private IMFactions factions;
     private ArrayList<User> users;
 
-    public UserManager() {
-        IMFactions.getInstance().getData().getMySQL().update("CREATE TABLE IF NOT EXISTS user (uuid VARCHAR(60), ether INT(10), onlinetime BIGINT, firstJoin DATETIME, lastSeen BIGINT, PRIMARY KEY(uuid))");
+    public UserManager(IMFactions factions) {
+        this.factions = factions;
+        factions.getData().getMySQL().update("CREATE TABLE IF NOT EXISTS user (uuid VARCHAR(60), ether INT(10), onlinetime BIGINT, firstJoin DATETIME, lastSeen BIGINT, PRIMARY KEY(uuid))");
         users = new ArrayList<>();
         loadUsers();
-        Bukkit.getScheduler().runTaskTimerAsynchronously(IMFactions.getInstance(), new Runnable() {
+        Bukkit.getScheduler().runTaskTimerAsynchronously(factions, new Runnable() {
             @Override
             public void run() {
                 saveUsers();
@@ -82,7 +84,7 @@ public class UserManager {
 
     public void loadUsers() {
         try {
-            ResultSet rs = IMFactions.getInstance().getData().getMySQL().querry("SELECT uuid, ether, onlinetime, firstJoin, lastSeen FROM `user` WHERE 1");
+            ResultSet rs = factions.getData().getMySQL().querry("SELECT uuid, ether, onlinetime, firstJoin, lastSeen FROM `user` WHERE 1");
             while (rs.next()) {
                 UUID uuid = UUID.fromString(rs.getString("uuid"));
                 User user = new User(uuid, rs.getInt("ether"), rs.getLong("onlinetime"), rs.getDate("firstJoin"), rs.getLong("lastSeen"));
@@ -122,18 +124,18 @@ public class UserManager {
 
         public void create() {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            IMFactions.getInstance().getData().getMySQL().update("INSERT INTO user VALUES ('" + uuid + "', " + ether + ", " + onlinetime + ", '" + sdf.format(firstJoin) + "', " + lastSeen + ")");
+            factions.getData().getMySQL().update("INSERT INTO user VALUES ('" + uuid + "', " + ether + ", " + onlinetime + ", '" + sdf.format(firstJoin) + "', " + lastSeen + ")");
             users.add(this);
         }
 
 
         public void delete() {
-            IMFactions.getInstance().getData().getMySQL().update("DELETE FROM user WHERE uuid = '" + uuid + "'");
+            factions.getData().getMySQL().update("DELETE FROM user WHERE uuid = '" + uuid + "'");
         }
 
         public void save() {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            IMFactions.getInstance().getData().getMySQL().update("UPDATE user SET ether = " + ether + ", onlinetime = " + onlinetime + ", firstJoin = '" + sdf.format(firstJoin) + "', lastSeen = " + lastSeen + " WHERE uuid = '" + uuid + "'");
+            factions.getData().getMySQL().update("UPDATE user SET ether = " + ether + ", onlinetime = " + onlinetime + ", firstJoin = '" + sdf.format(firstJoin) + "', lastSeen = " + lastSeen + " WHERE uuid = '" + uuid + "'");
         }
 
         public UUID getUUID() {

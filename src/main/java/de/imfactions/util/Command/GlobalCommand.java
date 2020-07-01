@@ -1,20 +1,24 @@
 package de.imfactions.util.Command;
 
 
+import de.imfactions.IMFactions;
+
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
 public abstract class GlobalCommand<S> {
+    private IMFactions factions;
     private CommandSubMap<S> commandMap;
     private Class playerClass;
 
-    public GlobalCommand(IMCommand command, Object function, Method method, Class playerClass) {
-        this.commandMap = new CommandSubMap<>(new CommandProcessor<>(this, command, function, method));
+    public GlobalCommand(IMFactions factions, IMCommand command, Object function, Method method, Class playerClass) {
+        this.factions = factions;
+        this.commandMap = new CommandSubMap<>(new CommandProcessor<>(factions, this, command, function, method));
         this.playerClass = playerClass;
     }
 
     public void addSubCommand(IMCommand command, Object function, Method method) {
-        commandMap.putCommand(new CommandProcessor<>(this, command, function, method), Arrays.copyOfRange(command.parent(), 1, command.parent().length));
+        commandMap.putCommand(new CommandProcessor<>(factions, this, command, function, method), Arrays.copyOfRange(command.parent(), 1, command.parent().length));
     }
 
     public void process(S sender, String[] args) {

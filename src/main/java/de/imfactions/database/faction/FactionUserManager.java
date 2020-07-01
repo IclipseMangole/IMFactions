@@ -1,9 +1,6 @@
 package de.imfactions.database.faction;
 
-import com.mysql.fabric.xmlrpc.base.Array;
 import de.imfactions.IMFactions;
-import de.imfactions.database.UserManager;
-import de.imfactions.util.UUIDFetcher;
 import org.bukkit.Bukkit;
 
 import java.sql.ResultSet;
@@ -13,13 +10,15 @@ import java.util.UUID;
 
 public class FactionUserManager {
 
+    private IMFactions factions;
     private ArrayList<FactionUser> factionUsers;
 
-    public FactionUserManager() {
-        IMFactions.getInstance().getData().getMySQL().update("CREATE TABLE IF NOT EXISTS factionUser (`uuid` VARCHAR(64), `factionId` INT(10), `rank` INT(10), PRIMARY KEY(`uuid`))");
+    public FactionUserManager(IMFactions factions) {
+        this.factions = factions;
+        factions.getData().getMySQL().update("CREATE TABLE IF NOT EXISTS factionUser (`uuid` VARCHAR(64), `factionId` INT(10), `rank` INT(10), PRIMARY KEY(`uuid`))");
         factionUsers = new ArrayList<>();
         loadFactionUser();
-        Bukkit.getScheduler().runTaskTimerAsynchronously(IMFactions.getInstance(), new Runnable() {
+        Bukkit.getScheduler().runTaskTimerAsynchronously(factions, new Runnable() {
             @Override
             public void run() {
                 saveFactionUsers();
@@ -34,13 +33,13 @@ public class FactionUserManager {
 
     public void createFactionUser(UUID uuid, int factionId, int rank) {
         if (!isFactionUserExists(uuid)) {
-            IMFactions.getInstance().getData().getMySQL().update("INSERT INTO factionUser (`uuid`, `factionId`, `rank`) VALUES ('" + uuid + "', '" + factionId + "', '" + rank + "')");
+            factions.getData().getMySQL().update("INSERT INTO factionUser (`uuid`, `factionId`, `rank`) VALUES ('" + uuid + "', '" + factionId + "', '" + rank + "')");
         }
     }
 
     private void loadFactionUser() {
         try {
-            ResultSet rs = IMFactions.getInstance().getData().getMySQL().querry("SELECT `uuid`, `factionId`, `rank` FROM factionUser WHERE 1");
+            ResultSet rs = factions.getData().getMySQL().querry("SELECT `uuid`, `factionId`, `rank` FROM factionUser WHERE 1");
             while (rs.next()) {
                 factionUsers.add(new FactionUser(UUID.fromString(rs.getString("uuid")), rs.getInt("factionId"), rs.getInt("rank")));
             }
@@ -198,11 +197,11 @@ public class FactionUserManager {
         }
 
         public void save() {
-            IMFactions.getInstance().getData().getMySQL().update("UPDATE factionUser SET `factionId` = '" + this.factionId + "', `rank` = '" + rank + "' WHERE `uuid` = '" + this.uuid.toString() + "'");
+            factions.getData().getMySQL().update("UPDATE factionUser SET `factionId` = '" + this.factionId + "', `rank` = '" + rank + "' WHERE `uuid` = '" + this.uuid.toString() + "'");
         }
 
         public void delete() {
-            IMFactions.getInstance().getData().getMySQL().update("DELETE FROM factionUser WHERE `uuid` = '" + this.uuid.toString() + "'");
+            factions.getData().getMySQL().update("DELETE FROM factionUser WHERE `uuid` = '" + this.uuid.toString() + "'");
             factionUsers.remove(this);
         }
     }

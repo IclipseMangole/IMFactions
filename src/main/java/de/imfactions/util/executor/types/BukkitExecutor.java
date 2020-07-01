@@ -12,10 +12,16 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 public class BukkitExecutor extends IExecutor {
+    private IMFactions factions;
+
+
+    public BukkitExecutor(IMFactions factions) {
+        this.factions = factions;
+    }
 
     @Override
     public Callback execute(final Runnable runnable, final Callback callback) {
-        Bukkit.getScheduler().runTask(IMFactions.getInstance(), () -> {
+        Bukkit.getScheduler().runTask(factions, () -> {
             runnable.run();
             callback.done();
         });
@@ -24,7 +30,7 @@ public class BukkitExecutor extends IExecutor {
 
     @Override
     public Callback executeAsync(final Runnable runnable, final Callback callback) {
-        Bukkit.getScheduler().runTaskAsynchronously(IMFactions.getInstance(), () -> {
+        Bukkit.getScheduler().runTaskAsynchronously(factions, () -> {
             runnable.run();
             callback.done();
         });
@@ -34,7 +40,7 @@ public class BukkitExecutor extends IExecutor {
     @Override
     public Callback repeat(Consumer<Integer> consumer, int times, long interval, TimeUnit timeUnit, Callback callback) {
         TimerTask timer = new TimerTask(interval, timeUnit);
-        timer.task = Bukkit.getScheduler().runTaskTimer(IMFactions.getInstance(), () -> {
+        timer.task = Bukkit.getScheduler().runTaskTimer(factions, () -> {
             if (times == timer.count) {
                 timer.cancelTask();
                 callback.done();
@@ -50,7 +56,7 @@ public class BukkitExecutor extends IExecutor {
     @Override
     public Callback repeatAsync(Consumer<Integer> consumer, int times, long interval, TimeUnit timeUnit, Callback callback) {
         TimerTask timer = new TimerTask(interval, timeUnit);
-        timer.task = Bukkit.getScheduler().runTaskTimerAsynchronously(IMFactions.getInstance(), () -> {
+        timer.task = Bukkit.getScheduler().runTaskTimerAsynchronously(factions, () -> {
             if (times == timer.count) {
                 timer.cancelTask();
                 callback.done();
@@ -68,7 +74,7 @@ public class BukkitExecutor extends IExecutor {
         if (timeUnit != null) {
             delay = timeUnit.toSeconds(delay) * 20;
         }
-        Bukkit.getScheduler().runTaskLater(IMFactions.getInstance(), () -> {
+        Bukkit.getScheduler().runTaskLater(factions, () -> {
             runnable.run();
             callback.done();
         }, delay);
@@ -80,7 +86,7 @@ public class BukkitExecutor extends IExecutor {
         if (timeUnit != null) {
             delay = timeUnit.toSeconds(delay) * 20;
         }
-        Bukkit.getScheduler().runTaskLaterAsynchronously(IMFactions.getInstance(), () -> {
+        Bukkit.getScheduler().runTaskLaterAsynchronously(factions, () -> {
             runnable.run();
             callback.done();
         }, delay);
@@ -89,7 +95,7 @@ public class BukkitExecutor extends IExecutor {
 
     @Override
     public Callback executeResult(final ResultRunnable runnable, final Callback callback) {
-        Bukkit.getScheduler().runTask(IMFactions.getInstance(), () -> {
+        Bukkit.getScheduler().runTask(factions, () -> {
             runnable.run();
             if (runnable.hadSuccess())
                 callback.done();
@@ -99,7 +105,7 @@ public class BukkitExecutor extends IExecutor {
 
     @Override
     public Callback executeResultAsync(final ResultRunnable runnable, final Callback callback) {
-        Bukkit.getScheduler().runTaskAsynchronously(IMFactions.getInstance(), () -> {
+        Bukkit.getScheduler().runTaskAsynchronously(factions, () -> {
             runnable.run();
             if (runnable.hadSuccess())
                 callback.done();

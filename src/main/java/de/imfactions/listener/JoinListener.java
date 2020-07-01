@@ -22,11 +22,14 @@ import java.util.UUID;
  * Created by Iclipse on 16.06.2020
  */
 public class JoinListener implements Listener {
-    UserManager manager;
+
+    private IMFactions factions;
+    private UserManager manager;
 
 
-    public JoinListener() {
-        manager = IMFactions.getInstance().getData().getUserManager();
+    public JoinListener(IMFactions factions) {
+        this.factions = factions;
+        manager = factions.getData().getUserManager();
     }
 
     @EventHandler

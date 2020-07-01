@@ -18,10 +18,13 @@ import org.bukkit.event.player.PlayerQuitEvent;
  * Created by Iclipse on 16.06.2020
  */
 public class QuitListener implements Listener {
-    UserManager manager;
 
-    public QuitListener() {
-        manager = IMFactions.getInstance().getData().getUserManager();
+    private IMFactions factions;
+    private UserManager manager;
+
+    public QuitListener(IMFactions factions) {
+        this.factions = factions;
+        manager = factions.getData().getUserManager();
     }
 
 

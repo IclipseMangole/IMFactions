@@ -2,7 +2,6 @@ package de.imfactions;
 
 import de.imfactions.commands.Ether;
 import de.imfactions.commands.Faction;
-import de.imfactions.functions.WorldLoader;
 import de.imfactions.listener.JoinListener;
 import de.imfactions.listener.QuitListener;
 import org.bukkit.Bukkit;
@@ -11,25 +10,18 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class IMFactions extends JavaPlugin {
 
-    private static IMFactions instance;
-
-    public static IMFactions getInstance() {
-        return instance;
-    }
-
     private Data data;
 
     @Override
     public void onLoad() {
-        instance = this;
+        data = new Data(this);
         if (Bukkit.getWorlds().size() == 0) {
-            WorldLoader.loadLobby();
+            data.getWorldLoader().loadLobby();
         }
     }
 
     @Override
     public void onEnable() {
-        data = new Data();
         data.getMySQL().connect();
         data.createTables();
         registerCommands();
@@ -51,17 +43,17 @@ public class IMFactions extends JavaPlugin {
 
 
     public String getServerName() {
-        return instance.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getName();
+        return this.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getName();
     }
 
     public void registerCommands() {
-        data.getRegistration().register(new Ether(), this);
-        data.getRegistration().register(new Faction(), this);
+        data.getRegistration().register(new Ether(this), this);
+        data.getRegistration().register(new Faction(this), this);
     }
 
     public void registerListener() {
-        Bukkit.getPluginManager().registerEvents(new JoinListener(), this);
-        Bukkit.getPluginManager().registerEvents(new QuitListener(), this);
+        Bukkit.getPluginManager().registerEvents(new JoinListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new QuitListener(this), this);
     }
 
     public void updateGamerules() {

@@ -1,5 +1,6 @@
 package de.imfactions.util.Command;
 
+import de.imfactions.IMFactions;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
@@ -16,12 +17,12 @@ public class BukkitCommand extends Command implements CommandExecutor {
     private IMCommand command;
     private GlobalCommand<CommandSender> processor;
 
-    public BukkitCommand(JavaPlugin plugin, Object function, Method method, IMCommand baseCommand) {
+    public BukkitCommand(IMFactions factions, Object function, Method method, IMCommand baseCommand) {
         super(baseCommand.name(), baseCommand.description(), baseCommand.usage(), Arrays.asList(baseCommand.aliases()));
-        this.plugin = plugin;
+        this.plugin = factions;
         this.function = function;
         this.command = baseCommand;
-        this.processor = new GlobalCommand<CommandSender>(baseCommand, function, method, Player.class) {
+        this.processor = new GlobalCommand<CommandSender>(factions, baseCommand, function, method, Player.class) {
             @Override
             public boolean checkPermission(CommandSender sender, String permission) {
                 return sender.hasPermission(permission);
