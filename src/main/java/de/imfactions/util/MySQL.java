@@ -18,7 +18,7 @@ import java.sql.*;
 public class MySQL {
 
     private File getMySQLFile() {
-        return new File("plugins/" + IMFactions.getInstance().getDescription().getName(), "mysql.yml");
+        return new File("plugins/" + factions.getDescription().getName(), "mysql.yml");
     }
 
     private FileConfiguration getMySQLFileConfiguration() {
@@ -33,7 +33,7 @@ public class MySQL {
         cfg.addDefault("user", "root");
         cfg.addDefault("password", "dshchangE762");
 
-        cfg.addDefault("prefix", "&5" + IMFactions.getInstance().getDescription().getName() + " &3MySQL &8&7");
+        cfg.addDefault("prefix", "&5" + factions.getDescription().getName() + " &3MySQL &8&7");
         try {
             cfg.save(getMySQLFile());
         } catch (IOException e) {
@@ -50,6 +50,7 @@ public class MySQL {
         prefix = ChatColor.translateAlternateColorCodes('&', cfg.getString("prefix")) + " ";
     }
 
+    private IMFactions factions;
 
     private String HOST;
     private String DATABASE;
@@ -61,11 +62,12 @@ public class MySQL {
     private Connection conn;
     private BukkitTask task;
 
-    public MySQL() {
+    public MySQL(IMFactions factions) {
+        this.factions = factions;
         setStandardMySQL();
         readMySQL();
         disable = 300;
-        Bukkit.getScheduler().runTaskTimerAsynchronously(IMFactions.getInstance(), new Runnable() {
+        Bukkit.getScheduler().runTaskTimerAsynchronously(factions, new Runnable() {
             @Override
             public void run() {
                 if (disable > 0) {

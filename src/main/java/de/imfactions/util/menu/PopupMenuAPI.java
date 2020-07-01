@@ -14,6 +14,12 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class PopupMenuAPI implements Listener {
 
+    private IMFactions factions;
+
+    public PopupMenuAPI(IMFactions factions) {
+        this.factions = factions;
+    }
+
     /**
      * Create a new pop-up menu and stores it for later use
      *
@@ -21,7 +27,7 @@ public class PopupMenuAPI implements Listener {
      * @param rows  The number of rows on the menu
      * @return The menu
      */
-    public static PopupMenu createMenu(String title, int rows) {
+    public PopupMenu createMenu(String title, int rows) {
         return new PopupMenu(title, rows);
     }
 
@@ -33,7 +39,7 @@ public class PopupMenuAPI implements Listener {
      * @param menu The menu to clone
      * @return The cloned copy
      */
-    public static PopupMenu cloneMenu(PopupMenu menu) {
+    public PopupMenu cloneMenu(PopupMenu menu) {
         return menu.clone();
     }
 
@@ -44,7 +50,7 @@ public class PopupMenuAPI implements Listener {
      *
      * @param menu The menu to destroy
      */
-    public static void removeMenu(PopupMenu menu) {
+    public void removeMenu(PopupMenu menu) {
         for (HumanEntity viewer : menu.getInventory().getViewers()) {
             if (viewer instanceof Player) {
                 menu.closeMenu((Player) viewer);
@@ -64,14 +70,14 @@ public class PopupMenuAPI implements Listener {
      * @param fromMenu The menu the player is currently viewing
      * @param toMenu   The menu the player is switching to
      */
-    public static void switchMenu(final Player player, PopupMenu fromMenu, final PopupMenu toMenu) {
+    public void switchMenu(final Player player, PopupMenu fromMenu, final PopupMenu toMenu) {
         fromMenu.closeMenu(player);
         new BukkitRunnable() {
             @Override
             public void run() {
                 toMenu.openMenu(player);
             }
-        }.runTask(IMFactions.getInstance());
+        }.runTask(factions);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)

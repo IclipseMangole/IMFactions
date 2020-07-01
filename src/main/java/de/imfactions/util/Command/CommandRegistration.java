@@ -1,6 +1,7 @@
 package de.imfactions.util.Command;
 
 import com.google.common.base.Joiner;
+import de.imfactions.IMFactions;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.event.Listener;
@@ -13,8 +14,10 @@ import java.util.List;
 import java.util.Map;
 
 public class CommandRegistration {
+    private IMFactions factions;
 
-    public CommandRegistration() {
+    public CommandRegistration(IMFactions factions) {
+        this.factions = factions;
     }
 
     public void register(Class functionClass, JavaPlugin plugin) {
@@ -62,7 +65,7 @@ public class CommandRegistration {
         IMCommand cmd = method.getAnnotation(IMCommand.class);
 
         if (cmd.parent().length == 0) {
-            BukkitCommand tBukkitCommand = new BukkitCommand(plugin, function, method, cmd);
+            BukkitCommand tBukkitCommand = new BukkitCommand(factions, function, method, cmd);
             tBukkitCommand.register();
             commandMap.put(tBukkitCommand.getName(), tBukkitCommand);
 
