@@ -1,24 +1,24 @@
 package de.imfactions.commands;
 
 import de.imfactions.IMFactions;
-import de.imfactions.database.UserManager;
 import de.imfactions.database.faction.FactionManager;
+import de.imfactions.database.faction.FactionPlotManager;
 import de.imfactions.database.faction.FactionUserManager;
+import de.imfactions.database.UserManager;
+import de.imfactions.functions.plots.FactionPlot;
 import de.imfactions.util.Command.IMCommand;
 import de.imfactions.util.UUIDFetcher;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 public class Faction {
 
@@ -27,12 +27,14 @@ public class Faction {
     private FactionManager factionManager;
     private FactionUserManager factionUserManager;
     private UserManager userManager;
+    private FactionPlotManager factionPlotManager;
 
     public Faction(IMFactions factions) {
         this.factions = factions;
         this.factionManager = factions.getData().getFactionManager();
         this.factionUserManager = factions.getData().getFactionUserManager();
         this.userManager = factions.getData().getUserManager();
+        this.factionPlotManager = IMFactions.getInstance().getData().getFactionPlotManager();
     }
 
     @IMCommand(
@@ -563,6 +565,6 @@ public class Faction {
     }
 
     private void add(String usage, String description) {
-        builder.append("\n" + factions.getData().getSymbol() + "§e" + usage + "§8: §7 " + description + ChatColor.RESET);
+        builder.append("\n" + IMFactions.getInstance().getData().getSymbol() + "§e" + usage + "§8: §7 " + description + ChatColor.RESET);
     }
 }
