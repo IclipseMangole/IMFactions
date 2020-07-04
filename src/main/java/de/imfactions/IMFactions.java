@@ -2,6 +2,7 @@ package de.imfactions;
 
 import de.imfactions.commands.Ether;
 import de.imfactions.commands.Faction;
+import de.imfactions.functions.WorldLoader;
 import de.imfactions.listener.JoinListener;
 import de.imfactions.listener.QuitListener;
 import org.bukkit.Bukkit;
@@ -11,17 +12,19 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class IMFactions extends JavaPlugin {
 
     private Data data;
+    private WorldLoader worldLoader;
 
     @Override
     public void onLoad() {
-        data = new Data(this);
+        worldLoader = new WorldLoader(this);
         if (Bukkit.getWorlds().size() == 0) {
-            data.getWorldLoader().loadLobby();
+            worldLoader.loadLobby();
         }
     }
 
     @Override
     public void onEnable() {
+        data = new Data(this);
         data.getMySQL().connect();
         data.createTables();
         registerCommands();

@@ -6,7 +6,6 @@ import de.imfactions.database.faction.FactionManager;
 import de.imfactions.database.faction.FactionPlotManager;
 import de.imfactions.database.faction.FactionUserManager;
 import de.imfactions.functions.UserSettingsManager;
-import de.imfactions.functions.WorldLoader;
 import de.imfactions.util.Command.CommandRegistration;
 import de.imfactions.util.MySQL;
 
@@ -16,7 +15,6 @@ public class Data {
     private final CommandRegistration registration;
     private final MySQL mysql;
     private final UserSettingsManager userSettingsManager;
-    private final WorldLoader worldLoader;
 
     //Tables
     private UserManager userManager;
@@ -28,7 +26,6 @@ public class Data {
 
     public Data(IMFactions factions) {
         this.factions = factions;
-        worldLoader = new WorldLoader(factions);
         registration = new CommandRegistration(factions);
         mysql = new MySQL(factions);
         userSettingsManager = new UserSettingsManager(factions);
@@ -68,10 +65,6 @@ public class Data {
         return consoleOnly;
     }
 
-
-    public WorldLoader getWorldLoader() {
-        return worldLoader;
-    }
 
     public CommandRegistration getRegistration() {
         return registration;
