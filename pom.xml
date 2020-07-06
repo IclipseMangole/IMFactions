@@ -56,7 +56,7 @@
     <repositories>
         <repository>
             <id>papermc-repo</id>
-            <url>http://papermc.io/repo/repository/maven-public/</url>
+            <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
         <repository>
             <id>sonatype</id>
