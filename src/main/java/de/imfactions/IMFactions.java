@@ -5,10 +5,8 @@ import de.imfactions.commands.Faction;
 import de.imfactions.functions.WorldLoader;
 import de.imfactions.listener.JoinListener;
 import de.imfactions.listener.QuitListener;
-import net.minecraft.server.v1_16_R1.World;
 import org.bukkit.Bukkit;
 import org.bukkit.GameRule;
-import org.bukkit.WorldCreator;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class IMFactions extends JavaPlugin {
@@ -18,6 +16,9 @@ public class IMFactions extends JavaPlugin {
 
     @Override
     public void onLoad() {
+        System.out.println(getFile().getAbsolutePath());
+        System.out.println(Bukkit.getWorldContainer().getAbsolutePath());
+        System.out.println(getDataFolder().getAbsolutePath());
         worldLoader = new WorldLoader(this);
         if (Bukkit.getWorlds().size() == 0) {
             worldLoader.loadLobby();
@@ -67,9 +68,7 @@ public class IMFactions extends JavaPlugin {
     }
 
     public void updateGamerules() {
-        Bukkit.getWorlds().forEach(world -> {
-            world.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
-        });
+        Bukkit.getWorlds().forEach(world -> world.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false));
     }
 
 
