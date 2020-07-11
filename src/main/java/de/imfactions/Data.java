@@ -1,16 +1,16 @@
 package de.imfactions;
 
-import com.sk89q.worldedit.bukkit.adapter.BukkitImplAdapter;
 import de.imfactions.database.UserManager;
 import de.imfactions.database.UserSettingsTable;
 import de.imfactions.database.faction.FactionManager;
 import de.imfactions.database.faction.FactionPlotManager;
 import de.imfactions.database.faction.FactionUserManager;
-import de.imfactions.functions.Tablist;
 import de.imfactions.database.faction.RaidManager;
+import de.imfactions.functions.Tablist;
 import de.imfactions.functions.UserSettingsManager;
 import de.imfactions.util.Command.CommandRegistration;
 import de.imfactions.util.MySQL;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -62,13 +62,13 @@ public class Data {
         raidManager = new RaidManager(factions);
     }
 
-    public void loadWorlds(){
+    public void loadWorlds() {
         world = Bukkit.getWorld("world");
-        PVP_world = Bukkit.createWorld(new WorldCreator("/home/IMNetzwerk/FactionsDev01/FactionPVP_world"));
-        FactionPlots_world = Bukkit.createWorld(new WorldCreator("/home/IMNetzwerk/FactionsDev01/FactionPlots_world"));
+        PVP_world = Bukkit.createWorld(new WorldCreator("FactionPVP_world"));
+        FactionPlots_world = Bukkit.createWorld(new WorldCreator("FactionPlots_world"));
         worldSpawn = new Location(world, 0, 31, -18);
-        PVP_worldSpawn = new Location(PVP_world, 0, 50 ,0);
-        FactionPlots_worldSpawn = new Location(FactionPlots_world, 0 ,17 ,0);
+        PVP_worldSpawn = new Location(PVP_world, 0, 50, 0);
+        FactionPlots_worldSpawn = new Location(FactionPlots_world, 0, 17, 0);
         world.setSpawnLocation(worldSpawn);
         PVP_world.setSpawnLocation(PVP_worldSpawn);
         FactionPlots_world.setSpawnLocation(FactionPlots_worldSpawn);
@@ -93,6 +93,14 @@ public class Data {
     public String getNoConsole() {
         String noConsole = "§4No Console!";
         return noConsole;
+    }
+
+    public ChatColor getPurple() {
+        return ChatColor.of("#a42eff");
+    }
+
+    public ChatColor getWhite() {
+        return ChatColor.of("#ffffff");
     }
 
     public String getConsoleOnly() {

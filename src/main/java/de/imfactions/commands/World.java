@@ -1,6 +1,5 @@
 package de.imfactions.commands;
 
-import com.mojang.brigadier.Command;
 import de.imfactions.Data;
 import de.imfactions.IMFactions;
 import de.imfactions.util.Command.IMCommand;
