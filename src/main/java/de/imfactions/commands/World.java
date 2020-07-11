@@ -48,16 +48,18 @@ public class World {
             parent = "world"
     )
     public void list(CommandSender sender){
-        builder = new StringBuilder();
-        builder.append(data.getPrefix() + "§eWorlds§8: ");
+        Player player = (Player) sender;
+        TextComponent base = new TextComponent();
+        base.addExtra(data.getPrefix() + "§eWorlds§8: ");
         Bukkit.getWorlds().forEach(world -> {
             TextComponent textComponent = new TextComponent();
             textComponent.setText("§5" + world.getName());
-            textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§eClick to tp you to§5" + world.getName()).create()));
+            textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§eClick to tp you to §5" + world.getName()).create()));
             textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/world tp " + world.getName()));
-            builder.append(textComponent).append("§8, ");
+            base.addExtra(textComponent);
+            base.addExtra("§8, ");
         });
-        sender.sendMessage(builder.toString());
+        player.spigot().sendMessage(base);
     }
 
     @IMCommand(
