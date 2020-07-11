@@ -5,6 +5,8 @@ import de.imfactions.database.UserManager;
 import de.imfactions.database.faction.FactionManager;
 import de.imfactions.database.faction.FactionPlotManager;
 import de.imfactions.database.faction.FactionUserManager;
+import de.imfactions.database.UserManager;
+import de.imfactions.functions.WorldLoader;
 import de.imfactions.util.Command.IMCommand;
 import de.imfactions.util.UUIDFetcher;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -29,6 +31,7 @@ public class Faction {
     private FactionUserManager factionUserManager;
     private UserManager userManager;
     private FactionPlotManager factionPlotManager;
+    private WorldLoader worldLoader;
 
     public Faction(IMFactions factions) {
         this.factions = factions;
@@ -36,6 +39,7 @@ public class Faction {
         this.factionUserManager = factions.getData().getFactionUserManager();
         this.userManager = factions.getData().getUserManager();
         this.factionPlotManager = factions.getData().getFactionPlotManager();
+        this.worldLoader = new WorldLoader(factions);
     }
 
     @IMCommand(
@@ -47,7 +51,7 @@ public class Faction {
     public void execute(CommandSender sender) {
         if (sender.hasPermission("im.factions.faction.*")) {
             builder = new StringBuilder();
-            builder.append("Overview" + "\n");
+            builder.append(factions.getData().getPrefix() + "§eOverview§8:" + "\n");
             add("/faction found <Name> <Shortcut>", "Makes the Player King of a new Faction");
             add("/faction leave", "The Player leaves a Faction");
             add("/faction invite <Player>", "Invites a new Player to the Faction");
@@ -562,7 +566,7 @@ public class Faction {
     )
     public void sethome(CommandSender sender) {
         Player player = (Player) sender;
-
+        worldLoader.loadMap("FactionPlot", player.getLocation());
     }
 
     private void add(String usage, String description) {

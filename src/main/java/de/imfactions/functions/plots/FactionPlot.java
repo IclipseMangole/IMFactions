@@ -8,9 +8,9 @@ import org.bukkit.entity.Player;
 
 public class FactionPlot {
 
-    IMFactions factions;
-    FactionPlotManager factionPlotManager;
-    FactionUserManager factionUserManager;
+    private IMFactions factions;
+    private FactionPlotManager factionPlotManager;
+    private FactionUserManager factionUserManager;
 
     public FactionPlot(IMFactions factions) {
         this.factions = factions;

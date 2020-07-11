@@ -10,13 +10,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class FactionPlotManager {
-
     private ArrayList<FactionPlot> factionPlots;
     private IMFactions factions;
 
-    public  FactionPlotManager(IMFactions factions) {
+    public FactionPlotManager(IMFactions factions) {
         this.factions = factions;
-        factions.getData().getMySQL().update("CREATE TABLE IF NOT EXISTS factionPlots (`factionId` INT(10), `edgeDownFrontRight` VARCHAR(100), `edgeUpBackLeft` VARCHAR(100), `home` VARCHAR(100), `reachable` BIGINT, `position` INT(10) PRIMARY KEY(`factionId`))");
+        factions.getData().getMySQL().update("CREATE TABLE IF NOT EXISTS factionPlots (`factionId` INT(10), `edgeDownFrontLeft` VARCHAR(100), `edgeUpBackRight` VARCHAR(100), `home` VARCHAR(100), `reachable` BIGINT, `position` INT(10), PRIMARY KEY(`factionId`))");
         factionPlots = new ArrayList<>();
         loadFactionPlots();
         Bukkit.getScheduler().runTaskTimerAsynchronously(factions, new Runnable() {
@@ -29,13 +28,9 @@ public class FactionPlotManager {
 
     public void createFactionPlot(int factionId, Location edgeDownFrontRight, Location edgeUpBackLeft, Location home, long reachable, int position) {
         if (!isFactionPlotExists(factionId)) {
-            factions.getData().getMySQL().update("INSERT INTO factionPlots (`factionId`, `edgeDownFrontRight`, `edgeUpBackLeft`, `home`, `reachable`, `position`) VALUES ('" + factionId + "', '" + edgeDownFrontRight + "', '" + edgeUpBackLeft + "', '" + home + "', '" + reachable + "', '" + position + "')");
+            factions.getData().getMySQL().update("INSERT INTO factionPlots (`factionId`, `edgeDownFrontLeft`, `edgeUpBackRight`, `home`, `reachable`, `position`) VALUES ('" + factionId + "', '" + edgeDownFrontRight + "', '" + edgeUpBackLeft + "', '" + home + "', '" + reachable + "', '" + position + "')");
             new FactionPlot(factionId, edgeDownFrontRight, edgeUpBackLeft, home, reachable, position);
         }
-    }
-
-    public void createFactionPlot(int factionId) {
-      //  new FactionPlot(factionId);
     }
 
     public FactionPlot getFactionPlot(int factionId) {
@@ -58,10 +53,10 @@ public class FactionPlotManager {
 
     public void loadFactionPlots() {
         try {
-            ResultSet rs = factions.getData().getMySQL().querry("SELECT `factionId`, `edgeDownFrontRight`, `edgeUpBackLeft`, `home`, `reachable`, `position` FROM factionPlots WHERE 1");
+            ResultSet rs = factions.getData().getMySQL().querry("SELECT `factionId`, `edgeDownFrontLeft`, `edgeUpBackRight`, `home`, `reachable`, `position` FROM factionPlots WHERE 1");
             while (rs.next()) {
-             //   FactionPlot factionPlot = new FactionPlot(rs.getInt("factionId"), rs.getString("name"), rs.getInt("userAmount"), rs.getDate("foundingDate"), rs.getLong("raidProtection"));
-              //  factionPlots.add(factionPlot);
+                FactionPlot factionPlot = new FactionPlot(rs.getInt("factionId"), LocationBuilder.fromString(rs.getString("edgeDownFrontLeft")), LocationBuilder.fromString(rs.getString("edgeUpBackRight")), LocationBuilder.fromString(rs.getString("home")), rs.getLong("reachable"), rs.getInt("position"));
+                factionPlots.add(factionPlot);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -70,17 +65,17 @@ public class FactionPlotManager {
 
     public void saveFactionPlots() {
         for (FactionPlot factionPlot : factionPlots) {
-           // factionPlot.save();
+            factionPlot.save();
         }
     }
 
     public ArrayList<FactionPlot> getFactionPlots() {
         ArrayList<FactionPlot> factionPlots = new ArrayList<>();
         try {
-            ResultSet rs = factions.getData().getMySQL().querry("SELECT `factionId`, `edgeDownFrontRight`, `edgeUpBackLeft`, `home`, `reachable`, `position` FROM factionPlots WHERE 1");
+            ResultSet rs = factions.getData().getMySQL().querry("SELECT `factionId`, `edgeDownFrontLeft`, `edgeUpBackRight`, `home`, `reachable`, `position` FROM factionPlots WHERE 1");
             while (rs.next()) {
-            //    FactionPlot factionPlot = new FactionPlot();
-             //   factionPlots.add(factionPlot);
+                //    FactionPlot factionPlot = new FactionPlot();
+                //   factionPlots.add(factionPlot);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -88,7 +83,7 @@ public class FactionPlotManager {
         return factionPlots;
     }
 
-    public class FactionPlot{
+    public class FactionPlot {
 
         int factionId;
         Location edgeDownFrontLeft;
@@ -139,7 +134,7 @@ public class FactionPlotManager {
         }
 
         public void save() {
-            factions.getData().getMySQL().update("UPDATE factionPlots SET `edgeDownFrontRight` = '" + LocationBuilder.toString(edgeDownFrontLeft) + "', `edgeUpBackLeft` = '" + LocationBuilder.toString(edgeUpBackRight) + "', `home` = '" + LocationBuilder.toString(home) + "', `reachable` = '" + reachable + "', `position` = '" + position + "' WHERE `factionId` = '" + factionId + "'");
+            factions.getData().getMySQL().update("UPDATE factionPlots SET `edgeDownFrontLeft` = '" + LocationBuilder.toString(edgeDownFrontLeft) + "', `edgeUpBackRight` = '" + LocationBuilder.toString(edgeUpBackRight) + "', `home` = '" + LocationBuilder.toString(home) + "', `reachable` = '" + reachable + "', `position` = '" + position + "' WHERE `factionId` = '" + factionId + "'");
         }
 
         public void deleteFactionPlot() {

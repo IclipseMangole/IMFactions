@@ -5,8 +5,10 @@ import de.imfactions.commands.Faction;
 import de.imfactions.functions.WorldLoader;
 import de.imfactions.listener.JoinListener;
 import de.imfactions.listener.QuitListener;
+import net.minecraft.server.v1_16_R1.World;
 import org.bukkit.Bukkit;
 import org.bukkit.GameRule;
+import org.bukkit.WorldCreator;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class IMFactions extends JavaPlugin {
@@ -19,6 +21,8 @@ public class IMFactions extends JavaPlugin {
         worldLoader = new WorldLoader(this);
         if (Bukkit.getWorlds().size() == 0) {
             worldLoader.loadLobby();
+            worldLoader.loadPVP();
+            worldLoader.loadPlots();
         }
     }
 
@@ -27,6 +31,7 @@ public class IMFactions extends JavaPlugin {
         data = new Data(this);
         data.getMySQL().connect();
         data.createTables();
+        data.loadWorlds();
         registerCommands();
         registerListener();
         updateGamerules();
@@ -38,6 +43,7 @@ public class IMFactions extends JavaPlugin {
         data.getFactionManager().saveFactions();
         data.getFactionUserManager().saveFactionUsers();
         data.getMySQL().close();
+        worldLoader.savePlots();
     }
 
     public Data getData() {
@@ -52,6 +58,7 @@ public class IMFactions extends JavaPlugin {
     public void registerCommands() {
         data.getRegistration().register(new Ether(this), this);
         data.getRegistration().register(new Faction(this), this);
+        data.getRegistration().register(new de.imfactions.commands.World(this), this);
     }
 
     public void registerListener() {
