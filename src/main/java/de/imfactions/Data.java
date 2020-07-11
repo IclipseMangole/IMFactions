@@ -5,6 +5,7 @@ import de.imfactions.database.UserSettingsTable;
 import de.imfactions.database.faction.FactionManager;
 import de.imfactions.database.faction.FactionPlotManager;
 import de.imfactions.database.faction.FactionUserManager;
+import de.imfactions.functions.Tablist;
 import de.imfactions.functions.UserSettingsManager;
 import de.imfactions.util.Command.CommandRegistration;
 import de.imfactions.util.MySQL;
@@ -15,6 +16,7 @@ public class Data {
     private final CommandRegistration registration;
     private final MySQL mysql;
     private final UserSettingsManager userSettingsManager;
+    private final Tablist tablist;
 
     //Tables
     private UserManager userManager;
@@ -29,6 +31,7 @@ public class Data {
         registration = new CommandRegistration(factions);
         mysql = new MySQL(factions);
         userSettingsManager = new UserSettingsManager(factions);
+        tablist = new Tablist(factions);
     }
 
     public void createTables() {
@@ -36,7 +39,7 @@ public class Data {
         userSettingsTable = new UserSettingsTable(factions);
         factionManager = new FactionManager(factions);
         factionUserManager = new FactionUserManager(factions);
-        factionPlotManager = new FactionPlotManager(factions);
+        //factionPlotManager = new FactionPlotManager(factions);
     }
 
 

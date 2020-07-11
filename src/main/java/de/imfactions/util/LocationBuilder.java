@@ -9,9 +9,6 @@ package de.imfactions.util;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
-/**
- * Created by Iclipse on 21.06.2020
- */
 public class LocationBuilder {
     public static String toString(Location location) {
         String loc = "";

@@ -1,14 +1,12 @@
 package de.imfactions.database.faction;
 
 import de.imfactions.IMFactions;
+import de.imfactions.util.LocationBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import de.imfactions.util.LocationBuilder;
-
 import java.util.ArrayList;
 
 public class FactionPlotManager {
@@ -21,7 +19,7 @@ public class FactionPlotManager {
         factions.getData().getMySQL().update("CREATE TABLE IF NOT EXISTS factionPlots (`factionId` INT(10), `edgeDownFrontRight` VARCHAR(100), `edgeUpBackLeft` VARCHAR(100), `home` VARCHAR(100), `reachable` BIGINT, `position` INT(10) PRIMARY KEY(`factionId`))");
         factionPlots = new ArrayList<>();
         loadFactionPlots();
-        Bukkit.getScheduler().runTaskTimerAsynchronously(IMFactions.getInstance(), new Runnable() {
+        Bukkit.getScheduler().runTaskTimerAsynchronously(factions, new Runnable() {
             @Override
             public void run() {
                 saveFactionPlots();

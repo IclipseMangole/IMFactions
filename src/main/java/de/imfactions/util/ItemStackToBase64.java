@@ -9,11 +9,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-/**
- * Diese Klasse wurde von feuerwehr45 am 14.06.2020 erstellt.
- * Der Inhalt ist Geistiges Eigentum von feuerwehr45 und ist damit Rechtlich geschützt.
- * Nutzung ohne das schriftliche Einverständnis ist untersagt!
- */
 public class ItemStackToBase64 {
 
     public static String toBase64(ItemStack itemstack) {

@@ -42,12 +42,12 @@ public class GameProfileBuilder {
         if (connection.getResponseCode() == 200) {
             String json = new BufferedReader(new InputStreamReader(connection.getInputStream())).readLine();
 
-            GameProfile result = (GameProfile) gson.fromJson(json, GameProfile.class);
+            GameProfile result = gson.fromJson(json, GameProfile.class);
             cache.put(uuid, new CachedProfile(result));
             return result;
         }
         if ((!forceNew) && (cache.containsKey(uuid))) {
-            return ((CachedProfile) cache.get(uuid)).profile;
+            return cache.get(uuid).profile;
         }
         JsonObject error = (JsonObject) new JsonParser().parse(new BufferedReader(new InputStreamReader(connection.getErrorStream())).readLine());
         throw new IOException(error.get("error").getAsString() + ": " + error.get("errorMessage").getAsString());
