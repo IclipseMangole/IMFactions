@@ -17,7 +17,6 @@ public enum ItemRarity {
     COMMON(0, ChatColor.GRAY), UNCOMMON(1, ChatColor.GREEN), RARE(2, ChatColor.BLUE), EPIC(3, ChatColor.DARK_PURPLE), LEGENDARY(4, ChatColor.DARK_RED);
 
     ItemRarity(int id, ChatColor color) {
-
     }
 
     public static ItemRarity valueOf(int id) {
