@@ -11,9 +11,9 @@ package de.imfactions.functions.items;
  */
 public class ItemModifier {
     private ItemModifierType itemModifierType;
-    private double itemModifierValue;
+    private ItemModifierValue itemModifierValue;
 
-    public ItemModifier(ItemModifierType itemModifierType, double itemModifierValue) {
+    public ItemModifier(ItemModifierType itemModifierType, ItemModifierValue itemModifierValue) {
         this.itemModifierType = itemModifierType;
         this.itemModifierValue = itemModifierValue;
     }
@@ -26,11 +26,11 @@ public class ItemModifier {
         this.itemModifierType = itemModifierType;
     }
 
-    public double getItemModifierValue() {
+    public ItemModifierValue getItemModifierValue() {
         return itemModifierValue;
     }
 
-    public void setItemModifierValue(double itemModifierValue) {
+    public void setItemModifierValue(ItemModifierValue itemModifierValue) {
         this.itemModifierValue = itemModifierValue;
     }
 }
