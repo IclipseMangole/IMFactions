@@ -26,10 +26,10 @@ public class FactionPlotManager {
         }, 0, 10 * 60 * 20);
     }
 
-    public void createFactionPlot(int factionId, Location edgeDownFrontRight, Location edgeUpBackLeft, Location home, long reachable, int position) {
+    public void createFactionPlot(int factionId, Location edgeDownFrontLeft, Location edgeUpBackRight, Location home, long reachable, int position) {
         if (!isFactionPlotExists(factionId)) {
-            factions.getData().getMySQL().update("INSERT INTO factionPlots (`factionId`, `edgeDownFrontLeft`, `edgeUpBackRight`, `home`, `reachable`, `position`) VALUES ('" + factionId + "', '" + edgeDownFrontRight + "', '" + edgeUpBackLeft + "', '" + home + "', '" + reachable + "', '" + position + "')");
-            new FactionPlot(factionId, edgeDownFrontRight, edgeUpBackLeft, home, reachable, position);
+            factions.getData().getMySQL().update("INSERT INTO factionPlots (`factionId`, `edgeDownFrontLeft`, `edgeUpBackRight`, `home`, `reachable`, `position`) VALUES ('" + factionId + "', '" + LocationBuilder.toString(edgeDownFrontLeft) + "', '" + LocationBuilder.toString(edgeUpBackRight) + "', '" + LocationBuilder.toString(home) + "', '" + reachable + "', '" + position + "')");
+            factionPlots.add(new FactionPlot(factionId, edgeDownFrontLeft, edgeUpBackRight, home, reachable, position));
         }
     }
 
@@ -51,6 +51,43 @@ public class FactionPlotManager {
         return false;
     }
 
+    public boolean isPositionFree(int position){
+        for(FactionPlot factionPlot : factionPlots){
+            if(factionPlot.getPosition() == position){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public int getHighestPosition(){
+        int position = 0;
+        for(FactionPlot factionPlot : factionPlots){
+            if(factionPlot.getPosition() > position){
+                position = factionPlot.getPosition();
+            }
+        }
+        return position;
+    }
+
+    public int getFreePosition(){
+        int position = 0;
+        for(int i = 0; i < getHighestPosition(); i++){
+            if(isPositionFree(i)){
+                return position;
+            }
+        }
+        return getHighestPosition() + 1;
+    }
+
+    public Location getEdgeDownFrontLeft(int position){
+        return new Location(Bukkit.getWorld("FactionPlots_world"), (position % 10) * 700 , 0, (position / 10) * 700);
+    }
+
+    public Location getEdgeUpBackRight(Location edgeDownFrontLeft){
+        return new Location(Bukkit.getWorld("FactionPlots_world"), edgeDownFrontLeft.getX() + 100, edgeDownFrontLeft.getY() + 150, edgeDownFrontLeft.getZ() + 100);
+    }
+
     public void loadFactionPlots() {
         try {
             ResultSet rs = factions.getData().getMySQL().querry("SELECT `factionId`, `edgeDownFrontLeft`, `edgeUpBackRight`, `home`, `reachable`, `position` FROM factionPlots WHERE 1");
@@ -70,16 +107,6 @@ public class FactionPlotManager {
     }
 
     public ArrayList<FactionPlot> getFactionPlots() {
-        ArrayList<FactionPlot> factionPlots = new ArrayList<>();
-        try {
-            ResultSet rs = factions.getData().getMySQL().querry("SELECT `factionId`, `edgeDownFrontLeft`, `edgeUpBackRight`, `home`, `reachable`, `position` FROM factionPlots WHERE 1");
-            while (rs.next()) {
-                //    FactionPlot factionPlot = new FactionPlot();
-                //   factionPlots.add(factionPlot);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
         return factionPlots;
     }
 
@@ -111,6 +138,22 @@ public class FactionPlotManager {
 
         public Location getEdgeDownFrontLeft() {
             return edgeDownFrontLeft;
+        }
+
+        public void setPosition(int position) {
+            this.position = position;
+        }
+
+        public int getPosition() {
+            return position;
+        }
+
+        public void setReachable(long reachable) {
+            this.reachable = reachable;
+        }
+
+        public long getReachable() {
+            return reachable;
         }
 
         public void setEdgeDownFrontLeft(Location edgeDownFrontLeft) {

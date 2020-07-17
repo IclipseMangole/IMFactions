@@ -2,10 +2,7 @@ package de.imfactions;
 
 import de.imfactions.database.UserManager;
 import de.imfactions.database.UserSettingsTable;
-import de.imfactions.database.faction.FactionManager;
-import de.imfactions.database.faction.FactionPlotManager;
-import de.imfactions.database.faction.FactionUserManager;
-import de.imfactions.database.faction.RaidManager;
+import de.imfactions.database.faction.*;
 import de.imfactions.functions.Tablist;
 import de.imfactions.functions.UserSettingsManager;
 import de.imfactions.util.Command.CommandRegistration;
@@ -40,6 +37,10 @@ public class Data {
     private Location PVP_worldSpawn;
     private Location FactionPlots_worldSpawn;
 
+    //Scheduler
+    private HomeScheduler homeScheduler;
+
+
     public Data(IMFactions factions) {
         this.factions = factions;
         registration = new CommandRegistration(factions);
@@ -72,6 +73,10 @@ public class Data {
         world.setSpawnLocation(worldSpawn);
         PVP_world.setSpawnLocation(PVP_worldSpawn);
         FactionPlots_world.setSpawnLocation(FactionPlots_worldSpawn);
+    }
+
+    public void startScheduler(){
+        homeScheduler = new HomeScheduler(factions);
     }
 
 
@@ -166,5 +171,9 @@ public class Data {
 
     public RaidManager getRaidManager() {
         return raidManager;
+    }
+
+    public HomeScheduler getHomeScheduler() {
+        return homeScheduler;
     }
 }

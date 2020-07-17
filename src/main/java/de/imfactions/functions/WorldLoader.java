@@ -19,8 +19,10 @@ import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import de.imfactions.IMFactions;
+import de.imfactions.database.faction.FactionPlotManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.craftbukkit.libs.org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -35,9 +37,11 @@ import java.nio.file.StandardCopyOption;
  */
 public class WorldLoader {
     private IMFactions factions;
+    private FactionPlotManager factionPlotManager;
 
     public WorldLoader(IMFactions factions) {
         this.factions = factions;
+        this.factionPlotManager = factions.getData().getFactionPlotManager();
     }
 
     public void loadLobby() {
@@ -137,7 +141,7 @@ public class WorldLoader {
 
     public void loadMap(String map, Location location) {
         Clipboard clipboard = loadSchematic(map);
-        try (EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(BukkitAdapter.adapt(Bukkit.getWorld("world")), -1)) {
+        try (EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(BukkitAdapter.adapt(location.getWorld()), -1)) {
             Operation operation = new ClipboardHolder(clipboard)
                     .createPaste(editSession)
                     .to(BlockVector3.at(location.getX(), location.getY(), location.getZ()))
@@ -169,5 +173,19 @@ public class WorldLoader {
 
     public File getSchematicFile(String name) {
         return new File("/home/IMNetzwerk/BuildServer/plugins/WorldEdit/schematics/" + name + ".schem");
+    }
+
+    public void deleteMap(Location edgeDownFrontLeft){
+        Location loc1 = new Location(edgeDownFrontLeft.getWorld(), edgeDownFrontLeft.getX() - 45, 0, edgeDownFrontLeft.getZ() - 45);
+        Location edgeUpBackRight = factionPlotManager.getEdgeUpBackRight(edgeDownFrontLeft);
+        Location loc2 = new Location(edgeDownFrontLeft.getWorld(), edgeUpBackRight.getX() + 45, edgeUpBackRight.getY(), edgeUpBackRight.getZ() + 45);
+
+        for(int x = (int) loc1.getX(); x < loc2.getX(); x++){
+            for(int y = (int) loc1.getY(); y < loc2.getY(); y++){
+                for(int z = (int) loc1.getZ(); z < loc2.getZ(); z++){
+                    new Location(edgeDownFrontLeft.getWorld(), x, y, z).getBlock().setType(Material.AIR);
+                }
+            }
+        }
     }
 }

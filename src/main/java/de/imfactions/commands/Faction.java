@@ -6,6 +6,7 @@ import de.imfactions.database.faction.FactionManager;
 import de.imfactions.database.faction.FactionPlotManager;
 import de.imfactions.database.faction.FactionUserManager;
 import de.imfactions.database.UserManager;
+import de.imfactions.database.faction.HomeScheduler;
 import de.imfactions.functions.WorldLoader;
 import de.imfactions.util.Command.IMCommand;
 import de.imfactions.util.UUIDFetcher;
@@ -15,6 +16,7 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -32,6 +34,7 @@ public class Faction {
     private UserManager userManager;
     private FactionPlotManager factionPlotManager;
     private WorldLoader worldLoader;
+    private HomeScheduler homeScheduler;
 
     public Faction(IMFactions factions) {
         this.factions = factions;
@@ -40,6 +43,7 @@ public class Faction {
         this.userManager = factions.getData().getUserManager();
         this.factionPlotManager = factions.getData().getFactionPlotManager();
         this.worldLoader = new WorldLoader(factions);
+        this.homeScheduler = factions.getData().getHomeScheduler();
     }
 
     @IMCommand(
@@ -86,6 +90,15 @@ public class Faction {
                         int factionId = factionManager.getHighestFactionId() + 1;
                         factionManager.createFaction(factionId, name, shortcut);
                         factionUserManager.createFactionUser(UUIDFetcher.getUUID(player), factionId, 3, true);
+                        //FactionPlot
+                        int position = factionPlotManager.getFreePosition();
+                        Location edgeDownFrontLeft = factionPlotManager.getEdgeDownFrontLeft(position);
+                        Location edgeUpBackRight = factionPlotManager.getEdgeUpBackRight(edgeDownFrontLeft);
+                        Location home = new Location(edgeDownFrontLeft.getWorld(), edgeDownFrontLeft.getX(), edgeDownFrontLeft.getY() + 17, edgeDownFrontLeft.getZ());
+                        factionPlotManager.createFactionPlot(factionId, edgeDownFrontLeft, edgeUpBackRight, home, System.currentTimeMillis() + 30000, position);
+
+                        worldLoader.loadMap("FactionPlot", home);
+
                         player.sendMessage("§aYou founded the Faction '§e" + name + "§a'");
                     }else{
                         player.sendMessage("§cA shortcut consists of 3 characters");
@@ -120,7 +133,13 @@ public class Faction {
                         factionManager.getFaction(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId()).deleteFaction();
                         factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).delete();
                         player.sendMessage("§aYou left the Faction. The Faction isn't existing anymore.");
-                        //factionplots müssen noch gelöscht werden
+                        //FactionPlots
+                        int factionId = factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId();
+                        int position = factionPlotManager.getFactionPlot(factionId).getPosition();
+                        factionPlotManager.getFactionPlot(factionId).deleteFactionPlot();
+
+                        worldLoader.deleteMap(factionPlotManager.getEdgeDownFrontLeft(position));
+
                     } else {
                         int factionId = factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId();
                         if (factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getRank() == 3) {
@@ -552,7 +571,40 @@ public class Faction {
     )
     public void home(CommandSender sender) {
         Player player = (Player) sender;
+        UUID uuid = UUIDFetcher.getUUID(player);
 
+        if(factionUserManager.isFactionUserExists(uuid)){
+            if(factionUserManager.isFactionUserInFaction(uuid)){
+                int factionId = factionUserManager.getFactionUser(uuid).getFactionId();
+                FactionManager.Faction faction = factionManager.getFaction(factionId);
+                FactionPlotManager.FactionPlot factionPlot = factionPlotManager.getFactionPlot(factionId);
+                if(factionPlot.getReachable() < System.currentTimeMillis()){
+                    if(!homeScheduler.getCountdowns().containsKey(player)) {
+
+                        String world = player.getWorld().getName();
+
+                        if (world.equals("world")) {
+                            homeScheduler.getCountdowns().put(player, 5);
+                        } else if(world.equals("FactionPlots_world")){
+                            homeScheduler.getCountdowns().put(player, 5);
+                        }else {
+                            homeScheduler.getCountdowns().put(player, 10);
+                        }
+
+                        homeScheduler.getLocations().put(player, factionPlot.getHome());
+
+                    }else{
+                        player.sendMessage("§cYou are already teleporting");
+                    }
+                }else {
+                    player.sendMessage("§cYour FactionPlot is loading. It should be done in few seconds");
+                }
+            }else{
+                player.sendMessage("§cYou aren't in a Faction");
+            }
+        }else{
+            player.sendMessage("§cYou aren't in a Faction");
+        }
     }
 
     @IMCommand(
@@ -566,7 +618,10 @@ public class Faction {
     )
     public void sethome(CommandSender sender) {
         Player player = (Player) sender;
-        worldLoader.loadMap("FactionPlot", player.getLocation());
+        UUID uuid = UUIDFetcher.getUUID(player);
+        int factionId = factionUserManager.getFactionUser(uuid).getFactionId();
+        FactionPlotManager.FactionPlot factionPlot = factionPlotManager.getFactionPlot(factionId);
+        factionPlot.setHome(player.getLocation());
     }
 
     private void add(String usage, String description) {

@@ -33,6 +33,7 @@ public class IMFactions extends JavaPlugin {
         data.getMySQL().connect();
         data.createTables();
         data.loadWorlds();
+        data.startScheduler();
         registerCommands();
         registerListener();
         updateGamerules();
