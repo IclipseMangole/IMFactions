@@ -41,7 +41,10 @@ public class WorldLoader {
 
     public WorldLoader(IMFactions factions) {
         this.factions = factions;
-        this.factionPlotManager = factions.getData().getFactionPlotManager();
+    }
+
+    public void loadManagers(){
+        factionPlotManager = factions.getData().getFactionPlotManager();
     }
 
     public void loadLobby() {
@@ -177,8 +180,7 @@ public class WorldLoader {
 
     public void deleteMap(Location edgeDownFrontLeft){
         Location loc1 = new Location(edgeDownFrontLeft.getWorld(), edgeDownFrontLeft.getX() - 45, 0, edgeDownFrontLeft.getZ() - 45);
-        Location edgeUpBackRight = factionPlotManager.getEdgeUpBackRight(edgeDownFrontLeft);
-        Location loc2 = new Location(edgeDownFrontLeft.getWorld(), edgeUpBackRight.getX() + 45, edgeUpBackRight.getY(), edgeUpBackRight.getZ() + 45);
+        Location loc2 = new Location(edgeDownFrontLeft.getWorld(), edgeDownFrontLeft.getX() + 45 + 100, edgeDownFrontLeft.getY() + 150, edgeDownFrontLeft.getZ() + 45 + 100);
 
         for(int x = (int) loc1.getX(); x < loc2.getX(); x++){
             for(int y = (int) loc1.getY(); y < loc2.getY(); y++){

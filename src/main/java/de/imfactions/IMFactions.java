@@ -2,6 +2,8 @@ package de.imfactions;
 
 import de.imfactions.commands.Ether;
 import de.imfactions.commands.Faction;
+import de.imfactions.commands.FactionPlot;
+import de.imfactions.commands.Spawn;
 import de.imfactions.functions.WorldLoader;
 import de.imfactions.listener.JoinListener;
 import de.imfactions.listener.QuitListener;
@@ -34,6 +36,7 @@ public class IMFactions extends JavaPlugin {
         data.createTables();
         data.loadWorlds();
         data.startScheduler();
+        worldLoader.loadManagers();
         registerCommands();
         registerListener();
         updateGamerules();
@@ -61,6 +64,8 @@ public class IMFactions extends JavaPlugin {
         data.getRegistration().register(new Ether(this), this);
         data.getRegistration().register(new Faction(this), this);
         data.getRegistration().register(new de.imfactions.commands.World(this), this);
+        data.getRegistration().register(new Spawn(this), this);
+        data.getRegistration().register(new FactionPlot(this), this);
     }
 
     public void registerListener() {
@@ -72,5 +77,7 @@ public class IMFactions extends JavaPlugin {
         Bukkit.getWorlds().forEach(world -> world.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false));
     }
 
-
+    public WorldLoader getWorldLoader() {
+        return worldLoader;
+    }
 }

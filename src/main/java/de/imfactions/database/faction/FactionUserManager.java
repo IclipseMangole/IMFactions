@@ -15,7 +15,7 @@ public class FactionUserManager {
 
     public FactionUserManager(IMFactions factions) {
         this.factions = factions;
-        factions.getData().getMySQL().update("CREATE TABLE IF NOT EXISTS factionUser (`uuid` VARCHAR(64), `factionId` INT(10), `rank` INT(10), PRIMARY KEY(`uuid`))");
+        factions.getData().getMySQL().update("CREATE TABLE IF NOT EXISTS `factionUser` (`uuid` VARCHAR(64), `factionId` INT(10), `rank` INT(10), PRIMARY KEY(`uuid`))");
         factionUsers = new ArrayList<>();
         loadFactionUser();
         Bukkit.getScheduler().runTaskTimerAsynchronously(factions, new Runnable() {

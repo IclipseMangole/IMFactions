@@ -38,7 +38,7 @@ public class Data {
     private Location FactionPlots_worldSpawn;
 
     //Scheduler
-    private HomeScheduler homeScheduler;
+    private Scheduler scheduler;
 
 
     public Data(IMFactions factions) {
@@ -67,8 +67,8 @@ public class Data {
         world = Bukkit.getWorld("world");
         PVP_world = Bukkit.createWorld(new WorldCreator("FactionPVP_world"));
         FactionPlots_world = Bukkit.createWorld(new WorldCreator("FactionPlots_world"));
-        worldSpawn = new Location(world, 0, 31, -18);
-        PVP_worldSpawn = new Location(PVP_world, 0, 50, 0);
+        worldSpawn = new Location(world, 0.5, 31, -17.5);
+        PVP_worldSpawn = new Location(PVP_world, 63.5, 80.5, 1265.5);
         FactionPlots_worldSpawn = new Location(FactionPlots_world, 0, 17, 0);
         world.setSpawnLocation(worldSpawn);
         PVP_world.setSpawnLocation(PVP_worldSpawn);
@@ -76,7 +76,7 @@ public class Data {
     }
 
     public void startScheduler(){
-        homeScheduler = new HomeScheduler(factions);
+        scheduler = new Scheduler(factions);
     }
 
 
@@ -173,7 +173,7 @@ public class Data {
         return raidManager;
     }
 
-    public HomeScheduler getHomeScheduler() {
-        return homeScheduler;
+    public Scheduler getScheduler() {
+        return scheduler;
     }
 }

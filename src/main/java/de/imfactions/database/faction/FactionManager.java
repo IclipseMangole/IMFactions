@@ -17,7 +17,7 @@ public class FactionManager {
 
     public FactionManager(IMFactions factions) {
         this.factions = factions;
-        factions.getData().getMySQL().update("CREATE TABLE IF NOT EXISTS factions (`factionId` MEDIUMINT NOT NULL AUTO_INCREMENT, `userAmount` INT(10), `name` VARCHAR(30), `shortcut` VARCHAR(3), `foundingDate` DATETIME, `raidProtection` BIGINT, PRIMARY KEY(`factionId`))");
+        factions.getData().getMySQL().update("CREATE TABLE IF NOT EXISTS `factions` (`factionId` MEDIUMINT NOT NULL AUTO_INCREMENT, `userAmount` INT(10), `name` VARCHAR(30), `shortcut` VARCHAR(3), `foundingDate` DATETIME, `raidProtection` BIGINT, PRIMARY KEY(`factionId`))");
         factionsList = new ArrayList<>();
         loadFactions();
         Bukkit.getScheduler().runTaskTimerAsynchronously(factions, new Runnable() {
@@ -127,7 +127,7 @@ public class FactionManager {
 
     public int getHighestFactionId() {
         try {
-            ResultSet rs = this.factions.getData().getMySQL().querry("SELECT MAX(`factionId`) AS `factionId` FROM factions WHERE 1");
+            ResultSet rs = this.factions.getData().getMySQL().querry("SELECT MAX(`factionId`) AS `factionId` FROM `factions` WHERE 1");
             if (rs.next()) {
                 return rs.getInt("factionId");
             }

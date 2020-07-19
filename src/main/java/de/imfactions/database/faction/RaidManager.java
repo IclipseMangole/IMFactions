@@ -16,7 +16,7 @@ public class RaidManager {
 
     public RaidManager(IMFactions imFactions) {
         this.imFactions = imFactions;
-        imFactions.getData().getMySQL().update("CREATE TABLE IF NOT EXISTS raids (`raidId` INT(10), `factionIdAttackers` INT(10), `factionIdDefenders` INT(10), `start` DATETIME, `time` BIGINT, PRIMARY KEY(`raidId`))");
+        imFactions.getData().getMySQL().update("CREATE TABLE IF NOT EXISTS `raids` (`raidId` INT(10), `factionIdAttackers` INT(10), `factionIdDefenders` INT(10), `start` DATETIME, `time` BIGINT, PRIMARY KEY(`raidId`))");
         raids = new ArrayList<>();
         loadRaids();
         Bukkit.getScheduler().runTaskTimerAsynchronously(imFactions, new Runnable() {

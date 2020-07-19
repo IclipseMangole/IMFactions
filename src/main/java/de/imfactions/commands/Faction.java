@@ -5,10 +5,10 @@ import de.imfactions.database.UserManager;
 import de.imfactions.database.faction.FactionManager;
 import de.imfactions.database.faction.FactionPlotManager;
 import de.imfactions.database.faction.FactionUserManager;
-import de.imfactions.database.UserManager;
-import de.imfactions.database.faction.HomeScheduler;
+import de.imfactions.database.faction.Scheduler;
 import de.imfactions.functions.WorldLoader;
 import de.imfactions.util.Command.IMCommand;
+import de.imfactions.util.LocationBuilder;
 import de.imfactions.util.UUIDFetcher;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -34,7 +34,7 @@ public class Faction {
     private UserManager userManager;
     private FactionPlotManager factionPlotManager;
     private WorldLoader worldLoader;
-    private HomeScheduler homeScheduler;
+    private Scheduler scheduler;
 
     public Faction(IMFactions factions) {
         this.factions = factions;
@@ -43,7 +43,7 @@ public class Faction {
         this.userManager = factions.getData().getUserManager();
         this.factionPlotManager = factions.getData().getFactionPlotManager();
         this.worldLoader = new WorldLoader(factions);
-        this.homeScheduler = factions.getData().getHomeScheduler();
+        this.scheduler = factions.getData().getScheduler();
     }
 
     @IMCommand(
@@ -87,19 +87,23 @@ public class Faction {
             if (!factionUserManager.isFactionUserExists(UUIDFetcher.getUUID(player)) || factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getRank() == -1) {
                 if(name.length() < 31) {
                     if(shortcut.length() == 3) {
-                        int factionId = factionManager.getHighestFactionId() + 1;
-                        factionManager.createFaction(factionId, name, shortcut);
-                        factionUserManager.createFactionUser(UUIDFetcher.getUUID(player), factionId, 3, true);
-                        //FactionPlot
-                        int position = factionPlotManager.getFreePosition();
-                        Location edgeDownFrontLeft = factionPlotManager.getEdgeDownFrontLeft(position);
-                        Location edgeUpBackRight = factionPlotManager.getEdgeUpBackRight(edgeDownFrontLeft);
-                        Location home = new Location(edgeDownFrontLeft.getWorld(), edgeDownFrontLeft.getX(), edgeDownFrontLeft.getY() + 17, edgeDownFrontLeft.getZ());
-                        factionPlotManager.createFactionPlot(factionId, edgeDownFrontLeft, edgeUpBackRight, home, System.currentTimeMillis() + 30000, position);
+                        if(factionPlotManager.getLoadingFactionPlots() < 3) {
+                            int factionId = factionManager.getHighestFactionId() + 1;
+                            factionManager.createFaction(factionId, name, shortcut);
+                            factionUserManager.createFactionUser(UUIDFetcher.getUUID(player), factionId, 3, true);
+                            //FactionPlot
+                            int position = factionPlotManager.getFreePosition();
+                            Location edgeDownFrontLeft = factionPlotManager.getEdgeDownFrontLeft(position);
+                            Location edgeUpBackRight = factionPlotManager.getEdgeUpBackRight(edgeDownFrontLeft);
+                            Location home = new Location(edgeDownFrontLeft.getWorld(), edgeDownFrontLeft.getX(), edgeDownFrontLeft.getY() + 17, edgeDownFrontLeft.getZ());
+                            factionPlotManager.createFactionPlot(factionId, edgeDownFrontLeft, edgeUpBackRight, home, System.currentTimeMillis() + 30000, position);
 
-                        worldLoader.loadMap("FactionPlot", home);
+                            worldLoader.loadMap("FactionPlot", home);
 
-                        player.sendMessage("§aYou founded the Faction '§e" + name + "§a'");
+                            player.sendMessage("§aYou founded the Faction '§e" + name + "§a'");
+                        }else {
+                            player.sendMessage("§cSorry, but there are too many new Factions and FactionPlots loading. Wait a short time");
+                        }
                     }else{
                         player.sendMessage("§cA shortcut consists of 3 characters");
                     }
@@ -130,15 +134,16 @@ public class Faction {
             if (factionUserManager.isFactionUserInFaction(UUIDFetcher.getUUID(player))) {
                 if (factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)) != null && factionManager.getFaction(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId()) != null) {
                     if (factionManager.getFaction(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId()).getUserAmount() == 1) {
+                        //FactionPlots
+                        player.teleport(factions.getData().getWorldSpawn());
+                        int factionId = factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId();
+                        int position = factionPlotManager.getFactionPlot(factionId).getPosition();
+                        worldLoader.deleteMap(factionPlotManager.getEdgeDownFrontLeft(position));
+                        factionPlotManager.getFactionPlot(factionId).deleteFactionPlot();
+
                         factionManager.getFaction(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId()).deleteFaction();
                         factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).delete();
                         player.sendMessage("§aYou left the Faction. The Faction isn't existing anymore.");
-                        //FactionPlots
-                        int factionId = factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId();
-                        int position = factionPlotManager.getFactionPlot(factionId).getPosition();
-                        factionPlotManager.getFactionPlot(factionId).deleteFactionPlot();
-
-                        worldLoader.deleteMap(factionPlotManager.getEdgeDownFrontLeft(position));
 
                     } else {
                         int factionId = factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId();
@@ -151,7 +156,6 @@ public class Faction {
                             player.sendMessage("§aYou left the Faction");
 
                             FactionUserManager.FactionUser[] king = new FactionUserManager.FactionUser[1];
-                            int kingPlace;
                             highestUser.forEach(factionUser -> {
                                 if(factionUser.getRank() == 3){
                                     king[0] = factionUser;
@@ -280,10 +284,15 @@ public class Faction {
                                     if (factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).isHigherRank(factionUserManager.getFactionUser(uuidKick).getRank())) {
                                         factionUserManager.getFactionUser(uuidKick).delete();
                                         player.sendMessage("§aYou kicked §e" + kick + " §aout of the Faction");
+                                        if(Bukkit.getPlayer(kick).getWorld().getName().equals("FactionPlots_world")){
+                                            Bukkit.getPlayer(kick).teleport(factions.getData().getWorldSpawn());
+                                        }
                                         Bukkit.getPlayer(kick).sendMessage("§e" + player.getName() + "§a kicked you out of the Faction");
                                         factionUserManager.getFactionUsers(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId()).forEach(factionUser -> {
                                             Bukkit.getPlayer(UUIDFetcher.getName(factionUser.getUuid())).sendMessage("§e" + kick + "§a was kicked out of the Faction");
                                         });
+                                        FactionManager.Faction faction = factionManager.getFaction(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId());
+                                        faction.setUserAmount(faction.getUserAmount() - 1);
                                     } else {
                                         player.sendMessage("§cYou have to be a higher Rank to kick this Player");
                                     }
@@ -579,25 +588,25 @@ public class Faction {
                 FactionManager.Faction faction = factionManager.getFaction(factionId);
                 FactionPlotManager.FactionPlot factionPlot = factionPlotManager.getFactionPlot(factionId);
                 if(factionPlot.getReachable() < System.currentTimeMillis()){
-                    if(!homeScheduler.getCountdowns().containsKey(player)) {
+                    if(!scheduler.getCountdowns().containsKey(player)) {
 
                         String world = player.getWorld().getName();
 
                         if (world.equals("world")) {
-                            homeScheduler.getCountdowns().put(player, 5);
+                            scheduler.getCountdowns().put(player, 5);
                         } else if(world.equals("FactionPlots_world")){
-                            homeScheduler.getCountdowns().put(player, 5);
+                            scheduler.getCountdowns().put(player, 5);
                         }else {
-                            homeScheduler.getCountdowns().put(player, 10);
+                            scheduler.getCountdowns().put(player, 10);
                         }
 
-                        homeScheduler.getLocations().put(player, factionPlot.getHome());
+                        scheduler.getLocations().put(player, factionPlot.getHome());
 
                     }else{
                         player.sendMessage("§cYou are already teleporting");
                     }
                 }else {
-                    player.sendMessage("§cYour FactionPlot is loading. It should be done in few seconds");
+                    player.sendMessage("§cYour FactionPlot is loading. Wait " + (factionPlot.getReachable() - System.currentTimeMillis()));
                 }
             }else{
                 player.sendMessage("§cYou aren't in a Faction");
@@ -619,9 +628,23 @@ public class Faction {
     public void sethome(CommandSender sender) {
         Player player = (Player) sender;
         UUID uuid = UUIDFetcher.getUUID(player);
-        int factionId = factionUserManager.getFactionUser(uuid).getFactionId();
-        FactionPlotManager.FactionPlot factionPlot = factionPlotManager.getFactionPlot(factionId);
-        factionPlot.setHome(player.getLocation());
+        if(factionUserManager.isFactionUserExists(uuid)) {
+            if(factionUserManager.isFactionUserInFaction(uuid)) {
+                String world = player.getWorld().getName();
+                if(world.equals("FactionPlots_world")) {
+                    int factionId = factionUserManager.getFactionUser(uuid).getFactionId();
+                    FactionPlotManager.FactionPlot factionPlot = factionPlotManager.getFactionPlot(factionId);
+                    factionPlot.setHome(player.getLocation());
+                    player.sendMessage("§aSet home to " + LocationBuilder.toString(player.getLocation()));
+                }else {
+                    player.sendMessage("§cYou can only change your home at your FactionPlot");
+                }
+            }else{
+                player.sendMessage("§cYou aren't in a Faction");
+            }
+        }else{
+           player.sendMessage("§cYou aren't in a Faction");
+        }
     }
 
     private void add(String usage, String description) {
