@@ -179,7 +179,7 @@ public class WorldLoader {
     }
 
     public void deleteMap(Location edgeDownFrontLeft){
-        Location loc1 = new Location(edgeDownFrontLeft.getWorld(), edgeDownFrontLeft.getX() - 45, 0, edgeDownFrontLeft.getZ() - 45);
+        Location loc1 = new Location(edgeDownFrontLeft.getWorld(), edgeDownFrontLeft.getX() - 46, 0, edgeDownFrontLeft.getZ() - 46);
         Location loc2 = new Location(edgeDownFrontLeft.getWorld(), edgeDownFrontLeft.getX() + 45 + 100, edgeDownFrontLeft.getY() + 150, edgeDownFrontLeft.getZ() + 45 + 100);
 
         for(int x = (int) loc1.getX(); x < loc2.getX(); x++){

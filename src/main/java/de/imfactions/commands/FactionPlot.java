@@ -43,6 +43,9 @@ public class FactionPlot {
         add("/factionplot", "Shows a Commmand-Overview");
         add("/factionplot create", "Creates a FactionPlot on your location");
         add("/factionplot delete", "Deletes a FactionPLot on your location");
+
+        Player player = (Player) sender;
+        player.sendMessage(stringBuilder.toString());
     }
 
     @IMCommand(

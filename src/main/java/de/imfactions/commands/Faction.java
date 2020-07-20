@@ -19,6 +19,15 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.primesoft.asyncworldedit.AsyncWorldEditBukkit;
+import org.primesoft.asyncworldedit.AsyncWorldEditMain;
+import org.primesoft.asyncworldedit.api.IAsyncWorldEdit;
+import org.primesoft.asyncworldedit.api.IAweOperations;
+import org.primesoft.asyncworldedit.api.blockPlacer.IBlockPlacer;
+import org.primesoft.asyncworldedit.api.blockPlacer.entries.IJobEntry;
+import org.primesoft.asyncworldedit.api.playerManager.IPlayerEntry;
+import org.primesoft.asyncworldedit.api.progressDisplay.IProgressDisplay;
+import org.primesoft.asyncworldedit.injector.classfactory.IJob;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -146,6 +155,7 @@ public class Faction {
                         player.sendMessage("§aYou left the Faction. The Faction isn't existing anymore.");
 
                     } else {
+                        player.teleport(factions.getData().getWorldSpawn());
                         int factionId = factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId();
                         if (factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getRank() == 3) {
                             factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).delete();

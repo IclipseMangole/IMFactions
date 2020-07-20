@@ -4,6 +4,7 @@ import de.imfactions.commands.Ether;
 import de.imfactions.commands.Faction;
 import de.imfactions.commands.FactionPlot;
 import de.imfactions.commands.Spawn;
+import de.imfactions.listener.Portals;
 import de.imfactions.functions.WorldLoader;
 import de.imfactions.listener.JoinListener;
 import de.imfactions.listener.QuitListener;
@@ -71,6 +72,7 @@ public class IMFactions extends JavaPlugin {
     public void registerListener() {
         Bukkit.getPluginManager().registerEvents(new JoinListener(this), this);
         Bukkit.getPluginManager().registerEvents(new QuitListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new Portals(this), this);
     }
 
     public void updateGamerules() {
