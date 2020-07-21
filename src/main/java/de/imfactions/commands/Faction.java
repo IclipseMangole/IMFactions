@@ -19,16 +19,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.primesoft.asyncworldedit.AsyncWorldEditBukkit;
-import org.primesoft.asyncworldedit.AsyncWorldEditMain;
-import org.primesoft.asyncworldedit.api.IAsyncWorldEdit;
-import org.primesoft.asyncworldedit.api.IAweOperations;
-import org.primesoft.asyncworldedit.api.blockPlacer.IBlockPlacer;
-import org.primesoft.asyncworldedit.api.blockPlacer.entries.IJobEntry;
-import org.primesoft.asyncworldedit.api.playerManager.IPlayerEntry;
-import org.primesoft.asyncworldedit.api.progressDisplay.IProgressDisplay;
-import org.primesoft.asyncworldedit.injector.classfactory.IJob;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Random;
@@ -607,7 +597,7 @@ public class Faction {
                         } else if(world.equals("FactionPlots_world")){
                             scheduler.getCountdowns().put(player, 5);
                         }else {
-                            scheduler.getCountdowns().put(player, 10);
+                            scheduler.getCountdowns().put(player, 20);
                         }
 
                         scheduler.getLocations().put(player, factionPlot.getHome());

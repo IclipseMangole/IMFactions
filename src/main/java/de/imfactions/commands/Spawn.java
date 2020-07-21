@@ -7,10 +7,13 @@ import de.imfactions.database.faction.FactionPlotManager;
 import de.imfactions.database.faction.FactionUserManager;
 import de.imfactions.database.faction.Scheduler;
 import de.imfactions.util.Command.IMCommand;
+import net.minecraft.server.v1_16_R1.Items;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 public class Spawn {
 
@@ -39,18 +42,22 @@ public class Spawn {
             maxArgs = 0,
             permissions = "im.factions.spawn"
     )
-    public void spawn(CommandSender sender){
+    public void spawn(CommandSender sender) {
         Player player = (Player) sender;
 
         String world = player.getWorld().getName();
 
-        if(world.equals("FactionPVP_world")) {
-            scheduler.getCountdowns().put(player, 10);
+        if (!scheduler.getLocations().containsKey(player)) {
+            if (world.equals("FactionPVP_world")) {
+                scheduler.getCountdowns().put(player, 20);
+            } else {
+                scheduler.getCountdowns().put(player, 5);
+            }
+            Location location = imFactions.getData().getWorldSpawn();
+            scheduler.getLocations().put(player, location);
         }else{
-            scheduler.getCountdowns().put(player,5);
+            player.sendMessage("§cYou are already teleporting");
         }
-        Location location = imFactions.getData().getWorldSpawn();
-        scheduler.getLocations().put(player, location);
     }
 
 

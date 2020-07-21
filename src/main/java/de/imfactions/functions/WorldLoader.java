@@ -64,7 +64,6 @@ public class WorldLoader {
         try {
             FileUtils.copyDirectory(from, to);
             Files.copy(new File("/home/IMNetzwerk/BuildServer/FactionLobby_world/level.dat").toPath(), new File(factions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/world/level.dat").toPath(), StandardCopyOption.REPLACE_EXISTING);
-            new File(factions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/world/data").mkdir();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -96,14 +95,13 @@ public class WorldLoader {
         try {
             FileUtils.copyDirectory(from, to);
             Files.copy(new File("/home/IMNetzwerk/BuildServer/FactionPVP_world/level.dat").toPath(), new File(factions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPVP_world/level.dat").toPath(), StandardCopyOption.REPLACE_EXISTING);
-            new File(factions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPVP_world/data").mkdir();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void loadPlots() {
-        File from = new File("/home/IMNetzwerk/FactionsDev01/FactionPlotsSave_world/region");
+        File from = new File(factions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlotsSave_world/region");
         File to = new File(factions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlots_world/region");
 
         try {
@@ -115,15 +113,14 @@ public class WorldLoader {
         }
         try {
             FileUtils.copyDirectory(from, to);
-            Files.copy(new File("/home/IMNetzwerk/FactionsDev01/FactionPlotsSave_world/level.dat").toPath(), new File(factions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlots_world/level.dat").toPath(), StandardCopyOption.REPLACE_EXISTING);
-            new File(factions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlots_world/data").mkdir();
+            Files.copy(new File(factions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlotsSave_world/level.dat").toPath(), new File(factions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlots_world/level.dat").toPath(), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void savePlots() {
-        File to = new File("/home/IMNetzwerk/FactionsDev01/FactionPlotsSave_world/region");
+        File to = new File(factions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlotsSave_world/region");
         File from = new File(factions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlots_world/region");
 
         try {
@@ -135,8 +132,7 @@ public class WorldLoader {
         }
         try {
             FileUtils.copyDirectory(from, to);
-            Files.copy(new File(factions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlots_world/level.dat").toPath(), new File("/home/IMNetzwerk/FactionsDev01/FactionPlotsSave_world/level.dat").toPath(), StandardCopyOption.REPLACE_EXISTING);
-            new File(factions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlots_world/data").mkdir();
+            Files.copy(new File(factions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlots_world/level.dat").toPath(), new File(factions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlotsSave_world/level.dat").toPath(), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -5,6 +5,7 @@ import de.imfactions.util.LocationBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
+import javax.xml.stream.XMLInputFactory;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -99,7 +100,36 @@ public class FactionPlotManager {
     }
 
     public Location getEdgeUpBackRight(Location edgeDownFrontLeft){
-        return new Location(Bukkit.getWorld("FactionPlots_world"), edgeDownFrontLeft.getX() + 99, edgeDownFrontLeft.getY() + 149, edgeDownFrontLeft.getZ() + 99);
+        return new Location(Bukkit.getWorld("FactionPlots_world"), edgeDownFrontLeft.getX() + 99, edgeDownFrontLeft.getY() + 150, edgeDownFrontLeft.getZ() + 99);
+    }
+
+    public Location getRaidEdgeLeft(Location edgeDownFrontLeft){
+        return new Location(Bukkit.getWorld("FactionPlots_world"), edgeDownFrontLeft.getX() - 14, edgeDownFrontLeft.getY(), edgeDownFrontLeft.getZ() - 14);
+    }
+
+    public Location getRaidEdgeRight(Location RaidEdgeLeft){
+        return new Location(Bukkit.getWorld("FactionPlots_world"), RaidEdgeLeft.getX() + 128, RaidEdgeLeft.getY() + 150, RaidEdgeLeft.getZ() + 128);
+    }
+
+    public Location getCompleteEdgeLeft(Location edgeDownFrontLeft){
+        return new Location(Bukkit.getWorld("FactionPlots_world"), edgeDownFrontLeft.getX() - 46, edgeDownFrontLeft.getY(), edgeDownFrontLeft.getZ() - 46);
+    }
+
+    public Location getCompleteEdgeRight(Location CompleteEdgeLeft){
+        return new Location(Bukkit.getWorld("FactionPlots_world"), CompleteEdgeLeft.getX() + 191, CompleteEdgeLeft.getY() + 150, CompleteEdgeLeft.getZ() + 191);
+    }
+
+    public FactionPlot getFactionPlot(Location location){
+
+        for (FactionPlot factionPlot : factionPlots){
+            Location CompletEdgeLeft = getCompleteEdgeLeft(factionPlot.getEdgeDownFrontLeft());
+            Location CompleteEdgeRight = getCompleteEdgeRight(CompletEdgeLeft);
+
+            if(isLocationInsideCube(location, CompletEdgeLeft, CompleteEdgeRight)){
+                return factionPlot;
+            }
+        }
+        return null;
     }
 
     public void loadFactionPlots() {
@@ -112,6 +142,32 @@ public class FactionPlotManager {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    private boolean isLocationInsideCube(Location location, Location edgeDownFrontLeft, Location edgeUpBackRight) {
+        int x = (int) location.getX();
+        int y = (int) location.getY();
+        int z = (int) location.getZ();
+
+        int x1 = (int) edgeDownFrontLeft.getX();
+        int y1 = (int) edgeDownFrontLeft.getY();
+        int z1 = (int) edgeDownFrontLeft.getZ();
+
+        int x2 = (int) edgeUpBackRight.getX();
+        int y2 = (int) edgeUpBackRight.getY();
+        int z2 = (int) edgeUpBackRight.getZ();
+
+
+        for (int i = Math.min(x1, x2); i <= Math.max(x1, x2); i++) {
+            for (int i1 = Math.min(y1, y2); i1 <= Math.max(y1, y2); i1++) {
+                for (int i2 = Math.min(z1, z2); i2 <= Math.max(z1, z2); i2++) {
+                    if (x == i && y == i1 && z == i2) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     public void saveFactionPlots() {

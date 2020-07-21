@@ -15,11 +15,11 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.scoreboard.Scoreboard;
 
 
-public class Portals implements Listener {
+public class PortalsListener implements Listener {
 
     private IMFactions imFactions;
 
-    public Portals(IMFactions imFactions) {
+    public PortalsListener(IMFactions imFactions) {
         this.imFactions = imFactions;
     }
 

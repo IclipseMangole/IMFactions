@@ -45,6 +45,7 @@ public class Scheduler {
                                 public void run() {
                                     player.teleport(location);
                                     player.removePotionEffect(PotionEffectType.CONFUSION);
+                                    player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
                                 }
                             });
 
@@ -52,7 +53,7 @@ public class Scheduler {
                             locations.remove(player);
                         } else {
                             //countdown
-                            player.sendMessage("§aYou will get teleported in " + integer + " seconds");
+                            player.sendTitle("§a§l" + integer, "", 2, 16, 2);
                             Bukkit.getScheduler().runTask(imFactions, new Runnable() {
                                 @Override
                                 public void run() {
