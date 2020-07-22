@@ -3,6 +3,8 @@ package de.imfactions;
 import de.imfactions.database.UserManager;
 import de.imfactions.database.UserSettingsTable;
 import de.imfactions.database.faction.*;
+import de.imfactions.functions.Scheduler;
+import de.imfactions.functions.Scoreboard;
 import de.imfactions.functions.Tablist;
 import de.imfactions.functions.UserSettingsManager;
 import de.imfactions.util.Command.CommandRegistration;
@@ -40,6 +42,9 @@ public class Data {
     //Scheduler
     private Scheduler scheduler;
 
+    //
+    private Scoreboard scoreboard;
+
 
     public Data(IMFactions factions) {
         this.factions = factions;
@@ -75,8 +80,12 @@ public class Data {
         FactionPlots_world.setSpawnLocation(FactionPlots_worldSpawn);
     }
 
-    public void startScheduler(){
+    public void loadScheduler(){
         scheduler = new Scheduler(factions);
+    }
+
+    public void loadScoreboards(){
+        scoreboard = new Scoreboard(factions);
     }
 
 
@@ -127,6 +136,10 @@ public class Data {
 
     public World getWorld() {
         return world;
+    }
+
+    public Scoreboard getScoreboard() {
+        return scoreboard;
     }
 
     public World getFactionPlots_world() {

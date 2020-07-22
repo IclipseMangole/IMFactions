@@ -5,6 +5,7 @@ import de.imfactions.IMFactions;
 import de.imfactions.database.faction.FactionManager;
 import de.imfactions.database.faction.FactionPlotManager;
 import de.imfactions.database.faction.FactionUserManager;
+import de.imfactions.util.LocationChecker;
 import de.imfactions.util.UUIDFetcher;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -45,17 +46,21 @@ public class PlotListener implements Listener {
         Location location = event.getBlock().getLocation();
         String world = location.getWorld().getName();
         Player player = event.getPlayer();
-        int factionID = factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId();
-        FactionPlotManager.FactionPlot factionPlot = factionPlotManager.getFactionPlot(factionID);
+        if(factionUserManager.isFactionUserInFaction(UUIDFetcher.getUUID(player))) {
+            int factionID = factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId();
+            FactionPlotManager.FactionPlot factionPlot = factionPlotManager.getFactionPlot(factionID);
 
-        if (world.equals("FactionPlots_world")) {
+            if (world.equals("FactionPlots_world")) {
 
-            Location edgeDownFrontLeft = factionPlot.getEdgeDownFrontLeft();
-            Location edgeUpBackRight = factionPlot.getEdgeUpBackRight();
+                Location edgeDownFrontLeft = factionPlot.getEdgeDownFrontLeft();
+                Location edgeUpBackRight = factionPlot.getEdgeUpBackRight();
 
-            if (!isLocationInsideCube(event.getBlock().getLocation(), edgeDownFrontLeft, edgeUpBackRight)) {
-                event.setCancelled(true);
+                if (!LocationChecker.isLocationInsideCube(event.getBlock().getLocation(), edgeDownFrontLeft, edgeUpBackRight)) {
+                    event.setCancelled(true);
+                }
             }
+        }else{
+            event.setCancelled(true);
         }
     }
 
@@ -85,17 +90,21 @@ public class PlotListener implements Listener {
         Location location = event.getBlock().getLocation();
         String world = location.getWorld().getName();
         Player player = event.getPlayer();
-        int factionID = factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId();
-        FactionPlotManager.FactionPlot factionPlot = factionPlotManager.getFactionPlot(factionID);
+        if(factionUserManager.isFactionUserInFaction(UUIDFetcher.getUUID(player))) {
+            int factionID = factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId();
+            FactionPlotManager.FactionPlot factionPlot = factionPlotManager.getFactionPlot(factionID);
 
-        if (world.equals("FactionPlots_world")) {
+            if (world.equals("FactionPlots_world")) {
 
-            Location edgeDownFrontLeft = factionPlot.getEdgeDownFrontLeft();
-            Location edgeUpBackRight = factionPlot.getEdgeUpBackRight();
+                Location edgeDownFrontLeft = factionPlot.getEdgeDownFrontLeft();
+                Location edgeUpBackRight = factionPlot.getEdgeUpBackRight();
 
-            if (!isLocationInsideCube(event.getBlock().getLocation(), edgeDownFrontLeft, edgeUpBackRight)) {
-                event.setCancelled(true);
+                if (!LocationChecker.isLocationInsideCube(event.getBlock().getLocation(), edgeDownFrontLeft, edgeUpBackRight)) {
+                    event.setCancelled(true);
+                }
             }
+        }else{
+            event.setCancelled(true);
         }
     }
 
@@ -177,31 +186,5 @@ public class PlotListener implements Listener {
                 }
             }
         }
-    }
-
-    public boolean isLocationInsideCube(Location location, Location edgeDownFrontLeft, Location edgeUpBackRight) {
-        int x = (int) location.getX();
-        int y = (int) location.getY();
-        int z = (int) location.getZ();
-
-        int x1 = (int) edgeDownFrontLeft.getX();
-        int y1 = (int) edgeDownFrontLeft.getY();
-        int z1 = (int) edgeDownFrontLeft.getZ();
-
-        int x2 = (int) edgeUpBackRight.getX();
-        int y2 = (int) edgeUpBackRight.getY();
-        int z2 = (int) edgeUpBackRight.getZ();
-
-
-        for (int i = Math.min(x1, x2); i <= Math.max(x1, x2); i++) {
-            for (int i1 = Math.min(y1, y2); i1 <= Math.max(y1, y2); i1++) {
-                for (int i2 = Math.min(z1, z2); i2 <= Math.max(z1, z2); i2++) {
-                    if (x == i && y == i1 && z == i2) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
     }
 }

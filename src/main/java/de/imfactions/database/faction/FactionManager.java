@@ -2,6 +2,7 @@ package de.imfactions.database.faction;
 
 import de.imfactions.IMFactions;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class FactionManager {
 

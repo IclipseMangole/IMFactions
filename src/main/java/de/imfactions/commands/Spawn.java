@@ -5,15 +5,11 @@ import de.imfactions.database.UserManager;
 import de.imfactions.database.faction.FactionManager;
 import de.imfactions.database.faction.FactionPlotManager;
 import de.imfactions.database.faction.FactionUserManager;
-import de.imfactions.database.faction.Scheduler;
+import de.imfactions.functions.Scheduler;
 import de.imfactions.util.Command.IMCommand;
-import net.minecraft.server.v1_16_R1.Items;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 public class Spawn {
 

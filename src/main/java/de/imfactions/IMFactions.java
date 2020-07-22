@@ -34,7 +34,8 @@ public class IMFactions extends JavaPlugin {
         data.getMySQL().connect();
         data.createTables();
         data.loadWorlds();
-        data.startScheduler();
+        data.loadScheduler();
+        data.loadScoreboards();
         worldLoader.loadManagers();
         registerCommands();
         registerListener();
@@ -47,6 +48,7 @@ public class IMFactions extends JavaPlugin {
         data.getFactionManager().saveFactions();
         data.getFactionUserManager().saveFactionUsers();
         data.getMySQL().close();
+        data.getScheduler().stopSchedulers();
         worldLoader.savePlots();
     }
 

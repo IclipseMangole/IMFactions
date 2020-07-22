@@ -1,6 +1,10 @@
-package de.imfactions.database.faction;
+package de.imfactions.functions;
 
+import de.imfactions.Data;
 import de.imfactions.IMFactions;
+import de.imfactions.database.faction.FactionManager;
+import de.imfactions.database.faction.FactionPlotManager;
+import de.imfactions.database.faction.FactionUserManager;
 import org.apache.logging.log4j.core.appender.rolling.action.IfAll;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -9,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.scoreboard.DisplaySlot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,20 +27,29 @@ public class Scheduler {
     private HashMap<Player, Integer> countdowns;
     private HashMap<Player, Location> locations;
     private ArrayList<Integer> loadingFactionPlotsTime;
+    private Data data;
+
+    private BukkitTask teleportScheduler;
 
     public Scheduler(IMFactions imFactions) {
         this.imFactions = imFactions;
-        factionManager = imFactions.getData().getFactionManager();
-        factionPlotManager = imFactions.getData().getFactionPlotManager();
-        factionUserManager = imFactions.getData().getFactionUserManager();
+        data = imFactions.getData();
+        factionManager = data.getFactionManager();
+        factionPlotManager = data.getFactionPlotManager();
+        factionUserManager = data.getFactionUserManager();
         countdowns = new HashMap<>();
         locations = new HashMap<>();
         loadingFactionPlotsTime = new ArrayList<>();
 
-        Bukkit.getScheduler().runTaskTimerAsynchronously(imFactions, new Runnable() {
+        startTeleportScheduler();
+    }
+
+    private void startTeleportScheduler() {
+
+        teleportScheduler = Bukkit.getScheduler().runTaskTimerAsynchronously(imFactions, new Runnable() {
             @Override
             public void run() {
-                if(!countdowns.isEmpty()) {
+                if (!countdowns.isEmpty()) {
                     countdowns.forEach((player, integer) -> {
                         //teleport
                         if (integer == 0) {
@@ -67,7 +81,7 @@ public class Scheduler {
                     });
                 }
 
-                if(!loadingFactionPlotsTime.isEmpty()) {
+                if (!loadingFactionPlotsTime.isEmpty()) {
                     loadingFactionPlotsTime.forEach(integer -> {
                         if (integer == 0) {
                             loadingFactionPlotsTime.remove(integer);
@@ -79,6 +93,10 @@ public class Scheduler {
                 }
             }
         }, 0, 20);
+    }
+
+    public void stopSchedulers() {
+        teleportScheduler.cancel();
     }
 
     public HashMap<Player, Integer> getCountdowns() {

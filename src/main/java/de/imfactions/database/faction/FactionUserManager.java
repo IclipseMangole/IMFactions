@@ -1,7 +1,9 @@
 package de.imfactions.database.faction;
 
 import de.imfactions.IMFactions;
+import de.imfactions.util.UUIDFetcher;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -83,6 +85,23 @@ public class FactionUserManager {
             }
         }
         return null;
+    }
+
+    public ArrayList<Player> getOnlineMembers(int factionID){
+        ArrayList<Player> online = new ArrayList<>();
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            UUID uuid = UUIDFetcher.getUUID(player);
+            int factionIDPlayer = getFactionUser(uuid).getFactionId();
+            if(factionIDPlayer == factionID){
+                online.add(player);
+            }
+        }
+        return online;
+    }
+
+    public int getOnlineMembersAmount(int factionID){
+        return getOnlineMembers(factionID).size();
     }
 
     public ArrayList<FactionUser> getFactionInvites(UUID uuid) {

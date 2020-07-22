@@ -6,6 +6,7 @@ package de.imfactions.listener;
 //   |   |      |       |   |         |  |
 //   |    ----   ----   |   |     -----  |---
 
+import de.imfactions.Data;
 import de.imfactions.IMFactions;
 import de.imfactions.database.UserManager;
 import de.imfactions.util.UUIDFetcher;
@@ -59,5 +60,7 @@ public class JoinListener implements Listener {
         } else {
             event.setJoinMessage(null);
         }
+
+        factions.getData().getScoreboard().setScoreboard(player);
     }
 }

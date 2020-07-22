@@ -20,9 +20,11 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import de.imfactions.IMFactions;
 import de.imfactions.database.faction.FactionPlotManager;
+import de.imfactions.util.EmptyChunkGenerator;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.WorldCreator;
 import org.bukkit.craftbukkit.libs.org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -101,6 +103,9 @@ public class WorldLoader {
     }
 
     public void loadPlots() {
+        if(!new File(factions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlotsSave_world/region").exists()){
+            new WorldCreator("FactionPlotsSave_world").generator(new EmptyChunkGenerator()).createWorld();
+        }
         File from = new File(factions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlotsSave_world/region");
         File to = new File(factions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlots_world/region");
 

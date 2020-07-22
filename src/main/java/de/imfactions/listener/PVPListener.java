@@ -7,6 +7,7 @@ import de.imfactions.database.UserManager;
 import de.imfactions.database.faction.FactionManager;
 import de.imfactions.database.faction.FactionPlotManager;
 import de.imfactions.database.faction.FactionUserManager;
+import de.imfactions.util.LocationChecker;
 import de.imfactions.util.UUIDFetcher;
 import net.md_5.bungee.api.ChatColor;
 import net.minecraft.server.v1_16_R1.Entity;
@@ -24,6 +25,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.potion.PotionEffectType;
 
 import static de.imfactions.util.ColorConverter.toHex;
+import static net.minecraft.server.v1_16_R1.DataWatcherRegistry.e;
 
 import java.awt.Color;
 
@@ -81,7 +83,7 @@ public class PVPListener implements Listener {
                 Player damager = (Player) event.getDamager();
                 Player player = (Player) event.getEntity();
 
-                if (!isPlayerInsideCube(player.getLocation(), edgeDownFrontLeft, edgeUpBackRight)) {
+                if (!LocationChecker.isLocationInsideCube(player.getLocation(), edgeDownFrontLeft, edgeUpBackRight)) {
                     int factionIDPlayer = factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId();
                     int factionIDDamager = factionUserManager.getFactionUser(UUIDFetcher.getUUID(damager)).getFactionId();
 
@@ -91,6 +93,24 @@ public class PVPListener implements Listener {
                 } else {
                     event.setCancelled(true);
                     damager.sendMessage("§cPVP isn't enabled in the Safe-Zone");
+                }
+            }
+        }
+    }
+
+    //Kein Schaden
+    @EventHandler
+    public void onDamage(EntityDamageEvent event) {
+        Location location = event.getEntity().getLocation();
+        String world = location.getWorld().getName();
+
+        if (world.equals("FactionPVP_world")) {
+            Location edgeDownFrontLeft = new Location(Bukkit.getWorld("FactionPVP_world"), 29, 69, 1245);
+            Location edgeUpBackRight = new Location(Bukkit.getWorld("FactionPVP_world"), 97, 99, 1279);
+            if(event.getEntity() instanceof Player){
+                Player player = (Player) event.getEntity();
+                if(LocationChecker.isLocationInsideCube(player.getLocation(), edgeDownFrontLeft, edgeUpBackRight)){
+                    event.setCancelled(true);
                 }
             }
         }
@@ -143,7 +163,7 @@ public class PVPListener implements Listener {
 
     //Teleport Abbruch
     @EventHandler
-    public void onDamage(EntityDamageEvent event){
+    public void onDamageTeleport(EntityDamageEvent event){
         Location location = event.getEntity().getLocation();
         String world = location.getWorld().getName();
 
@@ -160,29 +180,4 @@ public class PVPListener implements Listener {
         }
     }
 
-    public boolean isPlayerInsideCube(Location playerLocation, Location edgeDownFrontLeft, Location edgeUpBackRight) {
-        int x = (int) playerLocation.getX();
-        int y = (int) playerLocation.getY();
-        int z = (int) playerLocation.getZ();
-
-        int x1 = (int) edgeDownFrontLeft.getX();
-        int y1 = (int) edgeDownFrontLeft.getY();
-        int z1 = (int) edgeDownFrontLeft.getZ();
-
-        int x2 = (int) edgeUpBackRight.getX();
-        int y2 = (int) edgeUpBackRight.getY();
-        int z2 = (int) edgeUpBackRight.getZ();
-
-
-        for (int i = Math.min(x1, x2); i <= Math.max(x1, x2); i++) {
-            for (int i1 = Math.min(y1, y2); i1 <= Math.max(y1, y2); i1++) {
-                for (int i2 = Math.min(z1, z2); i2 <= Math.max(z1, z2); i2++) {
-                    if (x == i && y == i1 && z == i2) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
 }
