@@ -78,6 +78,15 @@ public class FactionUserManager {
         return false;
     }
 
+    public Player getPlayer(UUID uuid){
+        for(FactionUser factionUser : factionUsers){
+            if(factionUser.getUuid() == uuid){
+                return Bukkit.getPlayer(uuid);
+            }
+        }
+        return null;
+    }
+
     public FactionUser getFactionUser(UUID uuid) {
         for (FactionUser factionUser : factionUsers) {
             if (factionUser.getUuid().equals(uuid)) {
@@ -92,7 +101,7 @@ public class FactionUserManager {
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             UUID uuid = UUIDFetcher.getUUID(player);
-            int factionIDPlayer = getFactionUser(uuid).getFactionId();
+            int factionIDPlayer = getFactionUser(uuid).getFactionID();
             if(factionIDPlayer == factionID){
                 online.add(player);
             }
@@ -118,7 +127,7 @@ public class FactionUserManager {
     public ArrayList<FactionUser> getFactionUsers(int factionId) {
         ArrayList<FactionUser> factionIdUsers = new ArrayList<>();
         for (FactionUser factionUser : factionUsers) {
-            if (factionUser.getFactionId() == factionId) {
+            if (factionUser.getFactionID() == factionId) {
                 factionIdUsers.add(factionUser);
             }
         }
@@ -129,7 +138,7 @@ public class FactionUserManager {
         ArrayList<FactionUser> highestUsers = new ArrayList<>();
         int highest = 0;
         for(FactionUser factionUser : factionUsers){
-            if(factionUser.getFactionId() == factionId) {
+            if(factionUser.getFactionID() == factionId) {
                 if (factionUser.getRank() > highest) {
                     highestUsers.clear();
                     highestUsers.add(factionUser);
@@ -164,7 +173,7 @@ public class FactionUserManager {
             save();
         }
 
-        public int getFactionId() {
+        public int getFactionID() {
             return factionId;
         }
 

@@ -84,8 +84,8 @@ public class PVPListener implements Listener {
                 Player player = (Player) event.getEntity();
 
                 if (!LocationChecker.isLocationInsideCube(player.getLocation(), edgeDownFrontLeft, edgeUpBackRight)) {
-                    int factionIDPlayer = factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId();
-                    int factionIDDamager = factionUserManager.getFactionUser(UUIDFetcher.getUUID(damager)).getFactionId();
+                    int factionIDPlayer = factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionID();
+                    int factionIDDamager = factionUserManager.getFactionUser(UUIDFetcher.getUUID(damager)).getFactionID();
 
                     if (factionIDDamager == factionIDPlayer) {
                         event.setCancelled(true);

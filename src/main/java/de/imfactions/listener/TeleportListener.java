@@ -1,5 +1,6 @@
 package de.imfactions.listener;
 
+import de.imfactions.Data;
 import de.imfactions.IMFactions;
 import de.imfactions.util.LocationChecker;
 import de.imfactions.util.ScoreboardSign;
@@ -10,18 +11,24 @@ import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.Scoreboard;
 
+import java.util.Date;
 
-public class PortalsListener implements Listener {
+
+public class TeleportListener implements Listener {
 
     private IMFactions imFactions;
+    private Data data;
 
-    public PortalsListener(IMFactions imFactions) {
+    public TeleportListener(IMFactions imFactions) {
         this.imFactions = imFactions;
+        data = imFactions.getData();
     }
 
     @EventHandler
@@ -57,7 +64,7 @@ public class PortalsListener implements Listener {
 
                 player.playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 1 ,1);
 
-                player.sendTitle("§l§4☠ PVP-ZONE ☠", "", 10, 100, 10);
+                player.sendTitle("§l§4PVP-ZONE", "", 10, 100, 10);
 
                 //PVP zu Lobby
 
@@ -84,5 +91,40 @@ public class PortalsListener implements Listener {
             }
         }
     }
+
+    //Teleport Abbruch
+    @EventHandler
+    public void onMove(PlayerMoveEvent event) {
+        Location location = event.getFrom();
+        String world = location.getWorld().getName();
+        Player player = event.getPlayer();
+
+            if (data.getScheduler().getLocations().containsKey(player)) {
+                if(!(event.getTo().getX() == event.getFrom().getX() && event.getTo().getY() == event.getFrom().getY() && event.getTo().getZ() == event.getFrom().getZ())) {
+                    player.sendMessage("§cYour Teleport has been interrupted at " + data.getScheduler().getCountdowns().get(player) + " seconds");
+                    player.removePotionEffect(PotionEffectType.CONFUSION);
+                    data.getScheduler().getCountdowns().remove(player);
+                    data.getScheduler().getLocations().remove(player);
+                }
+        }
+    }
+
+    //Teleport Abbruch
+    @EventHandler
+    public void onDamageTeleport(EntityDamageEvent event){
+        Location location = event.getEntity().getLocation();
+        String world = location.getWorld().getName();
+
+            if(event.getEntity() instanceof Player){
+                Player player = (Player) event.getEntity();
+                if(data.getScheduler().getLocations().containsKey(player)){
+                    player.sendMessage("§cYour Teleport has been interrupted at " + data.getScheduler().getCountdowns().get(player) + " seconds");
+                    player.removePotionEffect(PotionEffectType.CONFUSION);
+                    data.getScheduler().getLocations().remove(player);
+                    data.getScheduler().getCountdowns().remove(player);
+                }
+        }
+    }
+
 
 }

@@ -71,42 +71,4 @@ public class LobbyListener implements Listener {
         }
     }
 
-    //Teleport Abbruch
-    @EventHandler
-    public void onMove(PlayerMoveEvent event) {
-        Location location = event.getFrom();
-        String world = location.getWorld().getName();
-        Player player = event.getPlayer();
-
-        if (world.equals("world")) {
-            if (data.getScheduler().getCountdowns().containsKey(player)) {
-                if(!(event.getTo().getX() == event.getFrom().getX() && event.getTo().getY() == event.getFrom().getY() && event.getTo().getZ() == event.getFrom().getZ())) {
-                    player.sendMessage("§cYour Teleport has been interrupted at " + data.getScheduler().getCountdowns().get(player) + " seconds");
-                    player.removePotionEffect(PotionEffectType.CONFUSION);
-                    data.getScheduler().getCountdowns().remove(player);
-                    data.getScheduler().getLocations().remove(player);
-                }
-            }
-        }
-
-    }
-
-    //Teleport Abbruch
-    @EventHandler
-    public void onTeleportDamage(EntityDamageEvent event){
-        Location location = event.getEntity().getLocation();
-        String world = location.getWorld().getName();
-
-        if(world.equals("FactionPlots_world")){
-            if(event.getEntity() instanceof Player){
-                Player player = (Player) event.getEntity();
-                if(data.getScheduler().getLocations().containsKey(player)){
-                    player.sendMessage("§cYour Teleport has been interrupted at " + data.getScheduler().getCountdowns().get(player) + " seconds");
-                    player.removePotionEffect(PotionEffectType.CONFUSION);
-                    data.getScheduler().getLocations().remove(player);
-                    data.getScheduler().getCountdowns().remove(player);
-                }
-            }
-        }
-    }
 }

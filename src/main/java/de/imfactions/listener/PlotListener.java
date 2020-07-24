@@ -47,7 +47,7 @@ public class PlotListener implements Listener {
         String world = location.getWorld().getName();
         Player player = event.getPlayer();
         if(factionUserManager.isFactionUserInFaction(UUIDFetcher.getUUID(player))) {
-            int factionID = factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId();
+            int factionID = factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionID();
             FactionPlotManager.FactionPlot factionPlot = factionPlotManager.getFactionPlot(factionID);
 
             if (world.equals("FactionPlots_world")) {
@@ -91,7 +91,7 @@ public class PlotListener implements Listener {
         String world = location.getWorld().getName();
         Player player = event.getPlayer();
         if(factionUserManager.isFactionUserInFaction(UUIDFetcher.getUUID(player))) {
-            int factionID = factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId();
+            int factionID = factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionID();
             FactionPlotManager.FactionPlot factionPlot = factionPlotManager.getFactionPlot(factionID);
 
             if (world.equals("FactionPlots_world")) {
@@ -120,8 +120,8 @@ public class PlotListener implements Listener {
                 Player damager = (Player) event.getDamager();
                 Player player = (Player) event.getEntity();
 
-                int factionIDPlayer = factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId();
-                int factionIDDamager = factionUserManager.getFactionUser(UUIDFetcher.getUUID(damager)).getFactionId();
+                int factionIDPlayer = factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionID();
+                int factionIDDamager = factionUserManager.getFactionUser(UUIDFetcher.getUUID(damager)).getFactionID();
 
                 if (factionIDDamager == factionIDPlayer) {
                     event.setCancelled(true);
@@ -141,7 +141,7 @@ public class PlotListener implements Listener {
                 Player player = (Player) event.getEntity();
                 if (event.getCause().equals(EntityDamageEvent.DamageCause.VOID)) {
                     event.setCancelled(true);
-                    int factionID = factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId();
+                    int factionID = factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionID();
                     FactionPlotManager.FactionPlot factionPlot = factionPlotManager.getFactionPlot(factionID);
                     player.teleport(factionPlot.getHome());
                     player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);

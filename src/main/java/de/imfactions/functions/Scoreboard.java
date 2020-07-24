@@ -58,7 +58,7 @@ public class Scoreboard {
 
         if (factionUserManager.isFactionUserExists(uuid)) {
             if (factionUserManager.isFactionUserInFaction(uuid)) {
-                int factionID = factionUserManager.getFactionUser(uuid).getFactionId();
+                int factionID = factionUserManager.getFactionUser(uuid).getFactionID();
                 FactionManager.Faction faction = factionManager.getFaction(factionID);
                 factionName = "§f" + faction.getName() + "§e[" + faction.getShortcut() + "]";
                 onlineMembers = "§f" + factionUserManager.getOnlineMembersAmount(factionID) + "/" + faction.getUserAmount();
@@ -94,7 +94,7 @@ public class Scoreboard {
 
         if (factionUserManager.isFactionUserExists(uuid)) {
             if (factionUserManager.isFactionUserInFaction(uuid)) {
-                factionID = factionUserManager.getFactionUser(uuid).getFactionId();
+                factionID = factionUserManager.getFactionUser(uuid).getFactionID();
                 FactionManager.Faction faction = factionManager.getFaction(factionID);
                 factionName = "§f" + faction.getName() + "§e[" + faction.getShortcut() + "]";
                 onlineMembers = "§f" + factionUserManager.getOnlineMembersAmount(factionID) + "/" + faction.getUserAmount();

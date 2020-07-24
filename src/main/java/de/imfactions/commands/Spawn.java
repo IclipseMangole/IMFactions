@@ -43,7 +43,7 @@ public class Spawn {
 
         String world = player.getWorld().getName();
 
-        if (!scheduler.getLocations().containsKey(player)) {
+        if (!scheduler.getCountdowns().containsKey(player)) {
             if (world.equals("FactionPVP_world")) {
                 scheduler.getCountdowns().put(player, 20);
             } else {
