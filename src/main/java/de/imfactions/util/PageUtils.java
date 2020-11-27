@@ -6,13 +6,13 @@ public class PageUtils {
 
     /**
      * @param list       ArrayList with all entrys
-     * @param anzPerPage How many entrys per Page
+     * @param amountPerPage How many entrys per Page
      * @param page       Which page you want the entrys from
      * @return Returns a ArrayList with the entrys of a page
      */
-    public static ArrayList getPage(ArrayList list, int anzPerPage, int page) {
+    public static ArrayList getPage(ArrayList list, int amountPerPage, int page) {
         ArrayList pageList = new ArrayList<>();
-        for (int i = page * anzPerPage; i < (page + 1) * anzPerPage && i < list.size(); i++) {
+        for (int i = page * amountPerPage; i < (page + 1) * amountPerPage && i < list.size(); i++) {
             pageList.add(list.get(i));
         }
         return pageList;

@@ -1,7 +1,7 @@
 package de.imfactions.util;
 
-import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
+import net.minecraft.server.v1_16_R3.*;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Field;

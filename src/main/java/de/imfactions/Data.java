@@ -7,6 +7,9 @@ import de.imfactions.functions.Scheduler;
 import de.imfactions.functions.Scoreboard;
 import de.imfactions.functions.Tablist;
 import de.imfactions.functions.UserSettingsManager;
+import de.imfactions.functions.items.Items;
+import de.imfactions.functions.items.api.ItemAPI;
+import de.imfactions.functions.npc.NPCAPI;
 import de.imfactions.util.Command.CommandRegistration;
 import de.imfactions.util.MySQL;
 import net.md_5.bungee.api.ChatColor;
@@ -22,6 +25,8 @@ public class Data {
     private final MySQL mysql;
     private final UserSettingsManager userSettingsManager;
     private final Tablist tablist;
+    private final ItemAPI itemAPI;
+    private final NPCAPI npcAPI;
 
     //Tables
     private UserManager userManager;
@@ -52,6 +57,9 @@ public class Data {
         mysql = new MySQL(factions);
         userSettingsManager = new UserSettingsManager(factions);
         tablist = new Tablist(factions);
+        itemAPI = new ItemAPI(factions);
+        npcAPI = new NPCAPI(factions);
+        new Items();
     }
 
     public void createTables() {

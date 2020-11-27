@@ -135,7 +135,7 @@ public class FactionPlotManager {
 
     public void loadFactionPlots() {
         try {
-            ResultSet rs = factions.getData().getMySQL().querry("SELECT `factionID`, `edgeDownFrontLeft`, `edgeUpBackRight`, `home`, `reachable`, `position` FROM factionPlots WHERE 1");
+            ResultSet rs = factions.getData().getMySQL().querry("SELECT `factionID`, `edgeDownFrontLeft`, `edgeUpBackRight`, `home`, `reachable`, `position` FROM factionPlots");
             while (rs.next()) {
                 FactionPlot factionPlot = new FactionPlot(rs.getInt("factionID"), LocationBuilder.fromString(rs.getString("edgeDownFrontLeft")), LocationBuilder.fromString(rs.getString("edgeUpBackRight")), LocationBuilder.fromString(rs.getString("home")), rs.getLong("reachable"), rs.getInt("position"));
                 factionPlots.add(factionPlot);

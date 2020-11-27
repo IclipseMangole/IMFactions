@@ -9,8 +9,11 @@ package de.imfactions.listener;
 import de.imfactions.Data;
 import de.imfactions.IMFactions;
 import de.imfactions.database.UserManager;
+import de.imfactions.functions.items.api.Item;
+import de.imfactions.functions.items.api.ItemRarity;
 import de.imfactions.util.UUIDFetcher;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -35,10 +38,14 @@ public class JoinListener implements Listener {
 
     @EventHandler
     public void onLogin(PlayerLoginEvent event) {
+        /*
         if (!event.getHostname().equalsIgnoreCase("207.180.241.195:25565")) {
             event.setResult(PlayerLoginEvent.Result.KICK_OTHER);
             event.setKickMessage("§4Please join our Proxy to connect to this Server.\n Thank you!");
         }
+
+         */
+
     }
 
 
@@ -61,6 +68,9 @@ public class JoinListener implements Listener {
             event.setJoinMessage(null);
         }
 
+        player.getInventory().setItem(0, Item.createItem(Material.DIAMOND_SWORD, ItemRarity.RARE, 0));
+        player.getInventory().setItem(1, Item.createItem(Material.BOW, ItemRarity.EPIC, 0));
+        System.out.println("Set Bow");
         factions.getData().getScoreboard().setScoreboard(player);
     }
 }

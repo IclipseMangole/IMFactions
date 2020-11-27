@@ -84,7 +84,7 @@ public class UserManager {
 
     public void loadUsers() {
         try {
-            ResultSet rs = factions.getData().getMySQL().querry("SELECT uuid, ether, onlinetime, firstJoin, lastSeen FROM `user` WHERE 1");
+            ResultSet rs = factions.getData().getMySQL().querry("SELECT uuid, ether, onlinetime, firstJoin, lastSeen FROM `user`");
             while (rs.next()) {
                 UUID uuid = UUID.fromString(rs.getString("uuid"));
                 User user = new User(uuid, rs.getInt("ether"), rs.getLong("onlinetime"), rs.getDate("firstJoin"), rs.getLong("lastSeen"));

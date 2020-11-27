@@ -41,7 +41,7 @@ public class FactionUserManager {
 
     private void loadFactionUser() {
         try {
-            ResultSet rs = factions.getData().getMySQL().querry("SELECT `uuid`, `factionId`, `rank` FROM factionUser WHERE 1");
+            ResultSet rs = factions.getData().getMySQL().querry("SELECT `uuid`, `factionId`, `rank` FROM factionUser");
             while (rs.next()) {
                 factionUsers.add(new FactionUser(UUID.fromString(rs.getString("uuid")), rs.getInt("factionId"), rs.getInt("rank")));
             }

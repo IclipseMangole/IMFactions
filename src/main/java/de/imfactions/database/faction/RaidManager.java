@@ -46,7 +46,7 @@ public class RaidManager {
 
     private void loadRaids() {
         try {
-            ResultSet rs = imFactions.getData().getMySQL().querry("SELECT `raidID`, `raidState`, `factionIdAttackers`, `factionIdDefenders`, `start`, `time` FROM raids WHERE 1");
+            ResultSet rs = imFactions.getData().getMySQL().querry("SELECT `raidID`, `raidState`, `factionIdAttackers`, `factionIdDefenders`, `start`, `time` FROM raids");
             while (rs.next()) {
                 raids.add(new Raid(rs.getInt("raidID"), rs.getString("raidState"), rs.getInt("factionIdAttackers"), rs.getInt("factionIdDefenders"), rs.getDate("start"), rs.getLong("time")));
             }
@@ -101,7 +101,7 @@ public class RaidManager {
 
     public int getHighestRaidID() {
         try {
-            ResultSet rs = data.getMySQL().querry("SELECT MAX(`raidID`) AS `raidID` FROM `raids` WHERE 1");
+            ResultSet rs = data.getMySQL().querry("SELECT MAX(`raidID`) AS `raidID` FROM `raids`");
             if (rs.next()) {
                 return rs.getInt("raidID");
             }

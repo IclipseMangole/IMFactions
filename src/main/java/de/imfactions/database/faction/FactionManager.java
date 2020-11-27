@@ -134,7 +134,7 @@ public class FactionManager {
 
     public void loadFactions() {
         try {
-            ResultSet rs = factions.getData().getMySQL().querry("SELECT `factionID`, `userAmount`, `name`, `shortcut`, `foundingDate`, `raidProtection`, `raidEnergy` FROM `factions` WHERE 1");
+            ResultSet rs = factions.getData().getMySQL().querry("SELECT `factionID`, `userAmount`, `name`, `shortcut`, `foundingDate`, `raidProtection`, `raidEnergy` FROM `factions`");
             while (rs.next()) {
                 Faction faction = new Faction(rs.getInt("factionID"), rs.getString("name"), rs.getString("shortcut"), rs.getInt("userAmount"), rs.getDate("foundingDate"), rs.getLong("raidProtection"), rs.getInt("raidEnergy"));
                 factionsList.add(faction);
@@ -153,7 +153,7 @@ public class FactionManager {
     public ArrayList<Faction> getFactions() {
         ArrayList<Faction> factions = new ArrayList<>();
         try {
-            ResultSet rs = this.factions.getData().getMySQL().querry("SELECT `factionID`, `userAmount`, `name`, `shortcut`, `foundingDate`, `raidProtection`, `raidEnergy` FROM `factions` WHERE 1");
+            ResultSet rs = this.factions.getData().getMySQL().querry("SELECT `factionID`, `userAmount`, `name`, `shortcut`, `foundingDate`, `raidProtection`, `raidEnergy` FROM `factions`");
             while (rs.next()) {
                 Faction faction = new Faction(rs.getInt("factionID"), rs.getString("name"), rs.getString("shortcut"), rs.getInt("userAmount"), rs.getDate("foundingDate"), rs.getLong("raidProtection"), rs.getInt("raidEnergy"));
                 factions.add(faction);
@@ -166,7 +166,7 @@ public class FactionManager {
 
     public int getHighestFactionID() {
         try {
-            ResultSet rs = this.factions.getData().getMySQL().querry("SELECT MAX(`factionID`) AS `factionID` FROM `factions` WHERE 1");
+            ResultSet rs = this.factions.getData().getMySQL().querry("SELECT MAX(`factionID`) AS `factionID` FROM `factions`");
             if (rs.next()) {
                 return rs.getInt("factionID");
             }

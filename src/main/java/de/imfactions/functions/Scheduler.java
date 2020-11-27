@@ -7,15 +7,16 @@ import de.imfactions.database.faction.FactionPlotManager;
 import de.imfactions.database.faction.FactionUserManager;
 import de.imfactions.database.faction.RaidManager;
 import de.imfactions.util.UUIDFetcher;
-import org.apache.logging.log4j.core.appender.rolling.action.IfAll;
+import net.minecraft.server.v1_16_R3.Packet;
+import net.minecraft.server.v1_16_R3.PacketPlayOutEntityStatus;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitTask;
-import org.bukkit.scoreboard.DisplaySlot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,13 +64,15 @@ public class Scheduler {
                          * Teleports for Spawn and Home
                          */
 
-                        if(locations.containsKey(player)) {
+                        if (locations.containsKey(player)) {
                             if (integer == 0) {
                                 Location location = locations.get(player);
                                 Bukkit.getScheduler().runTask(imFactions, new Runnable() {
                                     @Override
                                     public void run() {
                                         player.teleport(location);
+                                        Packet packet = new PacketPlayOutEntityStatus(((CraftPlayer) player).getHandle(), (byte) 46);
+                                        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
                                         player.removePotionEffect(PotionEffectType.CONFUSION);
                                         player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
                                     }
@@ -83,7 +86,7 @@ public class Scheduler {
                                     @Override
                                     public void run() {
                                         player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 100000, 0));
-                                        if(integer <= 5) {
+                                        if (integer <= 5) {
                                             player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_LAND, 1, 1);
                                         }
                                     }
@@ -96,7 +99,7 @@ public class Scheduler {
                              * Teleports for Raids
                              */
 
-                        }else if(startingRaids.containsKey(player)){
+                        } else if (startingRaids.containsKey(player)) {
                             if (integer == 0) {
                                 Location location = startingRaids.get(player);
                                 Bukkit.getScheduler().runTask(imFactions, new Runnable() {
@@ -114,7 +117,7 @@ public class Scheduler {
                                         FactionUserManager.FactionUser factionUser = factionUserManager.getFactionUser(uuid);
                                         int factionID = factionUser.getFactionID();
                                         int raidID = raidManager.getActiveRaidID(factionID);
-                                        if(!raidManager.getRaid(raidID).getRaidState().equals("scouting")) {
+                                        if (!raidManager.getRaid(raidID).getRaidState().equals("scouting")) {
                                             raidManager.getRaid(raidID).setRaidState("scouting");
                                         }
                                         //countdown for automatic beginning
@@ -129,7 +132,7 @@ public class Scheduler {
                                 Bukkit.getScheduler().runTask(imFactions, new Runnable() {
                                     @Override
                                     public void run() {
-                                        if(integer <= 10) {
+                                        if (integer <= 10) {
                                             player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_LAND, 1, 1);
                                         }
                                     }
@@ -142,8 +145,8 @@ public class Scheduler {
                              * Countdown for automatic Beginning while scouting
                              */
 
-                        }else{
-                            if(integer == 0){
+                        } else {
+                            if (integer == 0) {
 
                                 /**
                                  * scouting Raid is now a active Raid
@@ -155,23 +158,23 @@ public class Scheduler {
                                 int factionID = factionUser.getFactionID();
                                 int raidID = raidManager.getActiveRaidID(factionID);
                                 RaidManager.Raid raid = raidManager.getRaid(raidID);
-                                if(!raid.getRaidState().equals("active")) {
+                                if (!raid.getRaidState().equals("active")) {
                                     raid.setRaidState("active");
                                 }
                                 Bukkit.getScheduler().runTask(imFactions, new Runnable() {
                                     @Override
                                     public void run() {
                                         player.playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 1, 1);
-                                        player.sendTitle("§4§lRaid has begun", "", 2, 20 , 2);
+                                        player.sendTitle("§4§lRaid has begun", "", 2, 20, 2);
                                     }
                                 });
                                 countdowns.remove(player);
-                            }else{
-                                if(integer == 60 || integer == 30 || integer == 10 || integer <= 5){
+                            } else {
+                                if (integer == 60 || integer == 30 || integer == 10 || integer <= 5) {
                                     Bukkit.getScheduler().runTask(imFactions, new Runnable() {
                                         @Override
                                         public void run() {
-                                           player.sendMessage("§cThe time limit for scouting will be over in " + integer + " seconds and the Raid will start automatically");
+                                            player.sendMessage("§cThe time limit for scouting will be over in " + integer + " seconds and the Raid will start automatically");
                                         }
                                     });
                                 }
@@ -212,7 +215,7 @@ public class Scheduler {
         return locations;
     }
 
-    public HashMap<Player, Location> getRaids(){
+    public HashMap<Player, Location> getRaids() {
         return startingRaids;
     }
 }

@@ -1,4 +1,4 @@
-package de.imfactions.functions.items;
+package de.imfactions.functions.items.api;
 
 //   |    ----  |       |   |---  -----  |---
 //   |   |      |       |   |  |  |      |
@@ -7,16 +7,30 @@ package de.imfactions.functions.items;
 //   |    ----   ----   |   |     -----  |---
 
 
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
+import org.bukkit.event.Event;
 
 /**
  * Created by Iclipse on 20.06.2020
  */
 public enum ItemRarity {
 
-    COMMON(0, ChatColor.GRAY), UNCOMMON(1, ChatColor.GREEN), RARE(2, ChatColor.BLUE), EPIC(3, ChatColor.DARK_PURPLE), LEGENDARY(4, ChatColor.DARK_RED);
+    COMMON(0, ChatColor.of("#363636")), UNCOMMON(1, ChatColor.of("#154400")), RARE(2, ChatColor.of("#0044CC")), EPIC(3, ChatColor.of("#49007F")), LEGENDARY(4, ChatColor.of("#A10000"));
+
+    private int id;
+    private ChatColor color;
 
     ItemRarity(int id, ChatColor color) {
+        this.id = id;
+        this.color = color;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public ChatColor getColor() {
+        return color;
     }
 
     public static ItemRarity valueOf(int id) {

@@ -28,13 +28,13 @@ import java.util.UUID;
 public class Faction {
 
     private StringBuilder builder;
-    private IMFactions factions;
-    private FactionManager factionManager;
-    private FactionUserManager factionUserManager;
-    private UserManager userManager;
-    private FactionPlotManager factionPlotManager;
-    private WorldLoader worldLoader;
-    private Scheduler scheduler;
+    private final IMFactions factions;
+    private final FactionManager factionManager;
+    private final FactionUserManager factionUserManager;
+    private final UserManager userManager;
+    private final FactionPlotManager factionPlotManager;
+    private final WorldLoader worldLoader;
+    private final Scheduler scheduler;
 
     public Faction(IMFactions factions) {
         this.factions = factions;
@@ -536,12 +536,7 @@ public class Faction {
                             member.append("§2" + UUIDFetcher.getName(memberUser.getUuid()) + "§7, ");
                         }
                     });
-                    for (int i = 0; i < 68 / 2 - member.length() / 2; i++) {
-                        air.append(" ");
-                    }
-                    air.append(member);
-                    player.sendMessage(String.valueOf(air));
-                    air.delete(0, air.length());
+                    airLine(player, air, member);
                     //invited
                     player.sendMessage("§7--------------------§8INVITED§7--------------------");
                     ranks.forEach(invitedUser -> {
@@ -549,12 +544,7 @@ public class Faction {
                             invited.append("§8" + UUIDFetcher.getName(invitedUser.getUuid()) + "§7, ");
                         }
                     });
-                    for (int i = 0; i < 68 / 2 - invited.length() / 2; i++) {
-                        air.append(" ");
-                    }
-                    air.append(invited);
-                    player.sendMessage(String.valueOf(air));
-                    air.delete(0, air.length());
+                    airLine(player, air, invited);
 
                     TextComponent textComponent = new TextComponent();
                     textComponent.setText("§7[§eClick Here§7]");
@@ -570,6 +560,15 @@ public class Faction {
         } else {
             player.sendMessage("§cYou aren't in a Faction");
         }
+    }
+
+    private void airLine(Player player, StringBuilder air, StringBuilder member) {
+        for (int i = 0; i < 68 / 2 - member.length() / 2; i++) {
+            air.append(" ");
+        }
+        air.append(member);
+        player.sendMessage(String.valueOf(air));
+        air.delete(0, air.length());
     }
 
     @IMCommand(

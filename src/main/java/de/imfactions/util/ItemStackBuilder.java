@@ -1,8 +1,13 @@
 package de.imfactions.util;
 
+import com.google.common.collect.Multimap;
 import com.mojang.authlib.GameProfile;
+import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -32,6 +37,8 @@ public class ItemStackBuilder {
     private String name = null;
     private List<String> lore = null;
     private int customModelData = 0;
+    private double attackSpeed = -1;
+    private double damage = -1;
 
     // Features
     private boolean unbreakable = false;
@@ -124,6 +131,16 @@ public class ItemStackBuilder {
         return this;
     }
 
+    public ItemStackBuilder withAttackSpeed(double attackSpeed) {
+        this.attackSpeed = attackSpeed;
+        return this;
+    }
+
+    public ItemStackBuilder withDamage(double damage){
+        this.damage = damage;
+        return this;
+    }
+
     // Just calls ItemMeta#setUnbreakable(true), don't know if compatible with old versions
     public ItemStackBuilder makeUnbreakable() {
         this.unbreakable = true;
@@ -179,7 +196,6 @@ public class ItemStackBuilder {
         final ItemMeta itemMeta = itemStack.getItemMeta();
 
         // Meta
-
         ((Damageable) itemMeta).setDamage(durability);
 
         // Set localized name if not null
@@ -198,6 +214,7 @@ public class ItemStackBuilder {
         if (customModelData != 0) {
             itemMeta.setCustomModelData(customModelData);
         }
+
         // Add enchantments if any
         if (enchantments != null && !enchantments.isEmpty()) {
             // Doing this so I don't have to keep unsafe and safe enchantments separately
@@ -213,8 +230,16 @@ public class ItemStackBuilder {
         // You could of course always implement your own unbreakable method here
         if (unbreakable) itemMeta.setUnbreakable(true);
 
+
+        /*
+        if(attackSpeed != -1){
+            itemMeta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, new AttributeModifier("Custom Name", attackSpeed - ItemAttributes.getAttackSpeed(material), AttributeModifier.Operation.ADD_NUMBER));
+        }
+         */
+
         // Set the new ItemMeta
         itemStack.setItemMeta(itemMeta);
+
 
         if (profile != null) {
             SkullUtils.setProfile(profile, itemStack);
