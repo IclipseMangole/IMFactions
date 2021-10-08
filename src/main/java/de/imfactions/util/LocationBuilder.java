@@ -25,6 +25,19 @@ public class LocationBuilder {
         return loc;
     }
 
+    public static String getString(Location location){
+        String loc = "( ";
+
+        loc = loc + Math.round(location.getX());
+        loc = loc + " | ";
+        loc = loc + Math.round(location.getY());
+        loc = loc + " | ";
+        loc = loc + Math.round(location.getZ());
+        loc = loc + " ) ";
+
+        return loc;
+    }
+
 
     public static Location fromString(String location) {
         Location loc = null;

@@ -1,17 +1,14 @@
-package de.imfactions.commands;
+package de.imfactions.functions.factionPlot;
 
 import de.imfactions.Data;
 import de.imfactions.IMFactions;
-import de.imfactions.database.faction.FactionManager;
-import de.imfactions.database.faction.FactionPlotManager;
-import de.imfactions.database.faction.FactionUserManager;
 import de.imfactions.functions.WorldLoader;
 import de.imfactions.util.Command.IMCommand;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class FactionPlot {
+public class FactionPlotCommand {
 
     private IMFactions imFactions;
     private FactionUserManager factionUserManager;
@@ -74,10 +71,10 @@ public class FactionPlot {
             description = "Deletes a FactionPlot on your location"
     )
     public void delete(CommandSender sender) {
-            Player player = (Player) sender;
+        Player player = (Player) sender;
 
-            worldLoader.deleteMap(player.getLocation());
-            player.sendMessage("§aThe FactionPlot will be uninstalled soon");
+        worldLoader.deleteMap(player.getLocation());
+        player.sendMessage("§aThe FactionPlot will be uninstalled soon");
     }
 
     private void add(String usage, String description) {

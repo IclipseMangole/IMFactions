@@ -1,9 +1,9 @@
 package de.imfactions;
 
-import de.imfactions.commands.Ether;
-import de.imfactions.commands.Faction;
-import de.imfactions.commands.FactionPlot;
-import de.imfactions.commands.Spawn;
+import de.imfactions.commands.*;
+import de.imfactions.functions.factionPlot.PlotListener;
+import de.imfactions.functions.lobby.LobbyListener;
+import de.imfactions.functions.pvp.PVPListener;
 import de.imfactions.listener.*;
 import de.imfactions.functions.WorldLoader;
 import org.bukkit.Bukkit;
@@ -67,12 +67,13 @@ public class IMFactions extends JavaPlugin {
         data.getRegistration().register(new de.imfactions.commands.World(this), this);
         data.getRegistration().register(new Spawn(this), this);
         data.getRegistration().register(new FactionPlot(this), this);
+        data.getRegistration().register(new Raid(this), this);
     }
 
     public void registerListener() {
         Bukkit.getPluginManager().registerEvents(new JoinListener(this), this);
         Bukkit.getPluginManager().registerEvents(new QuitListener(this), this);
-        Bukkit.getPluginManager().registerEvents(new PortalsListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new TeleportListener(this), this);
         Bukkit.getPluginManager().registerEvents(new LobbyListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PVPListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PlotListener(this), this);

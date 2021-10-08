@@ -1,4 +1,4 @@
-package de.imfactions.database.faction;
+package de.imfactions.functions.factionMember;
 
 import de.imfactions.IMFactions;
 import de.imfactions.util.UUIDFetcher;
@@ -10,7 +10,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class FactionUserManager {
+public class FactionMemberUtil {
 
     private IMFactions factions;
     private ArrayList<FactionUser> factionUsers;
@@ -78,6 +78,15 @@ public class FactionUserManager {
         return false;
     }
 
+    public Player getPlayer(UUID uuid){
+        for(FactionUser factionUser : factionUsers){
+            if(factionUser.getUuid() == uuid){
+                return Bukkit.getPlayer(uuid);
+            }
+        }
+        return null;
+    }
+
     public FactionUser getFactionUser(UUID uuid) {
         for (FactionUser factionUser : factionUsers) {
             if (factionUser.getUuid().equals(uuid)) {
@@ -92,7 +101,7 @@ public class FactionUserManager {
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             UUID uuid = UUIDFetcher.getUUID(player);
-            int factionIDPlayer = getFactionUser(uuid).getFactionId();
+            int factionIDPlayer = getFactionUser(uuid).getFactionID();
             if(factionIDPlayer == factionID){
                 online.add(player);
             }
@@ -118,7 +127,7 @@ public class FactionUserManager {
     public ArrayList<FactionUser> getFactionUsers(int factionId) {
         ArrayList<FactionUser> factionIdUsers = new ArrayList<>();
         for (FactionUser factionUser : factionUsers) {
-            if (factionUser.getFactionId() == factionId) {
+            if (factionUser.getFactionID() == factionId) {
                 factionIdUsers.add(factionUser);
             }
         }
@@ -129,7 +138,7 @@ public class FactionUserManager {
         ArrayList<FactionUser> highestUsers = new ArrayList<>();
         int highest = 0;
         for(FactionUser factionUser : factionUsers){
-            if(factionUser.getFactionId() == factionId) {
+            if(factionUser.getFactionID() == factionId) {
                 if (factionUser.getRank() > highest) {
                     highestUsers.clear();
                     highestUsers.add(factionUser);
@@ -140,84 +149,5 @@ public class FactionUserManager {
             }
         }
         return  highestUsers;
-    }
-
-    public class FactionUser {
-
-        UUID uuid;
-        int factionId;
-        int rank;
-        //King 3, Veteran 2, Knight 1, Member 0, Invited -1
-
-        private FactionUser(UUID uuid, int factionId, int rank) {
-            this.factionId = factionId;
-            this.uuid = uuid;
-            this.rank = rank;
-        }
-
-        public FactionUser(UUID uuid, int factionId, int rank, boolean save) {
-            this.uuid = uuid;
-            this.factionId = factionId;
-            this.rank = rank;
-            createFactionUser(uuid, factionId, rank);
-            factionUsers.add(this);
-            save();
-        }
-
-        public int getFactionId() {
-            return factionId;
-        }
-
-        public UUID getUuid() {
-            return uuid;
-        }
-
-        public int getRank() {
-            return rank;
-        }
-
-        public String getRankname() {
-            switch (rank) {
-                case -1:
-                    return "§7Invited";
-                case 0:
-                    return "§2Member";
-                case 1:
-                    return "§9Knight";
-                case 2:
-                    return "§5Veteran";
-                default:
-                    return "§4King";
-            }
-        }
-
-        public void setRank(int rank) {
-            this.rank = rank;
-        }
-
-        public void setFactionId(int factionId) {
-            this.factionId = factionId;
-        }
-
-        public void setUuid(UUID uuid) {
-            this.uuid = uuid;
-        }
-
-        public boolean isHigherRank(int rank) {
-            if (this.rank > rank) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        public void save() {
-            factions.getData().getMySQL().update("UPDATE factionUser SET `factionId` = '" + this.factionId + "', `rank` = '" + rank + "' WHERE `uuid` = '" + this.uuid.toString() + "'");
-        }
-
-        public void delete() {
-            factions.getData().getMySQL().update("DELETE FROM factionUser WHERE `uuid` = '" + this.uuid.toString() + "'");
-            factionUsers.remove(this);
-        }
     }
 }

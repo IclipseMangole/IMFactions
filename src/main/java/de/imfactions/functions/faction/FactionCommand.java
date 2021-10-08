@@ -1,14 +1,12 @@
-package de.imfactions.commands;
+package de.imfactions.functions.faction;
 
 import de.imfactions.IMFactions;
 import de.imfactions.database.UserManager;
-import de.imfactions.database.faction.FactionManager;
-import de.imfactions.database.faction.FactionPlotManager;
-import de.imfactions.database.faction.FactionUserManager;
 import de.imfactions.functions.Scheduler;
 import de.imfactions.functions.WorldLoader;
 import de.imfactions.util.Command.IMCommand;
 import de.imfactions.util.LocationBuilder;
+import de.imfactions.util.LocationChecker;
 import de.imfactions.util.UUIDFetcher;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -19,12 +17,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.UUID;
 
-public class Faction {
+public class FactionCommand {
 
     private StringBuilder builder;
     private IMFactions factions;
@@ -87,7 +86,7 @@ public class Faction {
                 if(name.length() < 31) {
                     if(shortcut.length() == 3) {
                         if(factionPlotManager.getLoadingFactionPlots() < 3) {
-                            int factionId = factionManager.getHighestFactionId() + 1;
+                            int factionId = factionManager.getHighestFactionID() + 1;
                             factionManager.createFaction(factionId, name, shortcut);
                             factionUserManager.createFactionUser(UUIDFetcher.getUUID(player), factionId, 3, true);
                             //FactionPlot
@@ -131,22 +130,24 @@ public class Faction {
 
         if (factionUserManager.isFactionUserExists(UUIDFetcher.getUUID(player))) {
             if (factionUserManager.isFactionUserInFaction(UUIDFetcher.getUUID(player))) {
-                if (factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)) != null && factionManager.getFaction(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId()) != null) {
-                    if (factionManager.getFaction(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId()).getUserAmount() == 1) {
+                if (factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)) != null && factionManager.getFaction(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionID()) != null) {
+                    if (factionManager.getFaction(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionID()).getUserAmount() == 1) {
                         //FactionPlots
-                        player.teleport(factions.getData().getWorldSpawn());
-                        int factionId = factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId();
+                        if(player.getWorld().getName().equals("FactionPlots_world")) {
+                            player.teleport(factions.getData().getWorldSpawn());
+                        }
+                        int factionId = factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionID();
                         int position = factionPlotManager.getFactionPlot(factionId).getPosition();
                         worldLoader.deleteMap(factionPlotManager.getEdgeDownFrontLeft(position));
                         factionPlotManager.getFactionPlot(factionId).deleteFactionPlot();
 
-                        factionManager.getFaction(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId()).deleteFaction();
+                        factionManager.getFaction(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionID()).deleteFaction();
                         factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).delete();
                         player.sendMessage("§aYou left the Faction. The Faction isn't existing anymore.");
 
                     } else {
                         player.teleport(factions.getData().getWorldSpawn());
-                        int factionId = factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId();
+                        int factionId = factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionID();
                         if (factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getRank() == 3) {
                             factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).delete();
                             ArrayList<FactionUserManager.FactionUser> highestUser = factionUserManager.getHighestFactionUsers(factionId);
@@ -202,16 +203,16 @@ public class Faction {
             if (factionUserManager.isFactionUserInFaction(UUIDFetcher.getUUID(player))) {
                 if (factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getRank() > 0) {
                     if (!factionUserManager.isFactionUserInFaction(uuidInvite) && factionUserManager.getFactionUser(uuidInvite) == null) {
-                        factionUserManager.createFactionUser(uuidInvite, factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId(), -1, true);
+                        factionUserManager.createFactionUser(uuidInvite, factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionID(), -1, true);
                         player.sendMessage("§aYou invited §e" + name + "§a to join your Faction");
 
                         TextComponent command = new TextComponent();
-                        command.setText("/faction accept " + factionManager.getFactionName(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId()));
+                        command.setText("/faction accept " + factionManager.getFactionName(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionID()));
                         command.setColor(net.md_5.bungee.api.ChatColor.YELLOW);
-                        command.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/faction accept " + factionManager.getFactionName(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId())));
+                        command.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/faction accept " + factionManager.getFactionName(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionID())));
                         command.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§eClick to join").create()));
 
-                        Bukkit.getPlayer(name).spigot().sendMessage(new ComponentBuilder("You got invited by the Faction ").color(net.md_5.bungee.api.ChatColor.GREEN).append(factionManager.getFaction(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId()).getName()).color(net.md_5.bungee.api.ChatColor.YELLOW).append(". Do ").color(net.md_5.bungee.api.ChatColor.GREEN).append(command).append(" to join the Faction").color(net.md_5.bungee.api.ChatColor.GREEN).create());
+                        Bukkit.getPlayer(name).spigot().sendMessage(new ComponentBuilder("You got invited by the Faction ").color(net.md_5.bungee.api.ChatColor.GREEN).append(factionManager.getFaction(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionID()).getName()).color(net.md_5.bungee.api.ChatColor.YELLOW).append(". Do ").color(net.md_5.bungee.api.ChatColor.GREEN).append(command).append(" to join the Faction").color(net.md_5.bungee.api.ChatColor.GREEN).create());
                     } else {
                         player.sendMessage("§cThis Player is already member of a Faction");
                     }
@@ -247,7 +248,7 @@ public class Faction {
                     factionManager.getFaction(name).setUserAmount(factionManager.getFaction(name).getUserAmount() + 1);
                     factionUserManager.createFactionUser(UUIDFetcher.getUUID(player), factionManager.getFaction(name).getId(), 0, true);
                     player.sendMessage("§aYou joined the Faction '§e" + name + "§a'");
-                    factionUserManager.getFactionUsers(factionManager.getFactionId(name)).forEach(factionUser -> {
+                    factionUserManager.getFactionUsers(factionManager.getFactionID(name)).forEach(factionUser -> {
                         Bukkit.getPlayer(UUIDFetcher.getName(factionUser.getUuid())).sendMessage("§e" + player.getName() + "§a joined the Faction");
                     });
                 } else {
@@ -279,7 +280,7 @@ public class Faction {
                 if (factionUserManager.isFactionUserInFaction(UUIDFetcher.getUUID(player))) {
                     if (factionUserManager.isFactionUserExists(uuidKick) && factionUserManager.getFactionUser(uuidKick) != null) {
                         if (factionUserManager.isFactionUserInFaction(uuidKick)) {
-                            if (factionUserManager.getFactionUser(uuidKick).getFactionId() == factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId()) {
+                            if (factionUserManager.getFactionUser(uuidKick).getFactionID() == factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionID()) {
                                 if (!factionUserManager.getFactionUser(uuidKick).equals(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)))) {
                                     if (factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).isHigherRank(factionUserManager.getFactionUser(uuidKick).getRank())) {
                                         factionUserManager.getFactionUser(uuidKick).delete();
@@ -288,10 +289,10 @@ public class Faction {
                                             Bukkit.getPlayer(kick).teleport(factions.getData().getWorldSpawn());
                                         }
                                         Bukkit.getPlayer(kick).sendMessage("§e" + player.getName() + "§a kicked you out of the Faction");
-                                        factionUserManager.getFactionUsers(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId()).forEach(factionUser -> {
+                                        factionUserManager.getFactionUsers(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionID()).forEach(factionUser -> {
                                             Bukkit.getPlayer(UUIDFetcher.getName(factionUser.getUuid())).sendMessage("§e" + kick + "§a was kicked out of the Faction");
                                         });
-                                        FactionManager.Faction faction = factionManager.getFaction(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId());
+                                        FactionManager.Faction faction = factionManager.getFaction(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionID());
                                         faction.setUserAmount(faction.getUserAmount() - 1);
                                     } else {
                                         player.sendMessage("§cYou have to be a higher Rank to kick this Player");
@@ -334,7 +335,7 @@ public class Faction {
         if (userManager.isUserExists(promote)) {
             UUID uuidPromote = UUIDFetcher.getUUID(promote);
             if (factionUserManager.isFactionUserInFaction(UUIDFetcher.getUUID(player))) {
-                if (factionUserManager.getFactionUser(uuidPromote) != null && factionUserManager.getFactionUser(uuidPromote).getFactionId() == factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId()) {
+                if (factionUserManager.getFactionUser(uuidPromote) != null && factionUserManager.getFactionUser(uuidPromote).getFactionID() == factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionID()) {
                     if (!factionUserManager.getFactionUser(uuidPromote).equals(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)))) {
                         if (factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).isHigherRank(factionUserManager.getFactionUser(uuidPromote).getRank())) {
                             if (factionUserManager.getFactionUser(uuidPromote).getRank() < 2) {
@@ -380,7 +381,7 @@ public class Faction {
         if (userManager.isUserExists(demote)) {
             UUID uuidDemote = UUIDFetcher.getUUID(demote);
             if (factionUserManager.isFactionUserInFaction(UUIDFetcher.getUUID(player))) {
-                if (factionUserManager.getFactionUser(uuidDemote) != null && factionUserManager.getFactionUser(uuidDemote).getFactionId() == (factionUserManager.getFactionUser(UUIDFetcher.getUUID(player))).getFactionId()) {
+                if (factionUserManager.getFactionUser(uuidDemote) != null && factionUserManager.getFactionUser(uuidDemote).getFactionID() == (factionUserManager.getFactionUser(UUIDFetcher.getUUID(player))).getFactionID()) {
                     if (!factionUserManager.getFactionUser(uuidDemote).equals(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)))) {
                         if (factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).isHigherRank(factionUserManager.getFactionUser(uuidDemote).getRank())) {
                             if (factionUserManager.getFactionUser(uuidDemote).getRank() > 0) {
@@ -421,12 +422,12 @@ public class Faction {
 
         if (factionUserManager.isFactionUserExists(UUIDFetcher.getUUID(player))) {
             if (factionUserManager.isFactionUserInFaction(UUIDFetcher.getUUID(player))) {
-                if (factionManager.getFaction(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId()) != null) {
+                if (factionManager.getFaction(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionID()) != null) {
                     player.sendMessage("§7---------------§eFactionInfos§7---------------");
                     //Name
-                    player.sendMessage("§7Name: §e" + factionManager.getFaction(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId()).getName() + "§7[§e" + factionManager.getFaction(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId()).getShortcut() + "§7]");
+                    player.sendMessage("§7Name: §e" + factionManager.getFaction(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionID()).getName() + "§7[§e" + factionManager.getFaction(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionID()).getShortcut() + "§7]");
                     //RaidProtection
-                    int totalSecs = (int) ((int) factionManager.getFaction(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId()).getRaidProtection() - System.currentTimeMillis()) / 1000;
+                    int totalSecs = (int) ((int) factionManager.getFaction(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionID()).getRaidProtection() - System.currentTimeMillis()) / 1000;
                     int hours = totalSecs / 3600;
                     int minutes = (totalSecs % 3600) / 60;
                     int seconds = totalSecs % 60;
@@ -434,12 +435,12 @@ public class Faction {
                     player.sendMessage("§7RaidProtection: §e" + timeString);
                     //Founding Date
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    player.sendMessage("§7FoundingDate: §e" + simpleDateFormat.format(factionManager.getFaction(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId()).getFoundingDate()));
+                    player.sendMessage("§7FoundingDate: §e" + simpleDateFormat.format(factionManager.getFaction(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionID()).getFoundingDate()));
                     //Member Amount
                     TextComponent textComponent = new TextComponent("§7[§eClick Here§7]");
                     textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/faction members"));
                     textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§eSee a List of all Members").create()));
-                    player.spigot().sendMessage(new ComponentBuilder("Members: ").color(net.md_5.bungee.api.ChatColor.GRAY).append(factionManager.getFaction(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId()).getUserAmount() + " ").color(net.md_5.bungee.api.ChatColor.YELLOW).append(textComponent).create());
+                    player.spigot().sendMessage(new ComponentBuilder("Members: ").color(net.md_5.bungee.api.ChatColor.GRAY).append(factionManager.getFaction(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionID()).getUserAmount() + " ").color(net.md_5.bungee.api.ChatColor.YELLOW).append(textComponent).create());
                 }
             } else {
                 player.sendMessage("§7Invites from Factions:");
@@ -447,10 +448,10 @@ public class Faction {
                 for (FactionUserManager.FactionUser factionUser : factionUserManager.getFactionInvites(UUIDFetcher.getUUID(player))) {
                     TextComponent textComponent = new TextComponent();
                     ComponentBuilder componentBuilder = new ComponentBuilder();
-                    componentBuilder.append(factionManager.getFactionName(factionUser.getFactionId())).color(net.md_5.bungee.api.ChatColor.YELLOW).append("[").color(net.md_5.bungee.api.ChatColor.GRAY).append(factionManager.getFaction(factionUser.getFactionId()).getShortcut()).color(net.md_5.bungee.api.ChatColor.YELLOW).append("], ").color(net.md_5.bungee.api.ChatColor.GRAY);
+                    componentBuilder.append(factionManager.getFactionName(factionUser.getFactionID())).color(net.md_5.bungee.api.ChatColor.YELLOW).append("[").color(net.md_5.bungee.api.ChatColor.GRAY).append(factionManager.getFaction(factionUser.getFactionID()).getShortcut()).color(net.md_5.bungee.api.ChatColor.YELLOW).append("], ").color(net.md_5.bungee.api.ChatColor.GRAY);
                     textComponent.setExtra(componentBuilder.getParts());
-                    textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/faction accept " + factionManager.getFactionName(factionUser.getFactionId())));
-                    textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to join ").color(net.md_5.bungee.api.ChatColor.GRAY).append(factionManager.getFactionName(factionUser.getFactionId())).color(net.md_5.bungee.api.ChatColor.YELLOW).create()));
+                    textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/faction accept " + factionManager.getFactionName(factionUser.getFactionID())));
+                    textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to join ").color(net.md_5.bungee.api.ChatColor.GRAY).append(factionManager.getFactionName(factionUser.getFactionID())).color(net.md_5.bungee.api.ChatColor.YELLOW).create()));
                     factions.append(textComponent);
                 }
                 player.spigot().sendMessage(factions.create());
@@ -474,10 +475,10 @@ public class Faction {
 
         if (factionUserManager.isFactionUserExists(UUIDFetcher.getUUID(player))) {
             if (factionUserManager.isFactionUserInFaction(UUIDFetcher.getUUID(player))) {
-                if (factionManager.getFaction(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionId()) != null) {
+                if (factionManager.getFaction(factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionID()) != null) {
                     //factionUser
                     FactionUserManager.FactionUser factionUser = factionUserManager.getFactionUser(UUIDFetcher.getUUID(player));
-                    FactionManager.Faction faction = factionManager.getFaction(factionUser.getFactionId());
+                    FactionManager.Faction faction = factionManager.getFaction(factionUser.getFactionID());
                     ArrayList<FactionUserManager.FactionUser> ranks = factionUserManager.getFactionUsers(faction.getId());
                     //Stringbuilders
                     StringBuilder air = new StringBuilder();
@@ -584,7 +585,7 @@ public class Faction {
 
         if(factionUserManager.isFactionUserExists(uuid)){
             if(factionUserManager.isFactionUserInFaction(uuid)){
-                int factionId = factionUserManager.getFactionUser(uuid).getFactionId();
+                int factionId = factionUserManager.getFactionUser(uuid).getFactionID();
                 FactionManager.Faction faction = factionManager.getFaction(factionId);
                 FactionPlotManager.FactionPlot factionPlot = factionPlotManager.getFactionPlot(factionId);
                 if(factionPlot.getReachable() < System.currentTimeMillis()){
@@ -630,12 +631,18 @@ public class Faction {
         UUID uuid = UUIDFetcher.getUUID(player);
         if(factionUserManager.isFactionUserExists(uuid)) {
             if(factionUserManager.isFactionUserInFaction(uuid)) {
+                FactionUserManager.FactionUser factionUser = factionUserManager.getFactionUser(uuid);
+                FactionPlotManager.FactionPlot factionPlot = factionPlotManager.getFactionPlot(factionUser.getFactionID());
+                Location edgeDownFrontLeft = factionPlot.getEdgeDownFrontLeft();
+                Location edgeUpBackRight = factionPlot.getEdgeUpBackRight();
                 String world = player.getWorld().getName();
                 if(world.equals("FactionPlots_world")) {
-                    int factionId = factionUserManager.getFactionUser(uuid).getFactionId();
-                    FactionPlotManager.FactionPlot factionPlot = factionPlotManager.getFactionPlot(factionId);
-                    factionPlot.setHome(player.getLocation());
-                    player.sendMessage("§aSet home to " + LocationBuilder.toString(player.getLocation()));
+                    if(LocationChecker.isLocationInsideCube(player.getLocation(), edgeDownFrontLeft, edgeUpBackRight)) {
+                        factionPlot.setHome(player.getLocation());
+                        player.sendMessage("§aSet home to " + LocationBuilder.getString(player.getLocation()));
+                    }else{
+                        player.sendMessage("§cSet your home inside your FactionPlot");
+                    }
                 }else {
                     player.sendMessage("§cYou can only change your home at your FactionPlot");
                 }
@@ -643,7 +650,7 @@ public class Faction {
                 player.sendMessage("§cYou aren't in a Faction");
             }
         }else{
-           player.sendMessage("§cYou aren't in a Faction");
+            player.sendMessage("§cYou aren't in a Faction");
         }
     }
 

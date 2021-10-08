@@ -21,7 +21,7 @@ public class ItemModifierType<T> {
     public static final ItemModifierType<Double> KNOCKBACK_RESISTANCE = new ItemModifierType("knockbackResistance", "Standfestigkeit", ChatColor.of("#000000"), Double.class);
     public static final ItemModifierType<Integer> SPEED = new ItemModifierType("speed", "Schnelligkeit", ChatColor.of("#4DFFFF"), Integer.class);
     public static final ItemModifierType<Integer> POISON = new ItemModifierType("poison", "Vergiftung", ChatColor.of("#1eb02d"), Integer.class);
-    public static final ItemModifierType<Integer> FRIRE_ASPECT = new ItemModifierType("fireAspect", "Verbrennung", ChatColor.of("#e25822"), Integer.class);
+    public static final ItemModifierType<Integer> FIRE_ASPECT = new ItemModifierType("fireAspect", "Verbrennung", ChatColor.of("#e25822"), Integer.class);
 
     private final String name;
     private final String displayName;

@@ -1,7 +1,17 @@
 package de.imfactions.util;
 
-import net.minecraft.server.v1_16_R1.*;
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
+import net.minecraft.network.PacketDataSerializer;
+import net.minecraft.network.chat.IChatBaseComponent;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.PacketPlayOutScoreboardDisplayObjective;
+import net.minecraft.network.protocol.game.PacketPlayOutScoreboardObjective;
+import net.minecraft.network.protocol.game.PacketPlayOutScoreboardScore;
+import net.minecraft.network.protocol.game.PacketPlayOutScoreboardTeam;
+import net.minecraft.server.ScoreboardServer;
+import net.minecraft.server.network.PlayerConnection;
+import net.minecraft.world.scores.ScoreboardObjective;
+import net.minecraft.world.scores.criteria.IScoreboardCriteria;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Field;
@@ -132,7 +142,7 @@ public class ScoreboardSign {
     }
 
     private PlayerConnection getPlayer() {
-        return ((CraftPlayer) player).getHandle().playerConnection;
+        return ((CraftPlayer) player).getHandle().b;
     }
 
     private void sendLine(int line) {
@@ -162,7 +172,7 @@ public class ScoreboardSign {
         Factories
          */
     private PacketPlayOutScoreboardObjective createObjectivePacket(int mode, String displayName) {
-        PacketPlayOutScoreboardObjective packet = new PacketPlayOutScoreboardObjective();
+        PacketPlayOutScoreboardObjective packet = new PacketPlayOutScoreboardObjective(new PacketDataSerializer());
         // Nom de l'objectif
         setField(packet, "a", player.getName());
 
@@ -174,7 +184,7 @@ public class ScoreboardSign {
 
         if (mode == 0 || mode == 2) {
             setField(packet, "b", IChatBaseComponent.ChatSerializer.a("{\"text\" : \"" + displayName + "\"}"));
-            setField(packet, "c", IScoreboardCriteria.EnumScoreboardHealthDisplay.INTEGER);
+            setField(packet, "c", IScoreboardCriteria.EnumScoreboardHealthDisplay.b);
         }
 
         return packet;
@@ -190,7 +200,7 @@ public class ScoreboardSign {
     }
 
     private PacketPlayOutScoreboardScore sendScore(String line, int score) {
-        PacketPlayOutScoreboardScore packet = new PacketPlayOutScoreboardScore(ScoreboardServer.Action.CHANGE, player.getName(), line, score);
+        PacketPlayOutScoreboardScore packet = new PacketPlayOutScoreboardScore(ScoreboardServer.Action.a, player.getName(), line, score);
         //setField(packet, "b", player.getName());
 
         return packet;
@@ -198,7 +208,7 @@ public class ScoreboardSign {
 
 
     private PacketPlayOutScoreboardScore removeLine(String line) {
-        return new PacketPlayOutScoreboardScore(ScoreboardServer.Action.REMOVE, null, line, 0);
+        return new PacketPlayOutScoreboardScore(ScoreboardServer.Action.b, null, line, 0);
     }
 
 
