@@ -1,6 +1,5 @@
-package de.imfactions.database.faction;
+package de.imfactions.functions.raid;
 
-import com.mysql.fabric.xmlrpc.base.Array;
 import de.imfactions.Data;
 import de.imfactions.IMFactions;
 import de.imfactions.functions.Scheduler;
@@ -10,21 +9,20 @@ import org.bukkit.entity.Player;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Struct;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RaidManager {
+public class RaidUtil {
 
     private IMFactions imFactions;
     private ArrayList<Raid> raids;
     private HashMap<Raid, FactionUserManager.FactionUser> raidTeams;
     private Scheduler scheduler;
     private FactionUserManager factionUserManager;
+    private FactionManager factionManager;
     private Data data;
 
     public RaidManager(IMFactions imFactions) {
@@ -32,7 +30,9 @@ public class RaidManager {
         data = imFactions.getData();
         scheduler = data.getScheduler();
         factionUserManager = data.getFactionUserManager();
+        factionManager = data.getFactionManager();
         imFactions.getData().getMySQL().update("CREATE TABLE IF NOT EXISTS `raids` (`raidID` MEDIUMINT NOT NULL AUTO_INCREMENT, `raidState` VARCHAR(64), `factionIdAttackers` INT(10), `factionIdDefenders` INT(10), `start` DATETIME, `time` BIGINT, PRIMARY KEY(`raidID`))");
+
         raids = new ArrayList<>();
         raidTeams = new HashMap<>();
         loadRaids();
@@ -70,6 +70,15 @@ public class RaidManager {
         return false;
     }
 
+    public FactionManager.Faction getFactionForScout(int raidID, int factionIDScouting){
+        Raid raid = getRaid(raidID);
+        FactionManager.Faction faction = factionManager.getRandomFactionForRaid(raid.getFactionIdAttackers());
+        while(faction.getId() == factionIDScouting){
+            faction = factionManager.getRandomFactionForRaid(raid.getFactionIdAttackers());
+        }
+        return faction;
+    }
+
     public void createStartingRaid(int raidID, int factionIDAttackers){
         raids.add(new Raid(raidID, "starting", factionIDAttackers, -1, null, 0));
     }
@@ -84,7 +93,10 @@ public class RaidManager {
     }
 
     public void updateRaidToDone(int raidID){
+        Raid raid = getRaid(raidID);
 
+        raid.setRaidState("done");
+        raid.setTime(System.currentTimeMillis() - raid.getStart().getTime());
     }
 
     public ArrayList<FactionUserManager.FactionUser> getRaidTeam(int raidID){
@@ -135,6 +147,7 @@ public class RaidManager {
         return -1;
     }
 
+
     public Location getRaidSpawn(int raidID){
         Raid raid= getRaid(raidID);
 
@@ -165,6 +178,16 @@ public class RaidManager {
         return -1;
     }
 
+    public ArrayList<Raid> getActiveRaids(){
+        ArrayList<Raid> activeRaids = new ArrayList<>();
+        for(Raid raid : raids){
+            if(raid.getRaidState().equals("active")){
+                activeRaids.add(raid);
+            }
+        }
+        return activeRaids;
+    }
+
     public boolean isRaidExists(int raidID){
         for(Raid raid : raids){
             if(raid.getRaidID() == raidID){
@@ -193,83 +216,5 @@ public class RaidManager {
 
     public HashMap<Raid, FactionUserManager.FactionUser> getRaidTeams() {
         return raidTeams;
-    }
-
-    public class Raid {
-        int raidID;
-        String raidState;
-        int factionIdAttackers;
-        int factionIdDefenders;
-        Date start;
-        long time;
-
-        public Raid(int raidID, String raidState, int factionIdAttackers, int factionIdDefenders, Date start, long time) {
-            this.raidID = raidID;
-            this.raidState = raidState;
-            this.factionIdAttackers = factionIdAttackers;
-            this.factionIdDefenders = factionIdDefenders;
-            this.start = start;
-            this.time = time;
-        }
-
-        public Raid(int raidID, int factionIdAttackers, int factionIdDefenders) {
-            this.raidID = raidID;
-            this.factionIdAttackers = factionIdAttackers;
-            this.factionIdDefenders = factionIdDefenders;
-            start = Date.from(Instant.now());
-            time = 0;
-        }
-
-        public int getFactionIdAttackers() {
-            return factionIdAttackers;
-        }
-
-        public void setFactionIdAttackers(int factionIdAttackers) {
-            this.factionIdAttackers = factionIdAttackers;
-        }
-
-        public int getFactionIdDefenders() {
-            return factionIdDefenders;
-        }
-
-        public void setFactionIdDefenders(int factionIdDefenders) {
-            this.factionIdDefenders = factionIdDefenders;
-        }
-
-        public Date getStart() {
-            return start;
-        }
-
-        public void setStart(Date start) {
-            this.start = start;
-        }
-
-        public String getRaidState(){
-            return raidState;
-        }
-
-        public void setRaidState(String raidState){
-            this.raidState = raidState;
-        }
-
-        public long getTime() {
-            return time;
-        }
-
-        public void setTime(long time) {
-            this.time = time;
-        }
-
-        public int getRaidID() {
-            return raidID;
-        }
-
-        public void setRaidID(int raidID) {
-            this.raidID = raidID;
-        }
-
-        public void save() {
-            imFactions.getData().getMySQL().update("UPDATE raids SET `raidID` = '" + raidID + "', `raidState` = '" + raidState + "', `factionIdAttackers` = '" + factionIdAttackers + "', `factionIdDefenders` = '" + factionIdDefenders + "', `start` = '" + start + "', `time` = '" + start + "'");
-        }
     }
 }

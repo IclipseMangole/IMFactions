@@ -1,8 +1,8 @@
 package de.imfactions.util;
 
-import net.minecraft.server.v1_16_R1.Packet;
+import net.minecraft.network.protocol.Packet;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Field;
@@ -31,7 +31,7 @@ public class Reflections {
     }
 
     public static void sendPacket(Packet packet, Player player) {
-        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
+        ((CraftPlayer) player).getHandle().b.sendPacket(packet);
     }
 
     public static void sendPacket(Packet packet) {

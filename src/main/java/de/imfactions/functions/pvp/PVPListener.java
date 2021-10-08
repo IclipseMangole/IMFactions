@@ -1,18 +1,14 @@
-package de.imfactions.listener;
+package de.imfactions.functions.pvp;
 
 import de.imfactions.Data;
 import de.imfactions.IMFactions;
-import de.imfactions.commands.Ether;
 import de.imfactions.database.UserManager;
-import de.imfactions.database.faction.FactionManager;
-import de.imfactions.database.faction.FactionPlotManager;
-import de.imfactions.database.faction.FactionUserManager;
 import de.imfactions.util.LocationChecker;
 import de.imfactions.util.UUIDFetcher;
 import net.md_5.bungee.api.ChatColor;
-import net.minecraft.server.v1_16_R1.Entity;
-import org.bukkit.*;
-import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -21,13 +17,8 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.potion.PotionEffectType;
 
 import static de.imfactions.util.ColorConverter.toHex;
-import static net.minecraft.server.v1_16_R1.DataWatcherRegistry.e;
-
-import java.awt.Color;
 
 public class PVPListener implements Listener {
 
@@ -139,44 +130,6 @@ public class PVPListener implements Listener {
             dead.playSound(dead.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
 
             killer.playSound(killer.getLocation(), Sound.ENTITY_WITHER_DEATH, 1, 1);
-        }
-    }
-
-    //Teleport Abbruch
-    @EventHandler
-    public void onMove(PlayerMoveEvent event) {
-        Location location = event.getFrom();
-        String world = location.getWorld().getName();
-        Player player = event.getPlayer();
-
-        if (world.equals("FactionPVP_world")) {
-            if (data.getScheduler().getCountdowns().containsKey(player)) {
-                if(!(event.getTo().getX() == event.getFrom().getX() && event.getTo().getY() == event.getFrom().getY() && event.getTo().getZ() == event.getFrom().getZ())) {
-                    player.sendMessage("§cYour Teleport has been interrupted at " + data.getScheduler().getCountdowns().get(player) + " seconds");
-                    player.removePotionEffect(PotionEffectType.CONFUSION);
-                    data.getScheduler().getCountdowns().remove(player);
-                    data.getScheduler().getLocations().remove(player);
-                }
-            }
-        }
-    }
-
-    //Teleport Abbruch
-    @EventHandler
-    public void onDamageTeleport(EntityDamageEvent event){
-        Location location = event.getEntity().getLocation();
-        String world = location.getWorld().getName();
-
-        if(world.equals("FactionPlots_world")){
-            if(event.getEntity() instanceof Player){
-                Player player = (Player) event.getEntity();
-                if(data.getScheduler().getLocations().containsKey(player)){
-                    player.sendMessage("§cYour Teleport has been interrupted at " + data.getScheduler().getCountdowns().get(player) + " seconds");
-                    player.removePotionEffect(PotionEffectType.CONFUSION);
-                    data.getScheduler().getLocations().remove(player);
-                    data.getScheduler().getCountdowns().remove(player);
-                }
-            }
         }
     }
 

@@ -1,4 +1,4 @@
-package de.imfactions.listener;
+package de.imfactions.functions.lobby;
 
 import de.imfactions.Data;
 import de.imfactions.IMFactions;
@@ -10,8 +10,6 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.potion.PotionEffectType;
 
 public class LobbyListener implements Listener {
 
@@ -70,5 +68,4 @@ public class LobbyListener implements Listener {
             event.setCancelled(true);
         }
     }
-
 }

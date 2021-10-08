@@ -1,10 +1,7 @@
-package de.imfactions.commands;
+package de.imfactions.functions.faction;
 
 import de.imfactions.IMFactions;
 import de.imfactions.database.UserManager;
-import de.imfactions.database.faction.FactionManager;
-import de.imfactions.database.faction.FactionPlotManager;
-import de.imfactions.database.faction.FactionUserManager;
 import de.imfactions.functions.Scheduler;
 import de.imfactions.functions.WorldLoader;
 import de.imfactions.util.Command.IMCommand;
@@ -20,12 +17,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.UUID;
 
-public class Faction {
+public class FactionCommand {
 
     private StringBuilder builder;
     private IMFactions factions;
@@ -652,7 +650,7 @@ public class Faction {
                 player.sendMessage("§cYou aren't in a Faction");
             }
         }else{
-           player.sendMessage("§cYou aren't in a Faction");
+            player.sendMessage("§cYou aren't in a Faction");
         }
     }
 

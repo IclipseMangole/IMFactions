@@ -1,6 +1,9 @@
 package de.imfactions;
 
 import de.imfactions.commands.*;
+import de.imfactions.functions.factionPlot.PlotListener;
+import de.imfactions.functions.lobby.LobbyListener;
+import de.imfactions.functions.pvp.PVPListener;
 import de.imfactions.listener.*;
 import de.imfactions.functions.WorldLoader;
 import org.bukkit.Bukkit;
