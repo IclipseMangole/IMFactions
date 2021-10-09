@@ -7,6 +7,8 @@ package de.imfactions.listener;
 //   |    ----   ----   |   |     -----  |---
 
 import de.imfactions.IMFactions;
+import de.imfactions.functions.user.User;
+import de.imfactions.functions.user.UserUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,18 +21,18 @@ import org.bukkit.event.player.PlayerQuitEvent;
 public class QuitListener implements Listener {
 
     private IMFactions factions;
-    private UserManager manager;
+    private UserUtil userUtil;
 
     public QuitListener(IMFactions factions) {
         this.factions = factions;
-        manager = factions.getData().getUserManager();
+        userUtil = factions.getData().getUserUtil();
     }
 
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        UserManager.User user = manager.getUser(player);
+        User user = userUtil.getUser(player);
         user.addOnlineTime(System.currentTimeMillis() - user.getLastSeen());
         user.setLastSeen(System.currentTimeMillis());
 

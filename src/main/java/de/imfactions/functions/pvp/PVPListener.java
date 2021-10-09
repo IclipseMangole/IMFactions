@@ -2,6 +2,10 @@ package de.imfactions.functions.pvp;
 
 import de.imfactions.Data;
 import de.imfactions.IMFactions;
+import de.imfactions.functions.faction.FactionUtil;
+import de.imfactions.functions.factionMember.FactionMemberUtil;
+import de.imfactions.functions.factionPlot.FactionPlotUtil;
+import de.imfactions.functions.user.UserUtil;
 import de.imfactions.util.LocationChecker;
 import de.imfactions.util.UUIDFetcher;
 import net.md_5.bungee.api.ChatColor;
@@ -22,19 +26,19 @@ import static de.imfactions.util.ColorConverter.toHex;
 public class PVPListener implements Listener {
 
     private IMFactions imFactions;
-    private FactionManager factionManager;
+    private FactionUtil factionUtil;
     private Data data;
-    private UserManager userManager;
-    private FactionUserManager factionUserManager;
-    private FactionPlotManager factionPlotManager;
+    private UserUtil userUtil;
+    private FactionMemberUtil factionMemberUtil;
+    private FactionPlotUtil factionPlotUtil;
 
     public PVPListener(IMFactions imFactions) {
         this.imFactions = imFactions;
         data = imFactions.getData();
-        factionManager = data.getFactionManager();
-        userManager = data.getUserManager();
-        factionUserManager = data.getFactionUserManager();
-        factionPlotManager = data.getFactionPlotManager();
+        factionUtil = data.getFactionUtil();
+        userUtil = data.getUserUtil();
+        factionMemberUtil = data.getFactionMemberUtil();
+        factionPlotUtil = data.getFactionPlotUtil();
     }
 
     //keine Blöcke platzieren
@@ -74,8 +78,8 @@ public class PVPListener implements Listener {
                 Player player = (Player) event.getEntity();
 
                 if (!LocationChecker.isLocationInsideCube(player.getLocation(), edgeDownFrontLeft, edgeUpBackRight)) {
-                    int factionIDPlayer = factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionID();
-                    int factionIDDamager = factionUserManager.getFactionUser(UUIDFetcher.getUUID(damager)).getFactionID();
+                    int factionIDPlayer = factionMemberUtil.getFactionMember(UUIDFetcher.getUUID(player)).getFactionID();
+                    int factionIDDamager = factionMemberUtil.getFactionMember(UUIDFetcher.getUUID(damager)).getFactionID();
 
                     if (factionIDDamager == factionIDPlayer) {
                         event.setCancelled(true);
@@ -123,7 +127,7 @@ public class PVPListener implements Listener {
             killer.sendMessage("§4You killed §c" + dead.getName());
             killer.sendMessage("§4You earned §c10 §4Ether");
 
-            userManager.getUser(killer.getName()).addEther(10);
+            userUtil.getUser(killer.getName()).addEther(10);
 
             dead.teleport(data.getWorldSpawn());
             dead.playSound(dead.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);

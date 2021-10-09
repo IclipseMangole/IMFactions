@@ -7,6 +7,8 @@ package de.imfactions.listener;
 //   |    ----   ----   |   |     -----  |---
 
 import de.imfactions.IMFactions;
+import de.imfactions.functions.user.User;
+import de.imfactions.functions.user.UserUtil;
 import de.imfactions.util.UUIDFetcher;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -23,12 +25,12 @@ import java.util.UUID;
 public class JoinListener implements Listener {
 
     private IMFactions factions;
-    private UserManager manager;
+    private UserUtil userUtil;
 
 
     public JoinListener(IMFactions factions) {
         this.factions = factions;
-        manager = factions.getData().getUserManager();
+        userUtil = factions.getData().getUserUtil();
     }
 
     @EventHandler
@@ -44,11 +46,11 @@ public class JoinListener implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         UUID uuid = UUIDFetcher.getUUID(player);
-        UserManager.User user;
-        if (!manager.isUserExists(uuid)) {
-            user = manager.createUser(uuid);
+        User user;
+        if (!userUtil.isUserExists(uuid)) {
+            user = userUtil.createUser(uuid);
         } else {
-            user = manager.getUser(uuid);
+            user = userUtil.getUser(uuid);
         }
         user.setLastSeen(System.currentTimeMillis());
 

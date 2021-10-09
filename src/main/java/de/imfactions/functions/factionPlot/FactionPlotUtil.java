@@ -142,4 +142,8 @@ public class FactionPlotUtil {
         factionPlotTable.deleteFactionPlot(factionPlot);
         factionPlots.remove(factionPlot);
     }
+
+    public void createFactionPlot(int factionID, Location edgeDownFrontLeft, Location edgeUpBackRight, Location home, long reachable, int position){
+        factionPlotTable.createFactionPlot(factionID, edgeDownFrontLeft, edgeUpBackRight, home, reachable, position);
+    }
 }

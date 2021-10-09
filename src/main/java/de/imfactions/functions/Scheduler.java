@@ -2,6 +2,13 @@ package de.imfactions.functions;
 
 import de.imfactions.Data;
 import de.imfactions.IMFactions;
+import de.imfactions.functions.faction.FactionUtil;
+import de.imfactions.functions.factionMember.FactionMember;
+import de.imfactions.functions.factionMember.FactionMemberUtil;
+import de.imfactions.functions.factionPlot.FactionPlot;
+import de.imfactions.functions.factionPlot.FactionPlotUtil;
+import de.imfactions.functions.raid.Raid;
+import de.imfactions.functions.raid.RaidUtil;
 import de.imfactions.util.UUIDFetcher;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -18,10 +25,10 @@ import java.util.UUID;
 public class Scheduler {
 
     private IMFactions imFactions;
-    private FactionPlotManager factionPlotManager;
-    private FactionUserManager factionUserManager;
-    private FactionManager factionManager;
-    private RaidManager raidManager;
+    private FactionPlotUtil factionPlotUtil;
+    private FactionMemberUtil factionMemberUtil;
+    private FactionUtil factionUtil;
+    private RaidUtil raidUtil;
     private HashMap<Player, Integer> countdowns;
     private HashMap<Player, Location> locations;
     private HashMap<Player, Location> startingRaids;
@@ -33,10 +40,10 @@ public class Scheduler {
     public Scheduler(IMFactions imFactions) {
         this.imFactions = imFactions;
         data = imFactions.getData();
-        factionManager = data.getFactionManager();
-        factionPlotManager = data.getFactionPlotManager();
-        factionUserManager = data.getFactionUserManager();
-        raidManager = data.getRaidManager();
+        factionUtil = data.getFactionUtil();
+        factionPlotUtil = data.getFactionPlotUtil();
+        factionMemberUtil = data.getFactionMemberUtil();
+        raidUtil = data.getRaidUtil();
         countdowns = new HashMap<>();
         locations = new HashMap<>();
         startingRaids = new HashMap<>();
@@ -104,11 +111,11 @@ public class Scheduler {
 
                                         //raid
                                         UUID uuid = UUIDFetcher.getUUID(player);
-                                        FactionUserManager.FactionUser factionUser = factionUserManager.getFactionUser(uuid);
-                                        int factionID = factionUser.getFactionID();
-                                        int raidID = raidManager.getActiveRaidID(factionID);
-                                        if (!raidManager.getRaid(raidID).getRaidState().equals("scouting")) {
-                                            raidManager.getRaid(raidID).setRaidState("scouting");
+                                        FactionMember factionMember = factionMemberUtil.getFactionMember(uuid);
+                                        int factionID = factionMember.getFactionID();
+                                        int raidID = raidUtil.getActiveRaidID(factionID);
+                                        if (!raidUtil.getRaid(raidID).getRaidState().equals("scouting")) {
+                                            raidUtil.getRaid(raidID).setRaidState("scouting");
                                         }
                                         //countdown for automatic beginning
                                         countdowns.remove(player);
@@ -145,13 +152,13 @@ public class Scheduler {
 
                                 //raid
                                 UUID uuid = UUIDFetcher.getUUID(player);
-                                FactionUserManager.FactionUser factionUser = factionUserManager.getFactionUser(uuid);
+                                FactionMember factionUser = factionMemberUtil.getFactionMember(uuid);
                                 int factionID = factionUser.getFactionID();
-                                int raidID = raidManager.getActiveRaidID(factionID);
-                                RaidManager.Raid raid = raidManager.getRaid(raidID);
+                                int raidID = raidUtil.getActiveRaidID(factionID);
+                                Raid raid = raidUtil.getRaid(raidID);
                                 if (raid.getRaidState().equals("scouting")) {
-                                    FactionPlotManager.FactionPlot factionPlot = factionPlotManager.getFactionPlot(player.getLocation());
-                                    raidManager.updateRaidToActive(raidID, factionPlot.getFactionID());
+                                    FactionPlot factionPlot = factionPlotUtil.getFactionPlot(player.getLocation());
+                                    raidUtil.updateRaidToActive(raidID, factionPlot.getFactionID());
                                 }
                                 Bukkit.getScheduler().runTask(imFactions, new Runnable() {
                                     @Override
@@ -186,7 +193,7 @@ public class Scheduler {
                     loadingFactionPlotsTime.forEach(integer -> {
                         if (integer == 0) {
                             loadingFactionPlotsTime.remove(integer);
-                            factionPlotManager.addLoadingFactionPlots(-1);
+                            factionPlotUtil.addLoadingFactionPlots(-1);
                         } else {
                             loadingFactionPlotsTime.set(loadingFactionPlotsTime.indexOf(integer), integer - 1);
                         }
@@ -197,10 +204,10 @@ public class Scheduler {
                  *Checks all active Raids how much time is left for raiding
                  */
 
-                raidManager.getActiveRaids().forEach(raid -> {
+                raidUtil.getActiveRaids().forEach(raid -> {
                     if ((raid.getStart().getTime() + 1000 * 60 * 30) - System.currentTimeMillis() < 0) {
-                        raidManager.updateRaidToDone(raid.getRaidID());
-                        raidManager.getRaidTeams().remove(raid);
+                        raidUtil.updateRaidToDone(raid.getRaidID());
+                        raidUtil.getRaidTeams().remove(raid);
 
                     }
                 });

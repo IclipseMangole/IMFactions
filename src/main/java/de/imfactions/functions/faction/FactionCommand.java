@@ -146,7 +146,7 @@ public class FactionCommand {
                         int factionId = factionMemberUtil.getFactionMember(UUIDFetcher.getUUID(player)).getFactionID();
                         int position = factionPlotUtil.getFactionPlot(factionId).getPosition();
                         worldLoader.deleteMap(factionPlotUtil.getEdgeDownFrontLeft(position));
-                        factionPlotUtil.getFactionPlot(factionId).deleteFactionPlot();
+                        factionPlotUtil.deleteFactionPlot(factionPlotUtil.getFactionPlot(factionId));
 
                         factionUtil.deleteFaction(factionUtil.getFaction(factionId));
                         factionMemberUtil.deleteFactionMember(factionMemberUtil.getFactionMember(UUIDFetcher.getUUID(player)));

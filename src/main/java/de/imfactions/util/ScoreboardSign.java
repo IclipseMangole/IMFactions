@@ -172,7 +172,7 @@ public class ScoreboardSign {
         Factories
          */
     private PacketPlayOutScoreboardObjective createObjectivePacket(int mode, String displayName) {
-        PacketPlayOutScoreboardObjective packet = new PacketPlayOutScoreboardObjective(new PacketDataSerializer());
+        PacketPlayOutScoreboardObjective packet = new PacketPlayOutScoreboardObjective();
         // Nom de l'objectif
         setField(packet, "a", player.getName());
 
