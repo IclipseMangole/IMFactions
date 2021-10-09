@@ -2,7 +2,6 @@ package de.imfactions.functions;
 
 import de.imfactions.Data;
 import de.imfactions.IMFactions;
-import de.imfactions.database.UserManager;
 import de.imfactions.util.UUIDFetcher;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;

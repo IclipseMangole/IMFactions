@@ -1,6 +1,8 @@
-package de.imfactions.database;
+package de.imfactions.functions.user;
 
+import de.imfactions.Data;
 import de.imfactions.IMFactions;
+import de.imfactions.util.MySQL;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,28 +10,34 @@ import java.util.UUID;
 
 public class UserSettingsTable {
 
-    private IMFactions factions;
+    private IMFactions imFactions;
+    private Data data;
+    private MySQL mySQL;
+    private UserSettingsUtil userSettingsUtil;
 
-    public UserSettingsTable(IMFactions factions) {
-        this.factions = factions;
-        factions.getData().getMySQL().update("CREATE TABLE IF NOT EXISTS usersettings (id MEDIUMINT NOT NULL AUTO_INCREMENT, uuid VARCHAR(60), `key` VARCHAR(256), `value` VARCHAR(256), PRIMARY KEY (id))");
+    public UserSettingsTable(UserSettingsUtil userSettingsUtil, Data data) {
+        this.data = data;
+        this.userSettingsUtil = userSettingsUtil;
+        imFactions = data.getImFactions();
+        mySQL = data.getMySQL();
+        mySQL.update("CREATE TABLE IF NOT EXISTS usersettings (id MEDIUMINT NOT NULL AUTO_INCREMENT, uuid VARCHAR(60), `key` VARCHAR(256), `value` VARCHAR(256), PRIMARY KEY (id))");
     }
 
     public void createUserSetting(UUID uuid, String key, String value) {
         if (!isSettingExists(uuid, key)) {
-            factions.getData().getMySQL().update("INSERT INTO usersettings (uuid, `key`, `value`) VALUES ('" + uuid + "', '" + key + "', '" + value + "')");
+            mySQL.update("INSERT INTO usersettings (uuid, `key`, `value`) VALUES ('" + uuid + "', '" + key + "', '" + value + "')");
         }
     }
 
     public void createUserSetting(UUID uuid, String key, int value) {
         if (!isSettingExists(uuid, key)) {
-            factions.getData().getMySQL().update("INSERT INTO usersettings (uuid, `key`, `value`) VALUES ('" + uuid + "', '" + key + "', '" + value + "')");
+            mySQL.update("INSERT INTO usersettings (uuid, `key`, `value`) VALUES ('" + uuid + "', '" + key + "', '" + value + "')");
         }
     }
 
     public void createUserSetting(UUID uuid, String key, boolean value) {
         if (!isSettingExists(uuid, key)) {
-            factions.getData().getMySQL().update("INSERT INTO usersettings (uuid, `key`, `value`) VALUES ('" + uuid + "', '" + key + "', '" + value + "')");
+            mySQL.update("INSERT INTO usersettings (uuid, `key`, `value`) VALUES ('" + uuid + "', '" + key + "', '" + value + "')");
         }
     }
 
@@ -45,12 +53,12 @@ public class UserSettingsTable {
     }
 
     public void deleteUserSetting(UUID uuid, String key) {
-        factions.getData().getMySQL().update("DELETE usersettings WHERE uuid = '" + uuid + "' AND `key` = '" + key + "'");
+        mySQL.update("DELETE usersettings WHERE uuid = '" + uuid + "' AND `key` = '" + key + "'");
     }
 
     public int getId(UUID uuid, String key) {
         try {
-            ResultSet rs = factions.getData().getMySQL().querry("SELECT id FROM usersettings WHERE uuid = '" + uuid + "' AND `key` = '" + key + "'");
+            ResultSet rs = mySQL.querry("SELECT id FROM usersettings WHERE uuid = '" + uuid + "' AND `key` = '" + key + "'");
             while (rs.next()) {
                 return Integer.parseInt(rs.getString("id"));
             }
@@ -62,7 +70,7 @@ public class UserSettingsTable {
 
     public boolean isSettingExists(UUID uuid, String key) {
         try {
-            ResultSet rs = factions.getData().getMySQL().querry("SELECT id FROM usersettings WHERE uuid = '" + uuid + "' AND `key` = '" + key + "'");
+            ResultSet rs = mySQL.querry("SELECT id FROM usersettings WHERE uuid = '" + uuid + "' AND `key` = '" + key + "'");
             return rs.next();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -72,7 +80,7 @@ public class UserSettingsTable {
 
     public String getString(UUID uuid, String key) {
         try {
-            ResultSet rs = factions.getData().getMySQL().querry("SELECT `value` FROM usersettings WHERE uuid = '" + uuid + "' AND `key` = '" + key + "'");
+            ResultSet rs = mySQL.querry("SELECT `value` FROM usersettings WHERE uuid = '" + uuid + "' AND `key` = '" + key + "'");
             while (rs.next()) {
                 return rs.getString("value");
             }
@@ -84,7 +92,7 @@ public class UserSettingsTable {
 
     public int getInt(UUID uuid, String key) {
         try {
-            ResultSet rs = factions.getData().getMySQL().querry("SELECT `value` FROM usersettings WHERE uuid = '" + uuid + "' AND `key` = '" + key + "'");
+            ResultSet rs = mySQL.querry("SELECT `value` FROM usersettings WHERE uuid = '" + uuid + "' AND `key` = '" + key + "'");
             while (rs.next()) {
                 return Integer.parseInt(rs.getString("value"));
             }
@@ -96,7 +104,7 @@ public class UserSettingsTable {
 
     public boolean getBoolean(UUID uuid, String key) {
         try {
-            ResultSet rs = factions.getData().getMySQL().querry("SELECT `value` FROM usersettings WHERE uuid = '" + uuid + "' AND `key` = '" + key + "'");
+            ResultSet rs = mySQL.querry("SELECT `value` FROM usersettings WHERE uuid = '" + uuid + "' AND `key` = '" + key + "'");
             while (rs.next()) {
                 return Boolean.parseBoolean(rs.getString("value"));
             }
@@ -107,16 +115,17 @@ public class UserSettingsTable {
     }
 
     public void setString(UUID uuid, String key, String value) {
-        factions.getData().getMySQL().update("UPDATE usersettings SET `value` = '" + value + "' WHERE uuid = '" + uuid + "' AND `key` = '" + key + "'");
+        mySQL.update("UPDATE usersettings SET `value` = '" + value + "' WHERE uuid = '" + uuid + "' AND `key` = '" + key + "'");
     }
 
     public void setInt(UUID uuid, String key, int value) {
-        factions.getData().getMySQL().update("UPDATE usersettings SET `value` = '" + value + "' WHERE uuid = '" + uuid + "' AND `key` = '" + key + "'");
+        mySQL.update("UPDATE usersettings SET `value` = '" + value + "' WHERE uuid = '" + uuid + "' AND `key` = '" + key + "'");
     }
 
     public void setBoolean(UUID uuid, String key, boolean value) {
-        factions.getData().getMySQL().update("UPDATE usersettings SET `value` = '" + value + "' WHERE uuid = '" + uuid + "' AND `key` = '" + key + "'");
+        mySQL.update("UPDATE usersettings SET `value` = '" + value + "' WHERE uuid = '" + uuid + "' AND `key` = '" + key + "'");
     }
 
 
 }
+

@@ -75,8 +75,4 @@ public class Raid {
     public void setRaidID(int raidID) {
         this.raidID = raidID;
     }
-
-    public void save() {
-        imFactions.getData().getMySQL().update("UPDATE `raids` SET `raidID` = '" + raidID + "', `raidState` = '" + raidState + "', `factionIdAttackers` = '" + factionIdAttackers + "', `factionIdDefenders` = '" + factionIdDefenders + "', `start` = '" + start + "', `time` = '" + start + "'");
-    }
 }

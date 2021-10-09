@@ -2,7 +2,6 @@ package de.imfactions.functions.pvp;
 
 import de.imfactions.Data;
 import de.imfactions.IMFactions;
-import de.imfactions.database.UserManager;
 import de.imfactions.util.LocationChecker;
 import de.imfactions.util.UUIDFetcher;
 import net.md_5.bungee.api.ChatColor;

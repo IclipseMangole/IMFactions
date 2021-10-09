@@ -1,8 +1,11 @@
 package de.imfactions.commands;
 
 import de.imfactions.IMFactions;
-import de.imfactions.database.UserManager;
 import de.imfactions.functions.Scheduler;
+import de.imfactions.functions.faction.FactionUtil;
+import de.imfactions.functions.factionMember.FactionMemberUtil;
+import de.imfactions.functions.factionPlot.FactionPlotUtil;
+import de.imfactions.functions.user.UserUtil;
 import de.imfactions.util.Command.IMCommand;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -10,20 +13,20 @@ import org.bukkit.entity.Player;
 
 public class Spawn {
 
-    private FactionManager factionManager;
+    private FactionUtil factionUtil;
     private IMFactions imFactions;
-    private FactionUserManager factionUserManager;
-    private FactionPlotManager factionPlotManager;
+    private FactionMemberUtil factionMemberUtil;
+    private FactionPlotUtil factionPlotUtil;
     private StringBuilder builder;
-    private UserManager userManager;
+    private UserUtil userUtil;
     private Scheduler scheduler;
 
     public Spawn(IMFactions imFactions){
         this.imFactions = imFactions;
-        factionManager = imFactions.getData().getFactionManager();
-        factionPlotManager = imFactions.getData().getFactionPlotManager();
-        factionUserManager = imFactions.getData().getFactionUserManager();
-        userManager = imFactions.getData().getUserManager();
+        factionUtil = imFactions.getData().getFactionUtil();
+        factionPlotUtil = imFactions.getData().getFactionPlotUtil();
+        factionMemberUtil = imFactions.getData().getFactionMemberUtil();
+        userUtil = imFactions.getData().getUserUtil();
         scheduler = imFactions.getData().getScheduler();
     }
 

@@ -7,7 +7,6 @@ package de.imfactions.listener;
 //   |    ----   ----   |   |     -----  |---
 
 import de.imfactions.IMFactions;
-import de.imfactions.database.UserManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

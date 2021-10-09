@@ -3,6 +3,12 @@ package de.imfactions.functions.raid;
 import de.imfactions.Data;
 import de.imfactions.IMFactions;
 import de.imfactions.functions.Scheduler;
+import de.imfactions.functions.faction.Faction;
+import de.imfactions.functions.faction.FactionUtil;
+import de.imfactions.functions.factionMember.FactionMember;
+import de.imfactions.functions.factionMember.FactionMemberUtil;
+import de.imfactions.functions.factionPlot.FactionPlot;
+import de.imfactions.functions.factionPlot.FactionPlotUtil;
 import de.imfactions.util.Command.IMCommand;
 import de.imfactions.util.UUIDFetcher;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -23,20 +29,20 @@ public class RaidCommand {
 
     private IMFactions imFactions;
     private Data data;
-    private FactionUserManager factionUserManager;
-    private FactionManager factionManager;
-    private FactionPlotManager factionPlotManager;
-    private RaidManager raidManager;
+    private FactionMemberUtil factionMemberUtil;
+    private FactionUtil factionUtil;
+    private FactionPlotUtil factionPlotUtil;
+    private RaidUtil raidUtil;
     private StringBuilder builder;
     private Scheduler scheduler;
 
-    public Raid(IMFactions imFactions) {
+    public RaidCommand(IMFactions imFactions) {
         this.imFactions = imFactions;
         data = imFactions.getData();
-        factionManager = data.getFactionManager();
-        factionPlotManager = data.getFactionPlotManager();
-        factionUserManager = data.getFactionUserManager();
-        raidManager = data.getRaidManager();
+        factionUtil = data.getFactionUtil();
+        factionPlotUtil = data.getFactionPlotUtil();
+        factionMemberUtil = data.getFactionMemberUtil();
+        raidUtil = data.getRaidUtil();
         scheduler = data.getScheduler();
     }
 
@@ -78,30 +84,30 @@ public class RaidCommand {
         Player player = (Player) sender;
         UUID uuid = UUIDFetcher.getUUID(player);
 
-        if (factionUserManager.isFactionUserInFaction(uuid)) {
-            int factionID = factionUserManager.getFactionUser(uuid).getFactionID();
-            if (factionUserManager.getFactionUser(uuid).getRank() == 3) {
-                if (!raidManager.isFactionRaiding(factionID)) {
-                    if(factionManager.getFaction(factionID).getRaidEnergy() >= 5) {
-                        if (factionManager.getRaidableFactions().size() > 1) {
+        if (factionMemberUtil.isFactionMemberInFaction(uuid)) {
+            int factionID = factionMemberUtil.getFactionMember(uuid).getFactionID();
+            if (factionMemberUtil.getFactionMember(uuid).getRank() == 3) {
+                if (!raidUtil.isFactionRaiding(factionID)) {
+                    if(factionUtil.getFaction(factionID).getRaidEnergy() >= 5) {
+                        if (factionUtil.getRaidableFactions().size() > 1) {
                             if(!player.getWorld().getName().equals("FactionPVP_world")) {
 
                                 //neuer Raid
-                                int raidID = raidManager.getHighestRaidID() + 1;
-                                raidManager.createStartingRaid(raidID, factionID);
-                                RaidManager.Raid raid = raidManager.getRaid(raidID);
-                                raidManager.getRaidTeams().put(raid, factionUserManager.getFactionUser(uuid));
+                                int raidID = raidUtil.getHighestRaidID() + 1;
+                                raidUtil.createStartingRaid(raidID, factionID);
+                                Raid raid = raidUtil.getRaid(raidID);
+                                raidUtil.getRaidTeams().put(raid, factionMemberUtil.getFactionMember(uuid));
                                 //raidEnergy abziehen
-                                FactionManager.Faction faction = factionManager.getFaction(factionID);
+                                Faction faction = factionUtil.getFaction(factionID);
                                 faction.setRaidEnergy(faction.getRaidEnergy() - 5);
                                 //Teleport vorbereiten
-                                FactionManager.Faction enemy = factionManager.getRandomFactionForRaid(factionID);
-                                FactionPlotManager.FactionPlot enemyPlot = factionPlotManager.getFactionPlot(enemy.getId());
+                                Faction enemy = factionUtil.getRandomFactionForRaid(factionID);
+                                FactionPlot enemyPlot = factionPlotUtil.getFactionPlot(enemy.getId());
                                 Location raidTeleport = enemyPlot.getRaidSpawn();
                                 scheduler.getRaids().put(player, raidTeleport);
                                 scheduler.getCountdowns().put(player, 60);
                                 //Faction Mitglieder einladen
-                                factionUserManager.getOnlineMembers(factionID).forEach(member -> {
+                                factionMemberUtil.getOnlineMembers(factionID).forEach(member -> {
                                     TextComponent textComponent = new TextComponent("[HERE]");
                                     textComponent.setColor(net.md_5.bungee.api.ChatColor.of("990000"));
                                     textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to join the Raid").create()));
@@ -144,17 +150,17 @@ public class RaidCommand {
         Player player = (Player) sender;
         UUID uuid = UUIDFetcher.getUUID(player);
 
-        if (factionUserManager.isFactionUserInFaction(uuid)) {
-            int factionID = factionUserManager.getFactionUser(uuid).getFactionID();
-            if (raidManager.isFactionRaiding(factionID)) {
-                int raidID = raidManager.getActiveRaidID(factionID);
-                if (raidManager.getRaid(raidID).getRaidState().equals("starting")) {
+        if (factionMemberUtil.isFactionMemberInFaction(uuid)) {
+            int factionID = factionMemberUtil.getFactionMember(uuid).getFactionID();
+            if (raidUtil.isFactionRaiding(factionID)) {
+                int raidID = raidUtil.getActiveRaidID(factionID);
+                if (raidUtil.getRaid(raidID).getRaidState().equals("starting")) {
                     if (!player.getWorld().getName().equals("FactionPVP_world")) {
-                        RaidManager.Raid raid = raidManager.getRaid(raidID);
-                        raidManager.getRaidTeams().put(raid, factionUserManager.getFactionUser(uuid));
+                        Raid raid = raidUtil.getRaid(raidID);
+                        raidUtil.getRaidTeams().put(raid, factionMemberUtil.getFactionMember(uuid));
 
-                        int secondsLeft = raidManager.getStartingSecondsLeft(raidID);
-                        Location raidSpawn = raidManager.getRaidSpawn(raidID);
+                        int secondsLeft = raidUtil.getStartingSecondsLeft(raidID);
+                        Location raidSpawn = raidUtil.getRaidSpawn(raidID);
 
                         if (secondsLeft > -1) {
                             scheduler.getCountdowns().put(player, secondsLeft);
@@ -188,18 +194,18 @@ public class RaidCommand {
         Player player = (Player) sender;
         UUID uuid = player.getUniqueId();
 
-        if(factionUserManager.isFactionUserInFaction(uuid)){
-            FactionUserManager.FactionUser factionUser = factionUserManager.getFactionUser(uuid);
+        if(factionMemberUtil.isFactionMemberInFaction(uuid)){
+            FactionMember factionUser = factionMemberUtil.getFactionMember(uuid);
             int factionID = factionUser.getFactionID();
-            if(raidManager.isFactionRaiding(factionID)){
-                if(raidManager.isFactionUserUserJoinedRaid(factionUserManager.getFactionUser(uuid))){
-                    int raidID = raidManager.getActiveRaidID(factionID);
-                    RaidManager.Raid raid = raidManager.getRaid(raidID);
+            if(raidUtil.isFactionRaiding(factionID)){
+                if(raidUtil.isFactionMemberJoinedRaid(factionMemberUtil.getFactionMember(uuid))){
+                    int raidID = raidUtil.getActiveRaidID(factionID);
+                    Raid raid = raidUtil.getRaid(raidID);
                     if(raid.getRaidState().equals("scouting")){
-                        FactionPlotManager.FactionPlot scouting = factionPlotManager.getFactionPlot(player.getLocation());
-                        FactionManager.Faction newFaction = raidManager.getFactionForScout(raidID, scouting.getFactionID());
-                        FactionPlotManager.FactionPlot newFactionPlot = factionPlotManager.getFactionPlot(newFaction.getId());
-                        raidManager.getRaidTeam(raidID).forEach(member -> {
+                        FactionPlot scouting = factionPlotUtil.getFactionPlot(player.getLocation());
+                        Faction newFaction = raidUtil.getFactionForScout(raidID, scouting.getFactionID());
+                        FactionPlot newFactionPlot = factionPlotUtil.getFactionPlot(newFaction.getId());
+                        raidUtil.getRaidTeam(raidID).forEach(member -> {
                             Player player1 = Bukkit.getPlayer(member.getUuid());
                             player1.teleport(newFactionPlot.getRaidSpawn());
                         });
@@ -231,17 +237,17 @@ public class RaidCommand {
         Player player = (Player) sender;
         UUID uuid = player.getUniqueId();
 
-        if(factionUserManager.isFactionUserInFaction(uuid)){
-            FactionUserManager.FactionUser factionUser = factionUserManager.getFactionUser(uuid);
+        if(factionMemberUtil.isFactionMemberInFaction(uuid)){
+            FactionMember factionUser = factionMemberUtil.getFactionMember(uuid);
             int factionID = factionUser.getFactionID();
-            if(raidManager.isFactionRaiding(factionID)){
-                if(raidManager.isFactionUserUserJoinedRaid(factionUser)){
-                    int raidID = raidManager.getActiveRaidID(factionID);
-                    RaidManager.Raid raid = raidManager.getRaid(raidID);
+            if(raidUtil.isFactionRaiding(factionID)){
+                if(raidUtil.isFactionMemberJoinedRaid(factionUser)){
+                    int raidID = raidUtil.getActiveRaidID(factionID);
+                    Raid raid = raidUtil.getRaid(raidID);
                     if(raid.getRaidState().equals("scouting")){
-                        FactionPlotManager.FactionPlot factionPlot = factionPlotManager.getFactionPlot(player.getLocation());
-                        FactionManager.Faction enemy = factionManager.getFaction(factionPlot.getFactionID());
-                        raidManager.updateRaidToActive(raidID, enemy.getId());
+                        FactionPlot factionPlot = factionPlotUtil.getFactionPlot(player.getLocation());
+                        Faction enemy = factionUtil.getFaction(factionPlot.getFactionID());
+                        raidUtil.updateRaidToActive(raidID, enemy.getId());
                     }else{
                         player.sendMessage("§cNo");
                     }
@@ -269,16 +275,16 @@ public class RaidCommand {
         Player player = (Player) sender;
         UUID uuid = UUIDFetcher.getUUID(player);
 
-        if (factionUserManager.isFactionUserInFaction(uuid)) {
-            FactionUserManager.FactionUser factionUser = factionUserManager.getFactionUser(uuid);
-            if (raidManager.isFactionRaiding(factionUser.getFactionID())) {
-                int raidID = raidManager.getActiveRaidID(factionUser.getFactionID());
-                RaidManager.Raid raid = raidManager.getRaid(raidID);
-                ArrayList<FactionUserManager.FactionUser> team = raidManager.getRaidTeam(raidID);
-                if (raidManager.isFactionUserUserJoinedRaid(factionUser)) {
+        if (factionMemberUtil.isFactionMemberInFaction(uuid)) {
+            FactionMember factionUser = factionMemberUtil.getFactionMember(uuid);
+            if (raidUtil.isFactionRaiding(factionUser.getFactionID())) {
+                int raidID = raidUtil.getActiveRaidID(factionUser.getFactionID());
+                Raid raid = raidUtil.getRaid(raidID);
+                ArrayList<FactionMember> team = raidUtil.getRaidTeam(raidID);
+                if (raidUtil.isFactionMemberJoinedRaid(factionUser)) {
                     if (team.size() == 1) {
-                        raidManager.getRaids().remove(raid);
-                        raidManager.getRaidTeams().remove(raid);
+                        raidUtil.getRaids().remove(raid);
+                        raidUtil.getRaidTeams().remove(raid);
 
                         scheduler.getCountdowns().remove(player);
                         scheduler.getRaids().remove(player);
@@ -288,7 +294,7 @@ public class RaidCommand {
                         scheduler.getRaids().remove(player);
                         scheduler.getCountdowns().remove(player);
 
-                        raidManager.getRaidTeams().remove(raid, factionUser);
+                        raidUtil.getRaidTeams().remove(raid, factionUser);
 
                         player.sendMessage("§aYou left the Raid");
                     }

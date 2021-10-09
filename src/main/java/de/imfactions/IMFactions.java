@@ -1,9 +1,12 @@
 package de.imfactions;
 
 import de.imfactions.commands.*;
+import de.imfactions.functions.faction.FactionCommand;
+import de.imfactions.functions.factionPlot.FactionPlotCommand;
 import de.imfactions.functions.factionPlot.PlotListener;
 import de.imfactions.functions.lobby.LobbyListener;
 import de.imfactions.functions.pvp.PVPListener;
+import de.imfactions.functions.raid.RaidCommand;
 import de.imfactions.listener.*;
 import de.imfactions.functions.WorldLoader;
 import org.bukkit.Bukkit;
@@ -32,7 +35,7 @@ public class IMFactions extends JavaPlugin {
     public void onEnable() {
         data = new Data(this);
         data.getMySQL().connect();
-        data.createTables();
+        data.createUtils();
         data.loadWorlds();
         data.loadScheduler();
         data.loadScoreboards();
@@ -44,9 +47,7 @@ public class IMFactions extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        data.getUserManager().saveUsers();
-        data.getFactionManager().saveFactions();
-        data.getFactionUserManager().saveFactionUsers();
+        data.getUserUtil().saveUsers();
         data.getMySQL().close();
         data.getScheduler().stopSchedulers();
         worldLoader.savePlots();
@@ -63,17 +64,16 @@ public class IMFactions extends JavaPlugin {
 
     public void registerCommands() {
         data.getRegistration().register(new Ether(this), this);
-        data.getRegistration().register(new Faction(this), this);
+        data.getRegistration().register(new FactionCommand(this), this);
         data.getRegistration().register(new de.imfactions.commands.World(this), this);
         data.getRegistration().register(new Spawn(this), this);
-        data.getRegistration().register(new FactionPlot(this), this);
-        data.getRegistration().register(new Raid(this), this);
+        data.getRegistration().register(new FactionPlotCommand(this), this);
+        data.getRegistration().register(new RaidCommand(this), this);
     }
 
     public void registerListener() {
         Bukkit.getPluginManager().registerEvents(new JoinListener(this), this);
         Bukkit.getPluginManager().registerEvents(new QuitListener(this), this);
-        Bukkit.getPluginManager().registerEvents(new TeleportListener(this), this);
         Bukkit.getPluginManager().registerEvents(new LobbyListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PVPListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PlotListener(this), this);

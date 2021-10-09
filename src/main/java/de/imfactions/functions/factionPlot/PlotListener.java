@@ -2,6 +2,8 @@ package de.imfactions.functions.factionPlot;
 
 import de.imfactions.Data;
 import de.imfactions.IMFactions;
+import de.imfactions.functions.faction.FactionUtil;
+import de.imfactions.functions.factionMember.FactionMemberUtil;
 import de.imfactions.util.LocationChecker;
 import de.imfactions.util.UUIDFetcher;
 import org.bukkit.Location;
@@ -21,16 +23,16 @@ public class PlotListener implements Listener {
 
     private IMFactions imFactions;
     private Data data;
-    private FactionManager factionManager;
-    private FactionPlotManager factionPlotManager;
-    private FactionUserManager factionUserManager;
+    private FactionUtil factionUtil;
+    private FactionPlotUtil factionPlotUtil;
+    private FactionMemberUtil factionMemberUtil;
 
     public PlotListener(IMFactions imFactions) {
         this.imFactions = imFactions;
         data = imFactions.getData();
-        factionManager = data.getFactionManager();
-        factionPlotManager = data.getFactionPlotManager();
-        factionUserManager = data.getFactionUserManager();
+        factionUtil = data.getFactionUtil();
+        factionPlotUtil = data.getFactionPlotUtil();
+        factionMemberUtil = data.getFactionMemberUtil();
     }
 
     //Blöcke abbauen nur im Plot
@@ -39,9 +41,9 @@ public class PlotListener implements Listener {
         Location location = event.getBlock().getLocation();
         String world = location.getWorld().getName();
         Player player = event.getPlayer();
-        if(factionUserManager.isFactionUserInFaction(UUIDFetcher.getUUID(player))) {
-            int factionID = factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionID();
-            FactionPlotManager.FactionPlot factionPlot = factionPlotManager.getFactionPlot(factionID);
+        if(factionMemberUtil.isFactionMemberInFaction(UUIDFetcher.getUUID(player))) {
+            int factionID = factionMemberUtil.getFactionMember(UUIDFetcher.getUUID(player)).getFactionID();
+            FactionPlot factionPlot = factionPlotUtil.getFactionPlot(factionID);
 
             if (world.equals("FactionPlots_world")) {
 
@@ -63,11 +65,11 @@ public class PlotListener implements Listener {
         String world = location.getWorld().getName();
 
         if(world.equals("FactionPlots_world")) {
-            if (factionPlotManager.getFactionPlot(location) != null) {
-                FactionPlotManager.FactionPlot factionPlot = factionPlotManager.getFactionPlot(location);
+            if (factionPlotUtil.getFactionPlot(location) != null) {
+                FactionPlot factionPlot = factionPlotUtil.getFactionPlot(location);
                 Location edgeDownFrontLeft = factionPlot.getEdgeDownFrontLeft();
-                Location raidEdgeLeft = factionPlotManager.getRaidEdgeLeft(edgeDownFrontLeft);
-                Location raidEdgeRight = factionPlotManager.getRaidEdgeRight(raidEdgeLeft);
+                Location raidEdgeLeft = factionPlotUtil.getRaidEdgeLeft(edgeDownFrontLeft);
+                Location raidEdgeRight = factionPlotUtil.getRaidEdgeRight(raidEdgeLeft);
 
                 event.blockList().forEach(block -> {
                     Location location1 = block.getLocation();
@@ -87,9 +89,9 @@ public class PlotListener implements Listener {
         Location location = event.getBlock().getLocation();
         String world = location.getWorld().getName();
         Player player = event.getPlayer();
-        if(factionUserManager.isFactionUserInFaction(UUIDFetcher.getUUID(player))) {
-            int factionID = factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionID();
-            FactionPlotManager.FactionPlot factionPlot = factionPlotManager.getFactionPlot(factionID);
+        if(factionMemberUtil.isFactionMemberInFaction(UUIDFetcher.getUUID(player))) {
+            int factionID = factionMemberUtil.getFactionMember(UUIDFetcher.getUUID(player)).getFactionID();
+            FactionPlot factionPlot = factionPlotUtil.getFactionPlot(factionID);
 
             if (world.equals("FactionPlots_world")) {
 
@@ -119,9 +121,9 @@ public class PlotListener implements Listener {
                 UUID damagerUuid = damager.getUniqueId();
                 UUID playerUuid = player.getUniqueId();
 
-                if (factionUserManager.isFactionUserInFaction(damagerUuid) && factionUserManager.isFactionUserInFaction(playerUuid)) {
-                    int factionIDPlayer = factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionID();
-                    int factionIDDamager = factionUserManager.getFactionUser(UUIDFetcher.getUUID(damager)).getFactionID();
+                if (factionMemberUtil.isFactionMemberInFaction(damagerUuid) && factionMemberUtil.isFactionMemberInFaction(playerUuid)) {
+                    int factionIDPlayer = factionMemberUtil.getFactionMember(UUIDFetcher.getUUID(player)).getFactionID();
+                    int factionIDDamager = factionMemberUtil.getFactionMember(UUIDFetcher.getUUID(damager)).getFactionID();
 
                     if (factionIDDamager == factionIDPlayer) {
                         event.setCancelled(true);
@@ -142,9 +144,9 @@ public class PlotListener implements Listener {
                 Player player = (Player) event.getEntity();
                 if (event.getCause().equals(EntityDamageEvent.DamageCause.VOID)) {
                     event.setCancelled(true);
-                    if(factionUserManager.isFactionUserInFaction(player.getUniqueId())) {
-                        int factionID = factionUserManager.getFactionUser(UUIDFetcher.getUUID(player)).getFactionID();
-                        FactionPlotManager.FactionPlot factionPlot = factionPlotManager.getFactionPlot(factionID);
+                    if(factionMemberUtil.isFactionMemberInFaction(player.getUniqueId())) {
+                        int factionID = factionMemberUtil.getFactionMember(UUIDFetcher.getUUID(player)).getFactionID();
+                        FactionPlot factionPlot = factionPlotUtil.getFactionPlot(factionID);
                         player.teleport(factionPlot.getHome());
                         player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
                     }else{

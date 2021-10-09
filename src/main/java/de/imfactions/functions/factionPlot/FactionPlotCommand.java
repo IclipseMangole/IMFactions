@@ -3,6 +3,8 @@ package de.imfactions.functions.factionPlot;
 import de.imfactions.Data;
 import de.imfactions.IMFactions;
 import de.imfactions.functions.WorldLoader;
+import de.imfactions.functions.faction.FactionUtil;
+import de.imfactions.functions.factionMember.FactionMemberUtil;
 import de.imfactions.util.Command.IMCommand;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -11,19 +13,19 @@ import org.bukkit.entity.Player;
 public class FactionPlotCommand {
 
     private IMFactions imFactions;
-    private FactionUserManager factionUserManager;
-    private FactionManager factionManager;
-    private FactionPlotManager factionPlotManager;
+    private FactionMemberUtil factionMemberUtil;
+    private FactionUtil factionUtil;
+    private FactionPlotUtil factionPlotUtil;
     private StringBuilder stringBuilder;
     private Data data;
     private WorldLoader worldLoader;
 
-    public FactionPlot(IMFactions imFactions) {
+    public FactionPlotCommand(IMFactions imFactions) {
         this.imFactions = imFactions;
         data = imFactions.getData();
-        factionManager = data.getFactionManager();
-        factionPlotManager = data.getFactionPlotManager();
-        factionUserManager = data.getFactionUserManager();
+        factionUtil = data.getFactionUtil();
+        factionMemberUtil = data.getFactionMemberUtil();
+        factionPlotUtil = data.getFactionPlotUtil();
         worldLoader = imFactions.getWorldLoader();
     }
 

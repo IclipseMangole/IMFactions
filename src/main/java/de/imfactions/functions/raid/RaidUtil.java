@@ -3,6 +3,10 @@ package de.imfactions.functions.raid;
 import de.imfactions.Data;
 import de.imfactions.IMFactions;
 import de.imfactions.functions.Scheduler;
+import de.imfactions.functions.faction.Faction;
+import de.imfactions.functions.faction.FactionUtil;
+import de.imfactions.functions.factionMember.FactionMember;
+import de.imfactions.functions.factionMember.FactionMemberUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -19,40 +23,28 @@ public class RaidUtil {
 
     private IMFactions imFactions;
     private ArrayList<Raid> raids;
-    private HashMap<Raid, FactionUserManager.FactionUser> raidTeams;
+    private HashMap<Raid, FactionMember> raidTeams;
     private Scheduler scheduler;
-    private FactionUserManager factionUserManager;
-    private FactionManager factionManager;
+    private FactionMemberUtil factionMemberUtil;
+    private FactionUtil factionUtil;
+    private RaidTable raidTable;
     private Data data;
 
-    public RaidManager(IMFactions imFactions) {
-        this.imFactions = imFactions;
-        data = imFactions.getData();
+    public RaidUtil(Data data) {
+        this.data = data;
+        imFactions = data.getImFactions();
         scheduler = data.getScheduler();
-        factionUserManager = data.getFactionUserManager();
-        factionManager = data.getFactionManager();
-        imFactions.getData().getMySQL().update("CREATE TABLE IF NOT EXISTS `raids` (`raidID` MEDIUMINT NOT NULL AUTO_INCREMENT, `raidState` VARCHAR(64), `factionIdAttackers` INT(10), `factionIdDefenders` INT(10), `start` DATETIME, `time` BIGINT, PRIMARY KEY(`raidID`))");
-
-        raids = new ArrayList<>();
+        factionMemberUtil = data.getFactionMemberUtil();
+        factionUtil = data.getFactionUtil();
+        raidTable = new RaidTable(this, data);
+        raids = raidTable.getRaids();
         raidTeams = new HashMap<>();
-        loadRaids();
         Bukkit.getScheduler().runTaskTimerAsynchronously(imFactions, new Runnable() {
             @Override
             public void run() {
                 saveRaids();
             }
         }, 0, 20 * 60 * 10);
-    }
-
-    private void loadRaids() {
-        try {
-            ResultSet rs = imFactions.getData().getMySQL().querry("SELECT `raidID`, `raidState`, `factionIdAttackers`, `factionIdDefenders`, `start`, `time` FROM raids WHERE 1");
-            while (rs.next()) {
-                raids.add(new Raid(rs.getInt("raidID"), rs.getString("raidState"), rs.getInt("factionIdAttackers"), rs.getInt("factionIdDefenders"), rs.getDate("start"), rs.getLong("time")));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
     public ArrayList<Raid> getRaids(){
@@ -70,11 +62,11 @@ public class RaidUtil {
         return false;
     }
 
-    public FactionManager.Faction getFactionForScout(int raidID, int factionIDScouting){
+    public Faction getFactionForScout(int raidID, int factionIDScouting){
         Raid raid = getRaid(raidID);
-        FactionManager.Faction faction = factionManager.getRandomFactionForRaid(raid.getFactionIdAttackers());
+        Faction faction = factionUtil.getRandomFactionForRaid(raid.getFactionIdAttackers());
         while(faction.getId() == factionIDScouting){
-            faction = factionManager.getRandomFactionForRaid(raid.getFactionIdAttackers());
+            faction = factionUtil.getRandomFactionForRaid(raid.getFactionIdAttackers());
         }
         return faction;
     }
@@ -99,11 +91,11 @@ public class RaidUtil {
         raid.setTime(System.currentTimeMillis() - raid.getStart().getTime());
     }
 
-    public ArrayList<FactionUserManager.FactionUser> getRaidTeam(int raidID){
-        ArrayList<FactionUserManager.FactionUser> team = new ArrayList<>();
+    public ArrayList<FactionMember> getRaidTeam(int raidID){
+        ArrayList<FactionMember> team = new ArrayList<>();
         Raid raid = getRaid(raidID);
 
-        for(Map.Entry<Raid, FactionUserManager.FactionUser> entry : raidTeams.entrySet()){
+        for(Map.Entry<Raid, FactionMember> entry : raidTeams.entrySet()){
             if(entry.getKey().equals(raid)){
                 team.add(entry.getValue());
             }
@@ -135,10 +127,10 @@ public class RaidUtil {
     public int getStartingSecondsLeft(int raidID){
         Raid raid = getRaid(raidID);
 
-        for (Map.Entry<Raid, FactionUserManager.FactionUser> entry : raidTeams.entrySet()) {
-            FactionUserManager.FactionUser factionUser = entry.getValue();
+        for (Map.Entry<Raid, FactionMember> entry : raidTeams.entrySet()) {
+            FactionMember FactionMember = entry.getValue();
             if (entry.getKey().equals(raid)) {
-                Player player = factionUserManager.getPlayer(factionUser.getUuid());
+                Player player = factionMemberUtil.getPlayer(FactionMember.getUuid());
                 if(scheduler.getCountdowns().containsKey(player)) {
                     return scheduler.getCountdowns().get(player);
                 }
@@ -151,18 +143,18 @@ public class RaidUtil {
     public Location getRaidSpawn(int raidID){
         Raid raid= getRaid(raidID);
 
-        for (Map.Entry<Raid, FactionUserManager.FactionUser> entry : raidTeams.entrySet()) {
-            FactionUserManager.FactionUser factionUser = entry.getValue();
+        for (Map.Entry<Raid, FactionMember> entry : raidTeams.entrySet()) {
+            FactionMember FactionMember = entry.getValue();
             if(entry.getKey().equals(raid)){
-                Player player = factionUserManager.getPlayer(factionUser.getUuid());
+                Player player = factionMemberUtil.getPlayer(FactionMember.getUuid());
                 return scheduler.getRaids().get(player);
             }
         }
         return null;
     }
 
-    public boolean isFactionUserUserJoinedRaid(FactionUserManager.FactionUser factionUser){
-        if(raidTeams.containsValue(factionUser)){
+    public boolean isFactionMemberJoinedRaid(FactionMember FactionMember){
+        if(raidTeams.containsValue(FactionMember)){
             return true;
         }
         return false;
@@ -210,11 +202,11 @@ public class RaidUtil {
 
     public void saveRaids() {
         for (Raid raid : raids) {
-            raid.save();
+            raidTable.saveRaid(raid);
         }
     }
 
-    public HashMap<Raid, FactionUserManager.FactionUser> getRaidTeams() {
+    public HashMap<Raid, FactionMember> getRaidTeams() {
         return raidTeams;
     }
 }

@@ -1,12 +1,14 @@
 package de.imfactions;
 
-import de.imfactions.database.UserManager;
-import de.imfactions.database.UserSettingsTable;
-import de.imfactions.database.faction.*;
 import de.imfactions.functions.Scheduler;
 import de.imfactions.functions.Scoreboard;
 import de.imfactions.functions.Tablist;
-import de.imfactions.functions.UserSettingsManager;
+import de.imfactions.functions.faction.FactionUtil;
+import de.imfactions.functions.factionMember.FactionMemberUtil;
+import de.imfactions.functions.factionPlot.FactionPlotUtil;
+import de.imfactions.functions.raid.RaidUtil;
+import de.imfactions.functions.user.UserSettingsUtil;
+import de.imfactions.functions.user.UserUtil;
 import de.imfactions.util.Command.CommandRegistration;
 import de.imfactions.util.MySQL;
 import net.md_5.bungee.api.ChatColor;
@@ -16,20 +18,11 @@ import org.bukkit.World;
 import org.bukkit.WorldCreator;
 
 public class Data {
-    private IMFactions factions;
+    private IMFactions imFactions;
 
     private final CommandRegistration registration;
     private final MySQL mysql;
-    private final UserSettingsManager userSettingsManager;
     private final Tablist tablist;
-
-    //Tables
-    private UserManager userManager;
-    private UserSettingsTable userSettingsTable;
-    private FactionManager factionManager;
-    private FactionUserManager factionUserManager;
-    private FactionPlotManager factionPlotManager;
-    private RaidManager raidManager;
 
     //Worlds
     private World world;
@@ -42,30 +35,31 @@ public class Data {
     //Scheduler
     private Scheduler scheduler;
 
-    //
+    //Scoreboard
     private Scoreboard scoreboard;
 
+    //Utils
+    private FactionUtil factionUtil;
+    private FactionPlotUtil factionPlotUtil;
+    private FactionMemberUtil factionMemberUtil;
+    private RaidUtil raidUtil;
+    private UserUtil userUtil;
+    private UserSettingsUtil userSettingsUtil;
 
-    public Data(IMFactions factions) {
-        this.factions = factions;
-        registration = new CommandRegistration(factions);
-        mysql = new MySQL(factions);
-        userSettingsManager = new UserSettingsManager(factions);
-        tablist = new Tablist(factions);
+    public Data(IMFactions imFactions) {
+        this.imFactions = imFactions;
+        registration = new CommandRegistration(imFactions);
+        mysql = new MySQL(imFactions);
+        tablist = new Tablist(imFactions);
     }
 
-    public void createTables() {
-        userManager = new UserManager(factions);
-        userSettingsTable = new UserSettingsTable(factions);
-        factionManager = new FactionManager(factions);
-        factionUserManager = new FactionUserManager(factions);
-        factionPlotManager = new FactionPlotManager(factions);
-        userManager = new UserManager(factions);
-        userSettingsTable = new UserSettingsTable(factions);
-        factionManager = new FactionManager(factions);
-        factionUserManager = new FactionUserManager(factions);
-        factionPlotManager = new FactionPlotManager(factions);
-        raidManager = new RaidManager(factions);
+    public void createUtils() {
+        factionUtil = new FactionUtil(this);
+        factionPlotUtil = new FactionPlotUtil(this);
+        factionMemberUtil = new FactionMemberUtil(this);
+        raidUtil = new RaidUtil(this);
+        userUtil = new UserUtil(this);
+        userSettingsUtil = new UserSettingsUtil(this);
     }
 
     public void loadWorlds() {
@@ -81,11 +75,11 @@ public class Data {
     }
 
     public void loadScheduler(){
-        scheduler = new Scheduler(factions);
+        scheduler = new Scheduler(imFactions);
     }
 
     public void loadScoreboards(){
-        scoreboard = new Scoreboard(factions);
+        scoreboard = new Scoreboard(imFactions);
     }
 
 
@@ -157,36 +151,35 @@ public class Data {
     public MySQL getMySQL() {
         return mysql;
     }
-
-    public UserSettingsManager getUserSettingsManager() {
-        return userSettingsManager;
-    }
-
-    public UserManager getUserManager() {
-        return userManager;
-    }
-
-    public UserSettingsTable getUserSettingsTable() {
-        return userSettingsTable;
-    }
-
-    public FactionManager getFactionManager(){
-        return factionManager;
-    }
-
-    public FactionPlotManager getFactionPlotManager() {
-        return factionPlotManager;
-    }
-
-    public FactionUserManager getFactionUserManager() {
-        return factionUserManager;
-    }
-
-    public RaidManager getRaidManager() {
-        return raidManager;
-    }
-
     public Scheduler getScheduler() {
         return scheduler;
+    }
+
+    public IMFactions getImFactions(){
+        return imFactions;
+    }
+
+    public FactionUtil getFactionUtil() {
+        return factionUtil;
+    }
+
+    public FactionPlotUtil getFactionPlotUtil() {
+        return factionPlotUtil;
+    }
+
+    public FactionMemberUtil getFactionMemberUtil() {
+        return factionMemberUtil;
+    }
+
+    public RaidUtil getRaidUtil() {
+        return raidUtil;
+    }
+
+    public UserUtil getUserUtil() {
+        return userUtil;
+    }
+
+    public UserSettingsUtil getUserSettingsUtil() {
+        return userSettingsUtil;
     }
 }

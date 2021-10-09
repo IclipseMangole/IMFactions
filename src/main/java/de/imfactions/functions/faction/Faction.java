@@ -14,7 +14,7 @@ public class Faction {
     private long raidProtection;
     private int raidEnergy;
 
-    private Faction(int factionID, String name, String shortcut, int userAmount, Date foundingDate, long raidProtection, int raidEnergy) {
+    public Faction(int factionID, String name, String shortcut, int userAmount, Date foundingDate, long raidProtection, int raidEnergy) {
         this.factionID = factionID;
         this.name = name;
         this.shortcut = shortcut;
@@ -32,9 +32,6 @@ public class Faction {
         foundingDate = Date.from(Instant.now());
         raidProtection = System.currentTimeMillis() +  3*60*60*1000;
         raidEnergy = 20;
-        createFaction(factionID, name, shortcut, userAmount, foundingDate, raidProtection, raidEnergy);
-        factionsList.add(this);
-        save();
     }
 
     public String getName() {
@@ -102,15 +99,5 @@ public class Faction {
 
     public void setRaidEnergy(int raidEnergy) {
         this.raidEnergy = raidEnergy;
-    }
-
-    public void save() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        factions.getData().getMySQL().update("UPDATE factions SET `name` = " + name + ", `shortcut` = " + shortcut + ", `userAmount` = '" + userAmount + ", `foundingDate` = " + sdf.format(foundingDate) + ", `raidProtection` = " + raidProtection + ", `raidEnergy` = " +raidEnergy + " WHERE `factionID` = '" + factionID + "'");
-    }
-
-    public void deleteFaction() {
-        factions.getData().getMySQL().update("DELETE FROM factions WHERE `factionID` = '" + factionID + "'");
-        factionsList.remove(this);
     }
 }

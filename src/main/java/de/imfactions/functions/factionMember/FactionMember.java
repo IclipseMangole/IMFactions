@@ -9,19 +9,10 @@ public class FactionMember {
     int rank;
     //King 3, Veteran 2, Knight 1, Member 0, Invited -1
 
-    private FactionUser(UUID uuid, int factionId, int rank) {
-        this.factionId = factionId;
-        this.uuid = uuid;
-        this.rank = rank;
-    }
-
-    public FactionUser(UUID uuid, int factionId, int rank, boolean save) {
+    public FactionMember(UUID uuid, int factionId, int rank) {
         this.uuid = uuid;
         this.factionId = factionId;
         this.rank = rank;
-        createFactionUser(uuid, factionId, rank);
-        factionUsers.add(this);
-        save();
     }
 
     public int getFactionID() {
@@ -69,14 +60,5 @@ public class FactionMember {
         } else {
             return false;
         }
-    }
-
-    public void save() {
-        factions.getData().getMySQL().update("UPDATE factionUser SET `factionId` = '" + this.factionId + "', `rank` = '" + rank + "' WHERE `uuid` = '" + this.uuid.toString() + "'");
-    }
-
-    public void delete() {
-        factions.getData().getMySQL().update("DELETE FROM factionUser WHERE `uuid` = '" + this.uuid.toString() + "'");
-        factionUsers.remove(this);
     }
 }

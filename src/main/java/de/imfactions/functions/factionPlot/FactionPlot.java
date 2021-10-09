@@ -74,15 +74,4 @@ public class FactionPlot {
     public void setHome(Location home) {
         this.home = home;
     }
-
-    public void save() {
-        factions.getData().getMySQL().update("UPDATE factionPlots SET `edgeDownFrontLeft` = '" + LocationBuilder.toString(edgeDownFrontLeft) + "', `edgeUpBackRight` = '" + LocationBuilder.toString(edgeUpBackRight) + "', `home` = '" + LocationBuilder.toString(home) + "', `reachable` = '" + reachable + "', `position` = '" + position + "' WHERE `factionID` = '" + factionID + "'");
-    }
-
-    public void deleteFactionPlot() {
-        factions.getData().getMySQL().update("DELETE FROM factionPlots WHERE `factionID` = '" + factionID + "'");
-        factionPlots.remove(this);
-    }
-
-
 }

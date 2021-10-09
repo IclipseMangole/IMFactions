@@ -1,6 +1,8 @@
 package de.imfactions.functions.factionMember;
 
+import de.imfactions.Data;
 import de.imfactions.IMFactions;
+import de.imfactions.functions.faction.Faction;
 import de.imfactions.util.UUIDFetcher;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -12,63 +14,50 @@ import java.util.UUID;
 
 public class FactionMemberUtil {
 
-    private IMFactions factions;
-    private ArrayList<FactionUser> factionUsers;
+    private IMFactions imFactions;
+    private Data data;
+    private ArrayList<FactionMember> factionMembers;
+    private FactionMemberTable factionMemberTable;
 
-    public FactionUserManager(IMFactions factions) {
-        this.factions = factions;
-        factions.getData().getMySQL().update("CREATE TABLE IF NOT EXISTS `factionUser` (`uuid` VARCHAR(64), `factionId` INT(10), `rank` INT(10), PRIMARY KEY(`uuid`))");
-        factionUsers = new ArrayList<>();
-        loadFactionUser();
-        Bukkit.getScheduler().runTaskTimerAsynchronously(factions, new Runnable() {
+    public FactionMemberUtil(Data data) {
+        this.data = data;
+        imFactions = data.getImFactions();
+        factionMemberTable = new FactionMemberTable(this, data);
+        factionMembers = factionMemberTable.getFactionMembers();
+        Bukkit.getScheduler().runTaskTimerAsynchronously(imFactions, new Runnable() {
             @Override
             public void run() {
-                saveFactionUsers();
+                saveFactionMembers();
             }
         }, 0, 20 * 60 * 10);
 
     }
 
-    public void createFactionUser(UUID uuid, int factionId, int rank, boolean save) {
-        new FactionUser(uuid, factionId, rank, save);
+    public void createFactionMember(UUID uuid, int factionId, int rank) {
+        FactionMember factionMember = new FactionMember(uuid, factionId, rank);
+        factionMembers.add(factionMember);
+        factionMemberTable.createFactionMember(uuid,factionId,rank);
     }
 
-    public void createFactionUser(UUID uuid, int factionId, int rank) {
-        if (!isFactionUserExists(uuid)) {
-            factions.getData().getMySQL().update("INSERT INTO factionUser (`uuid`, `factionId`, `rank`) VALUES ('" + uuid + "', '" + factionId + "', '" + rank + "')");
+    public void saveFactionMembers() {
+        for (FactionMember factionMember : factionMembers) {
+            factionMemberTable.saveFactionMember(factionMember);
         }
     }
 
-    private void loadFactionUser() {
-        try {
-            ResultSet rs = factions.getData().getMySQL().querry("SELECT `uuid`, `factionId`, `rank` FROM factionUser WHERE 1");
-            while (rs.next()) {
-                factionUsers.add(new FactionUser(UUID.fromString(rs.getString("uuid")), rs.getInt("factionId"), rs.getInt("rank")));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void saveFactionUsers() {
-        for (FactionUser factionUser : factionUsers) {
-            factionUser.save();
-        }
-    }
-
-    public boolean isFactionUserExists(UUID uuid) {
-        for (FactionUser factionUser : factionUsers) {
-            if (factionUser.getUuid().equals(uuid)) {
+    public boolean isFactionMemberExists(UUID uuid) {
+        for (FactionMember FactionMember : factionMembers) {
+            if (FactionMember.getUuid().equals(uuid)) {
                 return true;
             }
         }
         return false;
     }
 
-    public boolean isFactionUserInFaction(UUID uuid) {
-        for (FactionUser factionUser : factionUsers) {
-            if (factionUser.getUuid().equals(uuid)) {
-                if (factionUser.getRank() != -1) {
+    public boolean isFactionMemberInFaction(UUID uuid) {
+        for (FactionMember FactionMember : factionMembers) {
+            if (FactionMember.getUuid().equals(uuid)) {
+                if (FactionMember.getRank() != -1) {
                     return true;
                 } else {
                     return false;
@@ -79,18 +68,18 @@ public class FactionMemberUtil {
     }
 
     public Player getPlayer(UUID uuid){
-        for(FactionUser factionUser : factionUsers){
-            if(factionUser.getUuid() == uuid){
+        for(FactionMember FactionMember : factionMembers){
+            if(FactionMember.getUuid() == uuid){
                 return Bukkit.getPlayer(uuid);
             }
         }
         return null;
     }
 
-    public FactionUser getFactionUser(UUID uuid) {
-        for (FactionUser factionUser : factionUsers) {
-            if (factionUser.getUuid().equals(uuid)) {
-                return factionUser;
+    public FactionMember getFactionMember(UUID uuid) {
+        for (FactionMember FactionMember : factionMembers) {
+            if (FactionMember.getUuid().equals(uuid)) {
+                return FactionMember;
             }
         }
         return null;
@@ -101,7 +90,7 @@ public class FactionMemberUtil {
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             UUID uuid = UUIDFetcher.getUUID(player);
-            int factionIDPlayer = getFactionUser(uuid).getFactionID();
+            int factionIDPlayer = getFactionMember(uuid).getFactionID();
             if(factionIDPlayer == factionID){
                 online.add(player);
             }
@@ -113,41 +102,45 @@ public class FactionMemberUtil {
         return getOnlineMembers(factionID).size();
     }
 
-    public ArrayList<FactionUser> getFactionInvites(UUID uuid) {
-        ArrayList<FactionUser> factionInvites = new ArrayList<>();
-        for (FactionUser factionUser : factionUsers) {
-            if (factionUser.getUuid().equals(uuid)) {
-                factionInvites.add(factionUser);
+    public ArrayList<FactionMember> getFactionInvites(UUID uuid) {
+        ArrayList<FactionMember> factionInvites = new ArrayList<>();
+        for (FactionMember FactionMember : factionMembers) {
+            if (FactionMember.getUuid().equals(uuid)) {
+                factionInvites.add(FactionMember);
             }
         }
         return factionInvites;
     }
 
 
-    public ArrayList<FactionUser> getFactionUsers(int factionId) {
-        ArrayList<FactionUser> factionIdUsers = new ArrayList<>();
-        for (FactionUser factionUser : factionUsers) {
-            if (factionUser.getFactionID() == factionId) {
-                factionIdUsers.add(factionUser);
+    public ArrayList<FactionMember> getFactionMembers(int factionId) {
+        ArrayList<FactionMember> factionIdUsers = new ArrayList<>();
+        for (FactionMember FactionMember : factionMembers) {
+            if (FactionMember.getFactionID() == factionId) {
+                factionIdUsers.add(FactionMember);
             }
         }
         return factionIdUsers;
     }
 
-    public ArrayList<FactionUser> getHighestFactionUsers(int factionId) {
-        ArrayList<FactionUser> highestUsers = new ArrayList<>();
+    public ArrayList<FactionMember> getHighestFactionMembers(int factionId) {
+        ArrayList<FactionMember> highestUsers = new ArrayList<>();
         int highest = 0;
-        for(FactionUser factionUser : factionUsers){
-            if(factionUser.getFactionID() == factionId) {
-                if (factionUser.getRank() > highest) {
+        for(FactionMember FactionMember : factionMembers){
+            if(FactionMember.getFactionID() == factionId) {
+                if (FactionMember.getRank() > highest) {
                     highestUsers.clear();
-                    highestUsers.add(factionUser);
-                    highest = factionUser.getRank();
-                } else if (factionUser.getRank() == highest) {
-                    highestUsers.add(factionUser);
+                    highestUsers.add(FactionMember);
+                    highest = FactionMember.getRank();
+                } else if (FactionMember.getRank() == highest) {
+                    highestUsers.add(FactionMember);
                 }
             }
         }
         return  highestUsers;
+    }
+
+    public void deleteFactionMember(FactionMember factionMember){
+        factionMemberTable.deleteFactionMember(factionMember);
     }
 }

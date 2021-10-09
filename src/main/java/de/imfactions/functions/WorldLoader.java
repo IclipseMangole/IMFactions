@@ -19,6 +19,7 @@ import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import de.imfactions.IMFactions;
+import de.imfactions.functions.factionPlot.FactionPlotUtil;
 import de.imfactions.util.EmptyChunkGenerator;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -36,25 +37,25 @@ import java.nio.file.StandardCopyOption;
  * Created by Iclipse on 21.06.2020
  */
 public class WorldLoader {
-    private IMFactions factions;
-    private FactionPlotManager factionPlotManager;
+    private IMFactions imFactions;
+    private FactionPlotUtil factionPlotUtil;
 
-    public WorldLoader(IMFactions factions) {
-        this.factions = factions;
+    public WorldLoader(IMFactions imFactions) {
+        this.imFactions = imFactions;
     }
 
     public void loadManagers(){
-        factionPlotManager = factions.getData().getFactionPlotManager();
+        factionPlotUtil = imFactions.getData().getFactionPlotUtil();
     }
 
     public void loadLobby() {
         //if (mapUpdate) {
         File from = new File("/home/IMNetzwerk/BuildServer/FactionLobby_world/region");
-        File to = new File(factions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/world/region");
+        File to = new File(imFactions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/world/region");
 
         try {
             if (to.exists()) {
-                FileUtils.deleteDirectory(new File(factions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/world"));
+                FileUtils.deleteDirectory(new File(imFactions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/world"));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -63,7 +64,7 @@ public class WorldLoader {
 
         try {
             FileUtils.copyDirectory(from, to);
-            Files.copy(new File("/home/IMNetzwerk/BuildServer/FactionLobby_world/level.dat").toPath(), new File(factions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/world/level.dat").toPath(), StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(new File("/home/IMNetzwerk/BuildServer/FactionLobby_world/level.dat").toPath(), new File(imFactions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/world/level.dat").toPath(), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -83,59 +84,59 @@ public class WorldLoader {
 
     public void loadPVP() {
         File from = new File("/home/IMNetzwerk/BuildServer/FactionPVP_world/region");
-        File to = new File(factions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPVP_world/region");
+        File to = new File(imFactions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPVP_world/region");
 
         try {
             if (to.exists()) {
-                FileUtils.deleteDirectory(new File(factions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPVP_world"));
+                FileUtils.deleteDirectory(new File(imFactions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPVP_world"));
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
         try {
             FileUtils.copyDirectory(from, to);
-            Files.copy(new File("/home/IMNetzwerk/BuildServer/FactionPVP_world/level.dat").toPath(), new File(factions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPVP_world/level.dat").toPath(), StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(new File("/home/IMNetzwerk/BuildServer/FactionPVP_world/level.dat").toPath(), new File(imFactions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPVP_world/level.dat").toPath(), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void loadPlots() {
-        if(!new File(factions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlotsSave_world/region").exists()){
+        if(!new File(imFactions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlotsSave_world/region").exists()){
             new WorldCreator("FactionPlotsSave_world").generator(new EmptyChunkGenerator()).createWorld();
         }
-        File from = new File(factions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlotsSave_world/region");
-        File to = new File(factions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlots_world/region");
+        File from = new File(imFactions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlotsSave_world/region");
+        File to = new File(imFactions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlots_world/region");
 
         try {
             if (to.exists()) {
-                FileUtils.deleteDirectory(new File(factions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlots_world"));
+                FileUtils.deleteDirectory(new File(imFactions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlots_world"));
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
         try {
             FileUtils.copyDirectory(from, to);
-            Files.copy(new File(factions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlotsSave_world/level.dat").toPath(), new File(factions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlots_world/level.dat").toPath(), StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(new File(imFactions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlotsSave_world/level.dat").toPath(), new File(imFactions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlots_world/level.dat").toPath(), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void savePlots() {
-        File to = new File(factions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlotsSave_world/region");
-        File from = new File(factions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlots_world/region");
+        File to = new File(imFactions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlotsSave_world/region");
+        File from = new File(imFactions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlots_world/region");
 
         try {
             if (to.exists()) {
-                FileUtils.deleteDirectory(new File(factions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlotsSave_world"));
+                FileUtils.deleteDirectory(new File(imFactions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlotsSave_world"));
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
         try {
             FileUtils.copyDirectory(from, to);
-            Files.copy(new File(factions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlots_world/level.dat").toPath(), new File(factions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlotsSave_world/level.dat").toPath(), StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(new File(imFactions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlots_world/level.dat").toPath(), new File(imFactions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlotsSave_world/level.dat").toPath(), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -6,9 +6,7 @@ package de.imfactions.listener;
 //   |   |      |       |   |         |  |
 //   |    ----   ----   |   |     -----  |---
 
-import de.imfactions.Data;
 import de.imfactions.IMFactions;
-import de.imfactions.database.UserManager;
 import de.imfactions.util.UUIDFetcher;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
