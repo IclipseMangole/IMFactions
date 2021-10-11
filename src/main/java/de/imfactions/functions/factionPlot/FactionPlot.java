@@ -10,15 +10,15 @@ public class FactionPlot {
     Location edgeDownFrontLeft;
     Location edgeUpBackRight;
     Location home;
-    long reachable;
+    boolean loading;
     int position;
 
-    public FactionPlot(int factionID, Location edgeDownFrontLeft, Location edgeUpBackRight, Location home, long reachable, int position) {
+    public FactionPlot(int factionID, Location edgeDownFrontLeft, Location edgeUpBackRight, Location home, boolean loading, int position) {
         this.factionID = factionID;
         this.edgeDownFrontLeft = edgeDownFrontLeft;
         this.edgeUpBackRight = edgeUpBackRight;
         this.home = home;
-        this.reachable = reachable;
+        this.loading = loading;
         this.position = position;
     }
 
@@ -47,12 +47,12 @@ public class FactionPlot {
         return position;
     }
 
-    public void setReachable(long reachable) {
-        this.reachable = reachable;
+    public void setLoading(boolean loading) {
+        this.loading = loading;
     }
 
-    public long getReachable() {
-        return reachable;
+    public boolean isLoading() {
+        return loading;
     }
 
     public void setEdgeDownFrontLeft(Location edgeDownFrontLeft) {

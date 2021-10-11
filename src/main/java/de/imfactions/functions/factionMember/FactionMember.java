@@ -7,7 +7,7 @@ public class FactionMember {
     UUID uuid;
     int factionId;
     int rank;
-    //King 3, Veteran 2, Knight 1, Member 0, Invited -1
+    //King 3, Veteran 2, Knight 1, Member 0
 
     public FactionMember(UUID uuid, int factionId, int rank) {
         this.uuid = uuid;
@@ -29,8 +29,6 @@ public class FactionMember {
 
     public String getRankname() {
         switch (rank) {
-            case -1:
-                return "§7Invited";
             case 0:
                 return "§2Member";
             case 1:

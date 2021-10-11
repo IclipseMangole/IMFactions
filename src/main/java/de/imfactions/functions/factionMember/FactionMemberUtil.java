@@ -3,8 +3,10 @@ package de.imfactions.functions.factionMember;
 import de.imfactions.Data;
 import de.imfactions.IMFactions;
 import de.imfactions.functions.faction.Faction;
+import de.imfactions.functions.faction.FactionUtil;
 import de.imfactions.util.UUIDFetcher;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.sql.ResultSet;
@@ -14,15 +16,17 @@ import java.util.UUID;
 
 public class FactionMemberUtil {
 
-    private IMFactions imFactions;
-    private Data data;
+    private final IMFactions imFactions;
+    private final Data data;
     private ArrayList<FactionMember> factionMembers;
-    private FactionMemberTable factionMemberTable;
+    private final FactionMemberTable factionMemberTable;
+    private final FactionUtil factionUtil;
 
     public FactionMemberUtil(Data data) {
         this.data = data;
         imFactions = data.getImFactions();
         factionMemberTable = new FactionMemberTable(this, data);
+        factionUtil = data.getFactionUtil();
         factionMembers = factionMemberTable.getFactionMembers();
         Bukkit.getScheduler().runTaskTimerAsynchronously(imFactions, new Runnable() {
             @Override
@@ -140,7 +144,14 @@ public class FactionMemberUtil {
         return  highestUsers;
     }
 
+    public void leaveFaction(FactionMember factionMember){
+        Faction faction = factionUtil.getFaction(factionMember.factionId);
+        faction.setUserAmount(faction.getUserAmount() - 1);
+        deleteFactionMember(factionMember);
+    }
+
     public void deleteFactionMember(FactionMember factionMember){
         factionMemberTable.deleteFactionMember(factionMember);
+        factionMembers.remove(factionMember);
     }
 }

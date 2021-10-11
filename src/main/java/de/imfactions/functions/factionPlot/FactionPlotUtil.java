@@ -13,10 +13,10 @@ import java.util.ArrayList;
 
 public class FactionPlotUtil {
     private ArrayList<FactionPlot> factionPlots;
-    private IMFactions imFactions;
-    private Data data;
+    private final IMFactions imFactions;
+    private final Data data;
     private int loadingFactionPlots;
-    private FactionPlotTable factionPlotTable;
+    private final FactionPlotTable factionPlotTable;
 
     public FactionPlotUtil(Data data) {
         this.data = data;
@@ -143,7 +143,15 @@ public class FactionPlotUtil {
         factionPlots.remove(factionPlot);
     }
 
-    public void createFactionPlot(int factionID, Location edgeDownFrontLeft, Location edgeUpBackRight, Location home, long reachable, int position){
-        factionPlotTable.createFactionPlot(factionID, edgeDownFrontLeft, edgeUpBackRight, home, reachable, position);
+    public void createFactionPlot(int factionID, Location edgeDownFrontLeft, Location edgeUpBackRight, Location home, boolean loading, int position){
+        factionPlotTable.createFactionPlot(factionID, edgeDownFrontLeft, edgeUpBackRight, home, loading, position);
+    }
+
+    public void createFactionPlot(int factionID){
+        int position = getFreePosition();
+        Location edgeDownFrontLeft = getEdgeDownFrontLeft(position);
+        Location edgeUpBackRight = getEdgeUpBackRight(edgeDownFrontLeft);
+        Location home = new Location(edgeDownFrontLeft.getWorld(), edgeDownFrontLeft.getX(), edgeDownFrontLeft.getY() + 17, edgeDownFrontLeft.getZ());
+        factionPlotTable.createFactionPlot(factionID, edgeDownFrontLeft, edgeUpBackRight, home, true, position);
     }
 }
