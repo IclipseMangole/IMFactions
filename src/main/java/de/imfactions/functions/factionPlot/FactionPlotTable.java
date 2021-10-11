@@ -24,21 +24,21 @@ public class FactionPlotTable {
     }
     
     private void createFactionPlotTable(){
-        mySQL.update("CREATE TABLE IF NOT EXISTS `factionPlots` (`factionID` INT(10), `edgeDownFrontLeft` VARCHAR(100), `edgeUpBackRight` VARCHAR(100), `home` VARCHAR(100), `reachable` BIGINT, `position` INT(10), PRIMARY KEY(`factionID`))");
+        mySQL.update("CREATE TABLE IF NOT EXISTS `factionPlots` (`factionID` INT(10), `edgeDownFrontLeft` VARCHAR(100), `edgeUpBackRight` VARCHAR(100), `home` VARCHAR(100), `loading` BOOLEAN, `position` INT(10), PRIMARY KEY(`factionID`))");
     }
 
-    public void createFactionPlot(int factionID, Location edgeDownFrontLeft, Location edgeUpBackRight, Location home, long reachable, int position) {
+    public void createFactionPlot(int factionID, Location edgeDownFrontLeft, Location edgeUpBackRight, Location home, boolean loading, int position) {
         if (!factionPlotUtil.isFactionPlotExists(factionID)) {
-            mySQL.update("INSERT INTO factionPlots (`factionID`, `edgeDownFrontLeft`, `edgeUpBackRight`, `home`, `reachable`, `position`) VALUES ('" + factionID + "', '" + LocationBuilder.toString(edgeDownFrontLeft) + "', '" + LocationBuilder.toString(edgeUpBackRight) + "', '" + LocationBuilder.toString(home) + "', '" + reachable + "', '" + position + "')");
+            mySQL.update("INSERT INTO factionPlots (`factionID`, `edgeDownFrontLeft`, `edgeUpBackRight`, `home`, `loading`, `position`) VALUES ('" + factionID + "', '" + LocationBuilder.toString(edgeDownFrontLeft) + "', '" + LocationBuilder.toString(edgeUpBackRight) + "', '" + LocationBuilder.toString(home) + "', '" + loading + "', '" + position + "')");
         }
     }
 
     public ArrayList<FactionPlot> getFactionPlots() {
         ArrayList<FactionPlot> factionPlots = new ArrayList<>();
         try {
-            ResultSet rs = mySQL.querry("SELECT `factionID`, `edgeDownFrontLeft`, `edgeUpBackRight`, `home`, `reachable`, `position` FROM factionPlots WHERE 1");
+            ResultSet rs = mySQL.querry("SELECT `factionID`, `edgeDownFrontLeft`, `edgeUpBackRight`, `home`, `loading`, `position` FROM factionPlots WHERE 1");
             while (rs.next()) {
-                FactionPlot factionPlot = new FactionPlot(rs.getInt("factionID"), LocationBuilder.fromString(rs.getString("edgeDownFrontLeft")), LocationBuilder.fromString(rs.getString("edgeUpBackRight")), LocationBuilder.fromString(rs.getString("home")), rs.getLong("reachable"), rs.getInt("position"));
+                FactionPlot factionPlot = new FactionPlot(rs.getInt("factionID"), LocationBuilder.fromString(rs.getString("edgeDownFrontLeft")), LocationBuilder.fromString(rs.getString("edgeUpBackRight")), LocationBuilder.fromString(rs.getString("home")), rs.getBoolean("loading"), rs.getInt("position"));
                 factionPlots.add(factionPlot);
             }
         } catch (SQLException e) {
@@ -48,7 +48,7 @@ public class FactionPlotTable {
     }
 
     public void saveFactionPlot(FactionPlot factionPlot){
-        mySQL.update("UPDATE factionPlots SET `edgeDownFrontLeft` = '" + LocationBuilder.toString(factionPlot.edgeDownFrontLeft) + "', `edgeUpBackRight` = '" + LocationBuilder.toString(factionPlot.edgeUpBackRight) + "', `home` = '" + LocationBuilder.toString(factionPlot.home) + "', `reachable` = '" + factionPlot.reachable + "', `position` = '" + factionPlot.position + "' WHERE `factionID` = '" + factionPlot.factionID + "'");
+        mySQL.update("UPDATE factionPlots SET `edgeDownFrontLeft` = '" + LocationBuilder.toString(factionPlot.edgeDownFrontLeft) + "', `edgeUpBackRight` = '" + LocationBuilder.toString(factionPlot.edgeUpBackRight) + "', `home` = '" + LocationBuilder.toString(factionPlot.home) + "', `loading` = '" + factionPlot.loading + "', `position` = '" + factionPlot.position + "' WHERE `factionID` = '" + factionPlot.factionID + "'");
 
     }
 

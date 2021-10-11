@@ -2,6 +2,8 @@ package de.imfactions.functions.faction;
 
 import de.imfactions.Data;
 import de.imfactions.IMFactions;
+import de.imfactions.functions.factionMember.FactionMember;
+import de.imfactions.functions.factionMember.FactionMemberUtil;
 import org.bukkit.Bukkit;
 
 import java.sql.ResultSet;
@@ -15,15 +17,17 @@ import java.util.Random;
 public class FactionUtil {
 
     private ArrayList<Faction> factions;
-    private IMFactions imFactions;
-    private Data data;
-    private FactionTable factionTable;
+    private final IMFactions imFactions;
+    private final Data data;
+    private final FactionTable factionTable;
+    private final FactionMemberUtil factionMemberUtil;
     private int raidEnergyCooldown;
 
     public FactionUtil(Data data) {
         this.data = data;
         imFactions = data.getImFactions();
         factionTable = new FactionTable(this, data);
+        factionMemberUtil = data.getFactionMemberUtil();
         factions = factionTable.getFactions();
         raidEnergyCooldown = 0;
         Bukkit.getScheduler().runTaskTimerAsynchronously(imFactions, new Runnable() {
@@ -141,5 +145,14 @@ public class FactionUtil {
 
     public void deleteFaction(Faction faction){
         factionTable.deleteFaction(faction);
+    }
+
+    public FactionMember getKing(Faction faction){
+        for(FactionMember factionMember : factionMemberUtil.getFactionMembers(faction.getId())){
+            if(factionMember.getRank() == 3){
+                return factionMember;
+            }
+        }
+        return null;
     }
 }

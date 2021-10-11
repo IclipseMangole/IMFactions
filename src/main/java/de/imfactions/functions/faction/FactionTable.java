@@ -11,9 +11,9 @@ import java.util.Date;
 
 public class FactionTable {
 
-    private Data data;
-    private MySQL mySQL;
-    private FactionUtil factionUtil;
+    private final Data data;
+    private final MySQL mySQL;
+    private final FactionUtil factionUtil;
 
     public FactionTable(FactionUtil factionUtil, Data data){
         this.data = data;
