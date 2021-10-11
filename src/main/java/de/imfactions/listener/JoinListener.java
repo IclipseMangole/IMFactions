@@ -36,10 +36,12 @@ public class JoinListener implements Listener {
 
     @EventHandler
     public void onLogin(PlayerLoginEvent event) {
+        /*
         if (!event.getHostname().equalsIgnoreCase("207.180.241.195:25565")) {
             event.setResult(PlayerLoginEvent.Result.KICK_OTHER);
             event.setKickMessage("§4Please join our Proxy to connect to this Server.\n Thank you!");
         }
+         */
     }
 
 

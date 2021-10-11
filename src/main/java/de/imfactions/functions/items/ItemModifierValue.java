@@ -18,3 +18,4 @@ public class ItemModifierValue<T> {
         this.value = value;
     }
 }
+

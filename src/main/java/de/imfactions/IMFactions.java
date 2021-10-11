@@ -20,9 +20,6 @@ public class IMFactions extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        System.out.println(getFile().getAbsolutePath());
-        System.out.println(Bukkit.getWorldContainer().getAbsolutePath());
-        System.out.println(getDataFolder().getAbsolutePath());
         worldLoader = new WorldLoader(this);
         if (Bukkit.getWorlds().size() == 0) {
             worldLoader.loadLobby();
@@ -34,7 +31,6 @@ public class IMFactions extends JavaPlugin {
     @Override
     public void onEnable() {
         data = new Data(this);
-        data.getMySQL().connect();
         data.createUtils();
         data.loadWorlds();
         data.loadScheduler();
