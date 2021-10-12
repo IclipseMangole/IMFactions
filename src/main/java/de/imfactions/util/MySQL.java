@@ -5,11 +5,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
 import java.io.IOException;
 import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by Yannick who could get really angry if somebody steal his code!
@@ -17,23 +20,40 @@ import java.sql.*;
  */
 public class MySQL {
 
-    private File getMySQLFile() {
-        return new File("plugins/" + factions.getDescription().getName(), "mysql.yml");
+    private JavaPlugin plugin;
+    private Logger logger;
+
+    private String HOST;
+    private String DATABASE;
+    private String USER;
+    private String PASSWORD;
+    private String prefix;
+
+    private Connection conn;
+
+    public MySQL(JavaPlugin plugin) {
+        this.plugin = plugin;
+        this.logger = plugin.getLogger();
+        connect();
     }
 
-    private FileConfiguration getMySQLFileConfiguration() {
+    public File getMySQLFile() {
+        return new File("plugins/" + plugin.getDescription().getName(), "mysql.yml");
+    }
+
+    public FileConfiguration getMySQLFileConfiguration() {
         return YamlConfiguration.loadConfiguration(getMySQLFile());
     }
 
-    private void setStandardMySQL() {
+    public void setStandardMySQL() {
         FileConfiguration cfg = getMySQLFileConfiguration();
         cfg.options().copyDefaults(true);
         cfg.addDefault("host", "localhost");
         cfg.addDefault("database", "Factions");
-        cfg.addDefault("user", "root");
+        cfg.addDefault("user", "mysql");
         cfg.addDefault("password", "dshchangE762");
 
-        cfg.addDefault("prefix", "&5" + factions.getDescription().getName() + " &3MySQL &8&7");
+        cfg.addDefault("prefix", "&5" + plugin.getDescription().getName() + " &3MySQL &8&7");
         try {
             cfg.save(getMySQLFile());
         } catch (IOException e) {
@@ -41,7 +61,7 @@ public class MySQL {
         }
     }
 
-    private void readMySQL() {
+    public void readMySQL() {
         FileConfiguration cfg = getMySQLFileConfiguration();
         HOST = cfg.getString("host");
         DATABASE = cfg.getString("database");
@@ -50,41 +70,16 @@ public class MySQL {
         prefix = ChatColor.translateAlternateColorCodes('&', cfg.getString("prefix")) + " ";
     }
 
-    private IMFactions factions;
-
-    private String HOST;
-    private String DATABASE;
-    private String USER;
-    private String PASSWORD;
-    private String prefix;
-    private int disable;
-
-    private Connection conn;
-    private BukkitTask task;
-
-    public MySQL(IMFactions factions) {
-        this.factions = factions;
-        setStandardMySQL();
-        readMySQL();
-        disable = 300;
-        Bukkit.getScheduler().runTaskTimerAsynchronously(factions, new Runnable() {
-            @Override
-            public void run() {
-                if (disable > 0) {
-                    disable--;
-                } else {
-                    close();
-                }
-            }
-        }, 0, 20);
-    }
 
     public void connect() {
+        setStandardMySQL();
+        readMySQL();
         try {
-            conn = DriverManager.getConnection("jdbc:mysql://" + HOST + ":3306/" + DATABASE + "?autoReconnect=false&useSSL=false", USER, PASSWORD);
-            System.out.println(prefix + "Verbunden!");
+            conn = DriverManager.getConnection("jdbc:mysql://" + HOST + ":3306/" + DATABASE + "?autoReconnect=false", USER, PASSWORD);
+            logger.log(Level.INFO, prefix + "Connected with database");
         } catch (SQLException e) {
-            System.out.println(prefix + "Keine Verbindung! Fehler: " + e.getMessage());
+            logger.log(Level.INFO, prefix + "No connection! Error: " + e.getMessage());
+            plugin.getServer().shutdown();
         }
     }
 
@@ -93,12 +88,12 @@ public class MySQL {
             if (!conn.isClosed()) {
                 if (conn != null) {
                     conn.close();
-                    System.out.println(prefix + "erfolgreich getrennt!");
+                    logger.log(Level.INFO, prefix + "disconnected successfully!");
                 }
             }
 
         } catch (SQLException e) {
-            System.out.println(prefix + "Keine Verbindung! Fehler: " + e.getMessage());
+            logger.log(Level.INFO, prefix + "No connection! Error: " + e.getMessage());
         }
     }
 
@@ -109,10 +104,9 @@ public class MySQL {
             st = conn.createStatement();
             st.executeUpdate(querry);
             st.close();
-            return;
         } catch (SQLException e) {
             connect();
-            System.err.println(e);
+            logger.log(Level.WARNING, e.getMessage());
         }
     }
 
@@ -131,11 +125,10 @@ public class MySQL {
         return rs;
     }
 
-    private void checkConnection() throws SQLException {
+    public void checkConnection() throws SQLException {
         if (conn == null || conn.isClosed()) {
             connect();
         }
-        disable = 300;
     }
 
 }

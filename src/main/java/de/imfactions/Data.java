@@ -10,12 +10,15 @@ import de.imfactions.functions.raid.RaidUtil;
 import de.imfactions.functions.user.UserSettingsUtil;
 import de.imfactions.functions.user.UserUtil;
 import de.imfactions.util.Command.CommandRegistration;
+import de.imfactions.util.EmptyChunkGenerator;
 import de.imfactions.util.MySQL;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
+
+import java.io.File;
 
 public class Data {
     private IMFactions imFactions;
@@ -65,7 +68,11 @@ public class Data {
     public void loadWorlds() {
         world = Bukkit.getWorld("world");
         PVP_world = Bukkit.createWorld(new WorldCreator("FactionPVP_world"));
-        FactionPlots_world = Bukkit.createWorld(new WorldCreator("FactionPlots_world"));
+        if(!new File(imFactions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlotsSave_world/").exists()){
+            FactionPlots_world = new WorldCreator("FactionPlotsSave_world").generator(new EmptyChunkGenerator()).createWorld();
+        }else{
+            FactionPlots_world = Bukkit.createWorld(new WorldCreator("FactionPlots_world"));
+        }
         worldSpawn = new Location(world, 0.5, 31, -17.5);
         PVP_worldSpawn = new Location(PVP_world, 63.5, 80.5, 1265.5);
         FactionPlots_worldSpawn = new Location(FactionPlots_world, 0, 17, 0);

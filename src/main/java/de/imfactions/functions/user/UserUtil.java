@@ -49,7 +49,9 @@ public class UserUtil {
     }
 
     public User createUser(UUID uuid) {
-        return new User(uuid);
+        User user = new User(uuid);
+        users.add(user);
+        return user;
     }
 
     public boolean isUserExists(UUID uuid) {
