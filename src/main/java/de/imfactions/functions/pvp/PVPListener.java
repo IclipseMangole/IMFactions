@@ -12,13 +12,17 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityPortalEnterEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
 import static de.imfactions.util.ColorConverter.toHex;
@@ -136,4 +140,31 @@ public class PVPListener implements Listener {
         }
     }
 
+    @EventHandler
+    public void onBurn(BlockBurnEvent event){
+        World world = event.getBlock().getWorld();
+        if(!world.getName().equalsIgnoreCase("world"))
+            return;
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onFireSpread(BlockSpreadEvent event){
+        World world = event.getBlock().getWorld();
+        if(!world.getName().equalsIgnoreCase("world"))
+            return;
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onPortal(EntityPortalEnterEvent event){
+        World world = event.getEntity().getWorld();
+        if(!world.getName().equalsIgnoreCase("world"))
+            return;
+        if(!(event.getEntity() instanceof Player))
+            return;
+        Player player = (Player) event.getEntity();
+        player.teleport(data.getWorldSpawn());
+        player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
+    }
 }

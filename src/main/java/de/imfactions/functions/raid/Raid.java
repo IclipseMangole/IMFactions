@@ -5,13 +5,13 @@ import java.util.Date;
 
 public class Raid {
     int raidID;
-    String raidState;
+    RaidState raidState;
     int factionIdAttackers;
     int factionIdDefenders;
     Date start;
     long time;
 
-    public Raid(int raidID, String raidState, int factionIdAttackers, int factionIdDefenders, Date start, long time) {
+    public Raid(int raidID, RaidState raidState, int factionIdAttackers, int factionIdDefenders, Date start, long time) {
         this.raidID = raidID;
         this.raidState = raidState;
         this.factionIdAttackers = factionIdAttackers;
@@ -52,11 +52,11 @@ public class Raid {
         this.start = start;
     }
 
-    public String getRaidState(){
+    public RaidState getRaidState(){
         return raidState;
     }
 
-    public void setRaidState(String raidState){
+    public void setRaidState(RaidState raidState){
         this.raidState = raidState;
     }
 

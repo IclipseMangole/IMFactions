@@ -2,13 +2,10 @@ package de.imfactions.functions.factionPlot;
 
 import de.imfactions.Data;
 import de.imfactions.IMFactions;
-import de.imfactions.util.LocationBuilder;
 import de.imfactions.util.LocationChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class FactionPlotUtil {

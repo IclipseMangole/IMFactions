@@ -1,5 +1,7 @@
 package de.imfactions.functions.factionMember;
 
+import org.bukkit.ChatColor;
+
 import java.util.UUID;
 
 public class FactionMember {
@@ -28,15 +30,32 @@ public class FactionMember {
     }
 
     public String getRankname() {
+        return getRankColor() + getRankString();
+    }
+
+    public String getRankString(){
         switch (rank) {
             case 0:
-                return "§2Member";
+                return "Member";
             case 1:
-                return "§9Knight";
+                return "Knight";
             case 2:
-                return "§5Veteran";
+                return "Veteran";
             default:
-                return "§4King";
+                return "King";
+        }
+    }
+
+    public ChatColor getRankColor(){
+        switch (rank){
+            case 0:
+                return ChatColor.DARK_GREEN;
+            case 1:
+                return ChatColor.BLUE;
+            case 2:
+                return ChatColor.DARK_PURPLE;
+            default:
+                return ChatColor.DARK_RED;
         }
     }
 
@@ -58,5 +77,13 @@ public class FactionMember {
         } else {
             return false;
         }
+    }
+
+    public void promote(){
+        rank += 1;
+    }
+
+    public void demote(){
+        rank -= 1;
     }
 }

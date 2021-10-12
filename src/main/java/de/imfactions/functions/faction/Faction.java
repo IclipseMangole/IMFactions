@@ -7,7 +7,7 @@ import java.util.Date;
 public class Faction {
 
     private int factionID;
-    private int userAmount;
+    private int memberAmount;
     private String name;
     private String shortcut;
     private Date foundingDate;
@@ -19,7 +19,7 @@ public class Faction {
         this.factionID = factionID;
         this.name = name;
         this.shortcut = shortcut;
-        this.userAmount = userAmount;
+        this.memberAmount = memberAmount;
         this.foundingDate = foundingDate;
         this.raidProtection = raidProtection;
         this.raidEnergy = raidEnergy;
@@ -29,7 +29,7 @@ public class Faction {
         this.factionID = factionID;
         this.name = name;
         this.shortcut = shortcut;
-        userAmount = 1;
+        memberAmount = 1;
         foundingDate = Date.from(Instant.now());
         raidProtection = System.currentTimeMillis() +  12*60*60*1000;
         raidEnergy = 10;
@@ -43,8 +43,8 @@ public class Faction {
         return factionID;
     }
 
-    public int getUserAmount() {
-        return userAmount;
+    public int getMemberAmount() {
+        return memberAmount;
     }
 
     public Date getFoundingDate() {
@@ -90,8 +90,8 @@ public class Faction {
         this.factionID = factionID;
     }
 
-    public void setUserAmount(int userAmount) {
-        this.userAmount = userAmount;
+    public void setMemberAmount(int memberAmount) {
+        this.memberAmount = memberAmount;
     }
 
     public int getRaidEnergy() {
@@ -100,5 +100,13 @@ public class Faction {
 
     public void setRaidEnergy(int raidEnergy) {
         this.raidEnergy = raidEnergy;
+    }
+
+    public void memberJoin(){
+        memberAmount += 1;
+    }
+
+    public void memberLeave(){
+        memberAmount -= 1;
     }
 }

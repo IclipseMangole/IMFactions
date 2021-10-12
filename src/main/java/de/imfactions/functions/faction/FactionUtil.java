@@ -5,6 +5,7 @@ import de.imfactions.IMFactions;
 import de.imfactions.functions.factionMember.FactionMember;
 import de.imfactions.functions.factionMember.FactionMemberUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,6 +22,7 @@ public class FactionUtil {
     private final Data data;
     private final FactionTable factionTable;
     private final FactionMemberUtil factionMemberUtil;
+    private final FactionHomeScheduler factionHomeScheduler;
     private int raidEnergyCooldown;
 
     public FactionUtil(Data data) {
@@ -28,6 +30,7 @@ public class FactionUtil {
         imFactions = data.getImFactions();
         factionTable = new FactionTable(this, data);
         factionMemberUtil = data.getFactionMemberUtil();
+        factionHomeScheduler = new FactionHomeScheduler(data);
         factions = factionTable.getFactions();
         raidEnergyCooldown = 0;
         Bukkit.getScheduler().runTaskTimerAsynchronously(imFactions, new Runnable() {
@@ -154,5 +157,19 @@ public class FactionUtil {
             }
         }
         return null;
+    }
+
+    public void teleportHome(FactionMember factionMember){
+        Player player = Bukkit.getPlayer(factionMember.getUuid());
+        if(player.getLocation().getWorld().getName().equalsIgnoreCase("FactionsPVP_world")){
+            factionHomeScheduler.teleportHome(factionMember, 10);
+        }else {
+            factionHomeScheduler.teleportHome(factionMember, 5);
+        }
+
+    }
+
+    public FactionHomeScheduler getFactionHomeScheduler() {
+        return factionHomeScheduler;
     }
 }

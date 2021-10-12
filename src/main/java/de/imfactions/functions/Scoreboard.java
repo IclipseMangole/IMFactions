@@ -7,6 +7,7 @@ import de.imfactions.functions.faction.FactionUtil;
 import de.imfactions.functions.factionMember.FactionMember;
 import de.imfactions.functions.factionMember.FactionMemberUtil;
 import de.imfactions.functions.raid.Raid;
+import de.imfactions.functions.raid.RaidState;
 import de.imfactions.functions.raid.RaidUtil;
 import de.imfactions.functions.user.UserUtil;
 import de.imfactions.util.UUIDFetcher;
@@ -58,7 +59,7 @@ public class Scoreboard {
         scoreboards.forEach((player, scoreboard) -> {
             UUID uuid = player.getUniqueId();
 
-            if (factionMemberUtil.isFactionMemberInFaction(uuid)) {
+            if (factionMemberUtil.isFactionMemberExists(uuid)) {
                 FactionMember factionMember = factionMemberUtil.getFactionMember(uuid);
                 int factionID = factionMember.getFactionID();
                 if (raidUtil.isFactionRaiding(factionID)) {
@@ -81,7 +82,7 @@ public class Scoreboard {
         FactionMember factionMember = factionMemberUtil.getFactionMember(uuid);
         Faction faction = factionUtil.getFaction(factionMember.getFactionID());
 
-        String raidState = raid.getRaidState();
+        String raidState = RaidState.getStringFromState(raid.getRaidState());
         String defenders = "None";
         String timeLeft = "30:00";
         ArrayList<FactionMember> raidTeam = raidUtil.getRaidTeam(raidID);
@@ -132,11 +133,11 @@ public class Scoreboard {
         String ether = "§f" + userUtil.getUser(player).getEther();
 
         if (factionMemberUtil.isFactionMemberExists(uuid)) {
-            if (factionMemberUtil.isFactionMemberInFaction(uuid)) {
+            if (factionMemberUtil.isFactionMemberExists(uuid)) {
                 int factionID = factionMemberUtil.getFactionMember(uuid).getFactionID();
                 Faction faction = factionUtil.getFaction(factionID);
                 factionName = "§f" + faction.getName() + "§e[" + faction.getShortcut() + "]";
-                onlineMembers = "§f" + factionMemberUtil.getOnlineMembersAmount(factionID) + "/" + faction.getUserAmount();
+                onlineMembers = "§f" + factionMemberUtil.getOnlineMembersAmount(factionID) + "/" + faction.getMemberAmount();
             }
         }
 
@@ -173,11 +174,11 @@ public class Scoreboard {
         String ether = "§f" + userUtil.getUser(player).getEther();
 
         if (factionMemberUtil.isFactionMemberExists(uuid)) {
-            if (factionMemberUtil.isFactionMemberInFaction(uuid)) {
+            if (factionMemberUtil.isFactionMemberExists(uuid)) {
                 int factionID = factionMemberUtil.getFactionMember(uuid).getFactionID();
                 Faction faction = factionUtil.getFaction(factionID);
                 factionName = "§f" + faction.getName() + "§e[" + faction.getShortcut() + "]";
-                onlineMembers = "§f" + factionMemberUtil.getOnlineMembersAmount(factionID) + "/" + faction.getUserAmount();
+                onlineMembers = "§f" + factionMemberUtil.getOnlineMembersAmount(factionID) + "/" + faction.getMemberAmount();
             }
         }
 

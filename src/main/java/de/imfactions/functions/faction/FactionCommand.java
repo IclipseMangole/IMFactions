@@ -135,7 +135,7 @@ public class FactionCommand {
         Player player = (Player) sender;
         UUID uuid = UUIDFetcher.getUUID(player);
 
-        if(!factionMemberUtil.isFactionMemberExists(uuid)){
+        if (!factionMemberUtil.isFactionMemberExists(uuid)) {
             player.sendMessage(ChatColor.RED + "You aren't member of a Faction");
             return;
         }
@@ -145,23 +145,23 @@ public class FactionCommand {
         FactionPlot factionPlot = factionPlotUtil.getFactionPlot(factionID);
         FactionMember factionMember = factionMemberUtil.getFactionMember(uuid);
 
-        if(player.getWorld().getName().equalsIgnoreCase("FactionPlots_world")){
+        if (player.getWorld().getName().equalsIgnoreCase("FactionPlots_world")) {
             player.teleport(data.getWorldSpawn());
         }
         factionMemberUtil.leaveFaction(factionMember);
-        for (FactionMember teamMember : factionMemberUtil.getFactionMembers(factionID))
-            Bukkit.getPlayer(teamMember.getUuid()).sendMessage(ChatColor.YELLOW + player.getName() + ChatColor.GREEN + " left the Faction");
         //Last one in Faction
-        if(faction.getUserAmount() == 1){
+        if (faction.getMemberAmount() == 1) {
             worldLoader.deleteMap(factionPlot.getEdgeDownFrontLeft());
             factionPlotUtil.deleteFactionPlot(factionPlot);
             factionUtil.deleteFaction(faction);
-            player.sendMessage(ChatColor.GREEN + "You left the Faction. " + ChatColor.YELLOW  + faction.getName() + ChatColor.GREEN + " isn't existing anymore");
+            player.sendMessage(ChatColor.GREEN + "You left the Faction. " + ChatColor.YELLOW + faction.getName() + ChatColor.GREEN + " isn't existing anymore");
             return;
         }
+        for (FactionMember teamMember : factionMemberUtil.getFactionMembers(factionID))
+            Bukkit.getPlayer(teamMember.getUuid()).sendMessage(ChatColor.YELLOW + player.getName() + ChatColor.GREEN + " left the Faction");
         player.sendMessage(ChatColor.GREEN + "You left the Faction");
         //King leaves Faction
-        if(factionMember.getRank() == 3){
+        if (factionMember.getRank() == 3) {
             ArrayList<FactionMember> highestMembers = factionMemberUtil.getHighestFactionMembers(factionID);
             Random random = new Random();
             FactionMember newKing = highestMembers.get(random.nextInt(highestMembers.size()));
@@ -185,26 +185,26 @@ public class FactionCommand {
         Player player = (Player) sender;
         UUID uuid = UUIDFetcher.getUUID(player);
 
-        if(!factionMemberUtil.isFactionMemberExists(uuid)){
+        if (!factionMemberUtil.isFactionMemberExists(uuid)) {
             player.sendMessage(ChatColor.RED + "WTF! You aren't member of a Faction");
             return;
         }
         FactionMember factionMember = factionMemberUtil.getFactionMember(uuid);
-        if(factionMember.getRank() == 0){
+        if (factionMember.getRank() == 0) {
             player.sendMessage(ChatColor.RED + "Your rank doesn't grant you the permission to invite players");
             return;
         }
-        if(!userUtil.isUserExists(name)){
+        if (!userUtil.isUserExists(name)) {
             player.sendMessage(ChatColor.RED + "This player doesn't exist on this Server");
             return;
         }
         Player invited = Bukkit.getPlayer(name);
         UUID uuidInvited = UUIDFetcher.getUUID(player);
-        if(!invited.isOnline()){
+        if (!invited.isOnline()) {
             player.sendMessage(ChatColor.RED + "The player isn't online");
             return;
         }
-        if(factionMemberUtil.isFactionMemberExists(uuidInvited)){
+        if (factionMemberUtil.isFactionMemberExists(uuidInvited)) {
             player.sendMessage(ChatColor.RED + "This player is already member of a Faction");
             return;
         }
@@ -227,41 +227,27 @@ public class FactionCommand {
             minArgs = 1,
             maxArgs = 1,
             parent = "faction",
-            permissions = "im.imFactions.faction.accept"
+            permissions = "im.imFactions.faction.accept",
+            noConsole = true
     )
     public void accept(CommandSender sender, String name) {
         Player player = (Player) sender;
         UUID uuid = UUIDFetcher.getUUID(player);
 
-        if(factionMemberUtil.isFactionMemberExists(uuid)){
+        if (factionMemberUtil.isFactionMemberExists(uuid)) {
             player.sendMessage(ChatColor.RED + "You are already member of a Faction");
             return;
         }
-
-
-
-
-        if (factionMemberUtil.isFactionMemberExists(UUIDFetcher.getUUID(player))) {
-            if (!factionMemberUtil.isFactionMemberInFaction(UUIDFetcher.getUUID(player))) {
-                if (factionUtil.isFactionExists(name)) {
-                    for (FactionMember factionMember : factionMemberUtil.getFactionInvites(UUIDFetcher.getUUID(player))) {
-                        factionMemberUtil.deleteFactionMember(factionMember);
-                    }
-                    factionUtil.getFaction(name).setUserAmount(factionUtil.getFaction(name).getUserAmount() + 1);
-                    factionMemberUtil.createFactionMember(UUIDFetcher.getUUID(player), factionUtil.getFaction(name).getId(), 0);
-                    player.sendMessage("§aYou joined the Faction '§e" + name + "§a'");
-                    factionMemberUtil.getFactionMembers(factionUtil.getFactionID(name)).forEach(factionMember -> {
-                        Bukkit.getPlayer(UUIDFetcher.getName(factionMember.getUuid())).sendMessage("§e" + player.getName() + "§a joined the Faction");
-                    });
-                } else {
-                    player.sendMessage("§cThe Faction '§e" + name + "§c' doesn't exist");
-                }
-            } else {
-                player.sendMessage("§cYou are already in a Faction");
-            }
-        } else {
-            player.sendMessage("§cYou have no Invites to join a Faction");
+        if (!factionUtil.isFactionExists(name)) {
+            player.sendMessage(ChatColor.RED + "This Factions doesn't exist");
+            return;
         }
+        player.sendMessage(ChatColor.GREEN + "You joined the Faction " + ChatColor.YELLOW + name);
+        Faction faction = factionUtil.getFaction(name);
+        factionMemberUtil.createFactionMember(uuid, faction.getId(), 0);
+        faction.memberJoin();
+        for (FactionMember factionMember : factionMemberUtil.getFactionMembers(faction.getId()))
+            Bukkit.getPlayer(factionMember.getUuid()).sendMessage(ChatColor.YELLOW + player.getName() + ChatColor.GREEN + " has joined the Faction");
     }
 
     @IMCommand(
@@ -271,55 +257,49 @@ public class FactionCommand {
             minArgs = 1,
             maxArgs = 1,
             parent = "faction",
-            permissions = "im.imFactions.faction.kick"
+            permissions = "im.imFactions.faction.kick",
+            noConsole = true
     )
     public void kick(CommandSender sender, String kick) {
         Player player = (Player) sender;
+        UUID uuid = UUIDFetcher.getUUID(player);
 
-        if (userUtil.isUserExists(kick)) {
-            UUID uuidKick = UUIDFetcher.getUUID(kick);
-            if (factionMemberUtil.isFactionMemberExists(UUIDFetcher.getUUID(player))) {
-                if (factionMemberUtil.isFactionMemberInFaction(UUIDFetcher.getUUID(player))) {
-                    if (factionMemberUtil.isFactionMemberExists(uuidKick) && factionMemberUtil.getFactionMember(uuidKick) != null) {
-                        if (factionMemberUtil.isFactionMemberInFaction(uuidKick)) {
-                            if (factionMemberUtil.getFactionMember(uuidKick).getFactionID() == factionMemberUtil.getFactionMember(UUIDFetcher.getUUID(player)).getFactionID()) {
-                                if (!factionMemberUtil.getFactionMember(uuidKick).equals(factionMemberUtil.getFactionMember(UUIDFetcher.getUUID(player)))) {
-                                    if (factionMemberUtil.getFactionMember(UUIDFetcher.getUUID(player)).isHigherRank(factionMemberUtil.getFactionMember(uuidKick).getRank())) {
-                                        factionMemberUtil.deleteFactionMember(factionMemberUtil.getFactionMember(uuidKick));
-                                        player.sendMessage("§aYou kicked §e" + kick + " §aout of the Faction");
-                                        if(Bukkit.getPlayer(kick).getWorld().getName().equals("FactionPlots_world")){
-                                            Bukkit.getPlayer(kick).teleport(data.getWorldSpawn());
-                                        }
-                                        Bukkit.getPlayer(kick).sendMessage("§e" + player.getName() + "§a kicked you out of the Faction");
-                                        factionMemberUtil.getFactionMembers(factionMemberUtil.getFactionMember(UUIDFetcher.getUUID(player)).getFactionID()).forEach(factionMember -> {
-                                            Bukkit.getPlayer(UUIDFetcher.getName(factionMember.getUuid())).sendMessage("§e" + kick + "§a was kicked out of the Faction");
-                                        });
-                                        Faction faction = factionUtil.getFaction(factionMemberUtil.getFactionMember(UUIDFetcher.getUUID(player)).getFactionID());
-                                        faction.setUserAmount(faction.getUserAmount() - 1);
-                                    } else {
-                                        player.sendMessage("§cYou have to be a higher Rank to kick this Player");
-                                    }
-                                } else {
-                                    player.sendMessage("§cWhy kick yourself? Use the command §e/faction leave §ato leave your Faction");
-                                }
-                            } else {
-                                player.sendMessage("§cThis player doesn't exist in your Faction");
-                            }
-                        } else {
-                            player.sendMessage("§cThis player doesn't exist in your Faction");
-                        }
-                    } else {
-                        player.sendMessage("§cThis player doesn't exist in your Faction");
-                    }
-                } else {
-                    player.sendMessage("§cYou aren't even in a Faction");
-                }
-            } else {
-                player.sendMessage("§cYou aren't even in a Faction");
-            }
-        } else {
-            player.sendMessage("§cThe player doesn't exist");
+        if (!factionMemberUtil.isFactionMemberExists(uuid)) {
+            player.sendMessage(ChatColor.RED + "You aren't in a Faction you Hu*******");
+            return;
         }
+        FactionMember factionMember = factionMemberUtil.getFactionMember(uuid);
+        Faction faction = factionUtil.getFaction(factionMember.getFactionID());
+        if (!userUtil.isUserExists(kick)) {
+            player.sendMessage(ChatColor.RED + "This player doesn't exist");
+            return;
+        }
+        UUID uuidKick = UUIDFetcher.getUUID(kick);
+        if (!factionMemberUtil.isFactionMemberExists(uuidKick)) {
+            player.sendMessage(ChatColor.RED + "This player isn't member of your Faction");
+            return;
+        }
+        FactionMember factionMemberKick = factionMemberUtil.getFactionMember(uuidKick);
+        if (!factionMemberUtil.isFactionMemberInFaction(factionMemberKick, faction)) {
+            player.sendMessage(ChatColor.RED + "This player isn't member of your Faction");
+            return;
+        }
+        if (factionMember == factionMemberKick) {
+            player.sendMessage(ChatColor.RED + "You can't kick yourself. Use " + ChatColor.YELLOW + "/faction leave " + ChatColor.RED + "to leave your Faction");
+            return;
+        }
+        if (factionMember.getRank() <= factionMemberKick.getRank()) {
+            player.sendMessage(ChatColor.RED + "You have to be higher ranked to kick this member");
+            return;
+        }
+        Player kicked = Bukkit.getPlayer(uuidKick);
+        factionMemberUtil.leaveFaction(factionMemberKick);
+        faction.memberLeave();
+        player.sendMessage(ChatColor.GREEN + "You kicked " + ChatColor.YELLOW + kicked.getName() + ChatColor.GREEN + " out of the Faction");
+        kicked.sendMessage(ChatColor.RED + "You got kicked out of th Faction");
+        for (FactionMember factionMembers : factionMemberUtil.getFactionMembers(faction.getId()))
+            if (factionMembers != factionMember)
+                Bukkit.getPlayer(factionMembers.getUuid()).sendMessage(ChatColor.YELLOW + kicked.getName() + ChatColor.GREEN + " got kicked out of the Faction");
     }
 
     @IMCommand(
@@ -329,42 +309,51 @@ public class FactionCommand {
             minArgs = 1,
             maxArgs = 1,
             parent = "faction",
-            permissions = "im.imFactions.faction.promote"
+            permissions = "im.imFactions.faction.promote",
+            noConsole = true
     )
     public void promote(CommandSender sender, String promote) {
         Player player = (Player) sender;
+        UUID uuid = UUIDFetcher.getUUID(player);
 
-        if (userUtil.isUserExists(promote)) {
-            UUID uuidPromote = UUIDFetcher.getUUID(promote);
-            if (factionMemberUtil.isFactionMemberInFaction(UUIDFetcher.getUUID(player))) {
-                if (factionMemberUtil.getFactionMember(uuidPromote) != null && factionMemberUtil.getFactionMember(uuidPromote).getFactionID() == factionMemberUtil.getFactionMember(UUIDFetcher.getUUID(player)).getFactionID()) {
-                    if (!factionMemberUtil.getFactionMember(uuidPromote).equals(factionMemberUtil.getFactionMember(UUIDFetcher.getUUID(player)))) {
-                        if (factionMemberUtil.getFactionMember(UUIDFetcher.getUUID(player)).isHigherRank(factionMemberUtil.getFactionMember(uuidPromote).getRank())) {
-                            if (factionMemberUtil.getFactionMember(uuidPromote).getRank() < 2) {
-                                factionMemberUtil.getFactionMember(uuidPromote).setRank(factionMemberUtil.getFactionMember(uuidPromote).getRank() + 1);
-                                player.sendMessage("§aYou promoted §e" + UUIDFetcher.getName(uuidPromote) + "§a to the Rank '" + factionMemberUtil.getFactionMember(uuidPromote).getRankname() + "§a'");
-                                Bukkit.getPlayer(promote).sendMessage("§aYou got promoted to the Rank '" + factionMemberUtil.getFactionMember(uuidPromote).getRankname() + "§a'");
-                            } else {
-                                factionMemberUtil.getFactionMember(uuidPromote).setRank(factionMemberUtil.getFactionMember(uuidPromote).getRank() + 1);
-                                factionMemberUtil.getFactionMember(UUIDFetcher.getUUID(player)).setRank(factionMemberUtil.getFactionMember(UUIDFetcher.getUUID(player)).getRank() - 1);
-                                player.sendMessage("§aYou promoted §e" + UUIDFetcher.getName(uuidPromote) + "§a to the Rank '" + factionMemberUtil.getFactionMember(uuidPromote).getRankname() + "§a'");
-                                player.sendMessage("§aYou have now the Rank '" + factionMemberUtil.getFactionMember(UUIDFetcher.getUUID(player)).getRankname() + "§a'");
-                                Bukkit.getPlayer(UUIDFetcher.getName(uuidPromote)).sendMessage("§aYou got promoted to the Rank '" + factionMemberUtil.getFactionMember(uuidPromote).getRankname() + "§a'");
-                            }
-                        } else {
-                            player.sendMessage("§cYou have to be higher Rank to promote this Player");
-                        }
-                    } else {
-                        player.sendMessage("§cYou can't promote yourself");
-                    }
-                } else {
-                    player.sendMessage("§cThis player isn't member of your Faction");
-                }
-            } else {
-                player.sendMessage("§cYou aren't in a Faction");
-            }
-        } else {
-            player.sendMessage("§cThe player doesn't exist");
+        if (!factionMemberUtil.isFactionMemberExists(uuid)) {
+            player.sendMessage(ChatColor.RED + "You aren't member of a Faction");
+            return;
+        }
+        FactionMember factionMember = factionMemberUtil.getFactionMember(uuid);
+        Faction faction = factionUtil.getFaction(factionMember.getFactionID());
+        if (!userUtil.isUserExists(promote)) {
+            player.sendMessage(ChatColor.RED + "This player doesn't exist");
+            return;
+        }
+        Player promoted = Bukkit.getPlayer(promote);
+        UUID uuidPromoted = UUIDFetcher.getUUID(promoted);
+        if (!factionMemberUtil.isFactionMemberExists(uuidPromoted)) {
+            player.sendMessage(ChatColor.RED + "This player isn't member of your Faction");
+            return;
+        }
+        FactionMember factionMemberPromoted = factionMemberUtil.getFactionMember(uuidPromoted);
+        if (!factionMemberUtil.isFactionMemberInFaction(factionMemberPromoted, faction)) {
+            player.sendMessage(ChatColor.RED + "This player isn't member of your Faction");
+            return;
+        }
+        if (factionMember == factionMemberPromoted) {
+            player.kickPlayer(ChatColor.RED + "I'm not stupid fu***** bas****");
+            return;
+        }
+        if (factionMember.getRank() <= factionMemberPromoted.getRank() || factionMember.getRank() < 2) {
+            player.sendMessage(ChatColor.RED + "You have to be higher ranked to promote this player");
+            return;
+        }
+
+        factionMemberPromoted.promote();
+        promoted.sendMessage(ChatColor.GREEN + "You got promoted to " + factionMemberPromoted.getRankname());
+        player.sendMessage(ChatColor.GREEN + "You promoted " + ChatColor.YELLOW + promote + ChatColor.GREEN + " to " + factionMemberPromoted.getRankname());
+        if (factionMember.getRank() == 3 && factionMemberPromoted.getRank() == 2) {
+            factionMember.demote();
+            for (FactionMember factionMembers : factionMemberUtil.getFactionMembers(faction.getId()))
+                if (factionMembers != factionMember && factionMembers != factionMemberPromoted)
+                    Bukkit.getPlayer(factionMembers.getUuid()).sendMessage(ChatColor.YELLOW + promote + ChatColor.GREEN + " is the new " + factionMemberPromoted.getRankname());
         }
     }
 
@@ -375,39 +364,48 @@ public class FactionCommand {
             minArgs = 1,
             maxArgs = 1,
             parent = "faction",
-            permissions = "im.imFactions.faction.demote"
+            permissions = "im.imFactions.faction.demote",
+            noConsole = true
     )
     public void demote(CommandSender sender, String demote) {
         Player player = (Player) sender;
+        UUID uuid = UUIDFetcher.getUUID(player);
 
-        if (userUtil.isUserExists(demote)) {
-            UUID uuidDemote = UUIDFetcher.getUUID(demote);
-            if (factionMemberUtil.isFactionMemberInFaction(UUIDFetcher.getUUID(player))) {
-                if (factionMemberUtil.getFactionMember(uuidDemote) != null && factionMemberUtil.getFactionMember(uuidDemote).getFactionID() == (factionMemberUtil.getFactionMember(UUIDFetcher.getUUID(player))).getFactionID()) {
-                    if (!factionMemberUtil.getFactionMember(uuidDemote).equals(factionMemberUtil.getFactionMember(UUIDFetcher.getUUID(player)))) {
-                        if (factionMemberUtil.getFactionMember(UUIDFetcher.getUUID(player)).isHigherRank(factionMemberUtil.getFactionMember(uuidDemote).getRank())) {
-                            if (factionMemberUtil.getFactionMember(uuidDemote).getRank() > 0) {
-                                factionMemberUtil.getFactionMember(uuidDemote).setRank(factionMemberUtil.getFactionMember(uuidDemote).getRank() - 1);
-                                player.sendMessage("§aYou demoted §e" + demote + "§a to the Rank '" + factionMemberUtil.getFactionMember(uuidDemote).getRankname() + "§a'");
-                                Bukkit.getPlayer(UUIDFetcher.getName(uuidDemote)).sendMessage("§aYou got demoted to the Rank '" + factionMemberUtil.getFactionMember(uuidDemote).getRankname() + "§a'");
-                            } else {
-                                player.sendMessage("§cThis player has already the lowest Rank");
-                            }
-                        } else {
-                            player.sendMessage("§cYou have to be a higher Rank to demote this Player");
-                        }
-                    } else {
-                        player.sendMessage("§cYou can't demote yourself");
-                    }
-                } else {
-                    player.sendMessage("§cThis player isn't member of your Faction");
-                }
-            } else {
-                player.sendMessage("§cYou aren't in a Faction");
-            }
-        } else {
-            player.sendMessage("§cThe player doesn't exist");
+        if (!factionMemberUtil.isFactionMemberExists(uuid)) {
+            player.sendMessage(ChatColor.RED + "You aren't member of a Faction");
+            return;
         }
+        FactionMember factionMember = factionMemberUtil.getFactionMember(uuid);
+        Faction faction = factionUtil.getFaction(factionMember.getFactionID());
+        if (!userUtil.isUserExists(demote)) {
+            player.sendMessage(ChatColor.RED + "This player doesn't exist");
+            return;
+        }
+        Player demoted = Bukkit.getPlayer(demote);
+        UUID uuidDemoted = UUIDFetcher.getUUID(demoted);
+        if (!factionMemberUtil.isFactionMemberExists(uuidDemoted)) {
+            player.sendMessage(ChatColor.RED + "This player isn't member of your Faction");
+            return;
+        }
+        FactionMember factionMemberDemoted = factionMemberUtil.getFactionMember(uuidDemoted);
+        if (!factionMemberUtil.isFactionMemberInFaction(factionMemberDemoted, faction)) {
+            player.sendMessage(ChatColor.RED + "This player isn't member of your Faction");
+            return;
+        }
+        if (factionMember == factionMemberDemoted) {
+            player.kickPlayer(ChatColor.RED + "You can't demote yourself. This would be outrages");
+            return;
+        }
+        if (factionMember.getRank() <= factionMemberDemoted.getRank() || factionMember.getRank() < 2) {
+            player.sendMessage(ChatColor.RED + "You have to be higher ranked to demote this player");
+            return;
+        }
+        if (factionMemberDemoted.getRank() == 0) {
+            player.sendMessage(ChatColor.RED + "He has already the lowest rank");
+            return;
+        }
+
+        factionMemberDemoted.demote();
     }
 
     @IMCommand(
@@ -417,50 +415,42 @@ public class FactionCommand {
             minArgs = 0,
             maxArgs = 0,
             parent = "faction",
-            permissions = "im.imFactions.faction.info"
+            permissions = "im.imFactions.faction.info",
+            noConsole = true
     )
     public void info(CommandSender sender) {
         Player player = (Player) sender;
+        UUID uuid = UUIDFetcher.getUUID(player);
 
-        if (factionMemberUtil.isFactionMemberExists(UUIDFetcher.getUUID(player))) {
-            if (factionMemberUtil.isFactionMemberInFaction(UUIDFetcher.getUUID(player))) {
-                if (factionUtil.getFaction(factionMemberUtil.getFactionMember(UUIDFetcher.getUUID(player)).getFactionID()) != null) {
-                    player.sendMessage("§7---------------§eFactionInfos§7---------------");
-                    //Name
-                    player.sendMessage("§7Name: §e" + factionUtil.getFaction(factionMemberUtil.getFactionMember(UUIDFetcher.getUUID(player)).getFactionID()).getName() + "§7[§e" + factionUtil.getFaction(factionMemberUtil.getFactionMember(UUIDFetcher.getUUID(player)).getFactionID()).getShortcut() + "§7]");
-                    //RaidProtection
-                    int totalSecs = (int) ((int) factionUtil.getFaction(factionMemberUtil.getFactionMember(UUIDFetcher.getUUID(player)).getFactionID()).getRaidProtection() - System.currentTimeMillis()) / 1000;
-                    int hours = totalSecs / 3600;
-                    int minutes = (totalSecs % 3600) / 60;
-                    int seconds = totalSecs % 60;
-                    String timeString = String.format("%02d:%02d:%02d", hours, minutes, seconds);
-                    player.sendMessage("§7RaidProtection: §e" + timeString);
-                    //Founding Date
-                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    player.sendMessage("§7FoundingDate: §e" + simpleDateFormat.format(factionUtil.getFaction(factionMemberUtil.getFactionMember(UUIDFetcher.getUUID(player)).getFactionID()).getFoundingDate()));
-                    //Member Amount
-                    TextComponent textComponent = new TextComponent("§7[§eClick Here§7]");
-                    textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/faction members"));
-                    textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§eSee a List of all Members").create()));
-                    player.spigot().sendMessage(new ComponentBuilder("Members: ").color(net.md_5.bungee.api.ChatColor.GRAY).append(factionUtil.getFaction(factionMemberUtil.getFactionMember(UUIDFetcher.getUUID(player)).getFactionID()).getUserAmount() + " ").color(net.md_5.bungee.api.ChatColor.YELLOW).append(textComponent).create());
-                }
-            } else {
-                player.sendMessage("§7Invites from Factions:");
-                ComponentBuilder imFactions = new ComponentBuilder();
-                for (FactionMember factionMember : factionMemberUtil.getFactionInvites(UUIDFetcher.getUUID(player))) {
-                    TextComponent textComponent = new TextComponent();
-                    ComponentBuilder componentBuilder = new ComponentBuilder();
-                    componentBuilder.append(factionUtil.getFactionName(factionMember.getFactionID())).color(net.md_5.bungee.api.ChatColor.YELLOW).append("[").color(net.md_5.bungee.api.ChatColor.GRAY).append(factionUtil.getFaction(factionMember.getFactionID()).getShortcut()).color(net.md_5.bungee.api.ChatColor.YELLOW).append("], ").color(net.md_5.bungee.api.ChatColor.GRAY);
-                    textComponent.setExtra(componentBuilder.getParts());
-                    textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/faction accept " + factionUtil.getFactionName(factionMember.getFactionID())));
-                    textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to join ").color(net.md_5.bungee.api.ChatColor.GRAY).append(factionUtil.getFactionName(factionMember.getFactionID())).color(net.md_5.bungee.api.ChatColor.YELLOW).create()));
-                    imFactions.append(textComponent);
-                }
-                player.spigot().sendMessage(imFactions.create());
-            }
-        } else {
-            player.sendMessage("§cThere are no Invites");
+        if (!factionMemberUtil.isFactionMemberExists(uuid)) {
+            player.sendMessage(ChatColor.RED + "You aren't member of a Faction");
+            return;
         }
+
+        FactionMember factionMember = factionMemberUtil.getFactionMember(uuid);
+        Faction faction = factionUtil.getFaction(factionMember.getFactionID());
+        StringBuilder message = new StringBuilder(ChatColor.GRAY + "---------------" + ChatColor.YELLOW + "FactionInfos" + ChatColor.GRAY + "---------------\n");
+        //name
+        message.append(ChatColor.GRAY + "Name: " + ChatColor.YELLOW + faction.getName() + "\n");
+        //shortcut
+        message.append(ChatColor.GRAY + "Shortcut: " + ChatColor.YELLOW + faction.getShortcut() + "\n");
+        //founding date
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        message.append(ChatColor.GRAY + "Founding Date: " + ChatColor.YELLOW + simpleDateFormat.format(faction.getFoundingDate()) + "\n");
+        //RaidProtection
+        int totalSecs = (int) ((int) faction.getRaidProtection() - System.currentTimeMillis()) / 1000;
+        int hours = totalSecs / 3600;
+        int minutes = (totalSecs % 3600) / 60;
+        int seconds = totalSecs % 60;
+        String timeString = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+        message.append(ChatColor.GRAY + "RaidProtection: " + ChatColor.YELLOW + timeString + "\n");
+        //member amount
+        message.append(ChatColor.GRAY + "Members: " + ChatColor.YELLOW + faction.getMemberAmount() + "\n");
+        //members
+        TextComponent textComponent = new TextComponent(ChatColor.GRAY + "[" + ChatColor.YELLOW + "Click Here" + ChatColor.GRAY + "]");
+        textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/faction members"));
+        textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.YELLOW + "See a List of all Members").create()));
+        player.spigot().sendMessage(textComponent);
     }
 
     @IMCommand(
@@ -470,106 +460,44 @@ public class FactionCommand {
             minArgs = 0,
             maxArgs = 0,
             parent = "faction",
-            permissions = "im.imFactions.faction.members"
+            permissions = "im.imFactions.faction.members",
+            noConsole = true
     )
     public void infoMembers(CommandSender sender) {
         Player player = (Player) sender;
+        UUID uuid = UUIDFetcher.getUUID(player);
 
-        if (factionMemberUtil.isFactionMemberExists(UUIDFetcher.getUUID(player))) {
-            if (factionMemberUtil.isFactionMemberInFaction(UUIDFetcher.getUUID(player))) {
-                if (factionUtil.getFaction(factionMemberUtil.getFactionMember(UUIDFetcher.getUUID(player)).getFactionID()) != null) {
-                    //factionMember
-                    FactionMember factionMember = factionMemberUtil.getFactionMember(UUIDFetcher.getUUID(player));
-                    Faction faction = factionUtil.getFaction(factionMember.getFactionID());
-                    ArrayList<FactionMember> ranks = factionMemberUtil.getFactionMembers(faction.getId());
-                    //Stringbuilders
-                    StringBuilder air = new StringBuilder();
-                    StringBuilder king = new StringBuilder();
-                    StringBuilder veteran = new StringBuilder();
-                    StringBuilder knight = new StringBuilder();
-                    StringBuilder member = new StringBuilder();
-                    StringBuilder invited = new StringBuilder();
-                    //messages
-                    //king
-                    player.sendMessage("§7---------------------§4KING§7---------------------");
-                    ranks.forEach(kingUser -> {
-                        if (kingUser.getRank() == 3) {
-                            king.append("§4" + UUIDFetcher.getName(kingUser.getUuid()) + "§7, ");
-                        }
-                    });
-                    for (int i = 0; i < ((70 / 2) - (king.length() / 2)); i++) {
-                        air.append(" ");
-                    }
-                    air.append(king);
-                    player.sendMessage(String.valueOf(air));
-                    air.delete(0, air.length());
-                    //veteran
-                    player.sendMessage("§7-------------------§5VETERAN§7--------------------");
-                    ranks.forEach(veteranUser -> {
-                        if (veteranUser.getRank() == 2) {
-                            veteran.append("§5" + UUIDFetcher.getName(veteranUser.getUuid()) + "§7, ");
-                        }
-                    });
-                    for (int i = 0; i < 70 / 2 - veteran.length() / 2; i++) {
-                        air.append(" ");
-                    }
-                    air.append(veteran);
-                    player.sendMessage(String.valueOf(air));
-                    air.delete(0, air.length());
-                    //knight
-                    player.sendMessage("§7--------------------§1KNIGHT§7--------------------");
-                    ranks.forEach(knightUser -> {
-                        if (knightUser.getRank() == 1) {
-                            knight.append("§1" + UUIDFetcher.getName(knightUser.getUuid()) + "§7, ");
-                        }
-                    });
-                    for (int i = 0; i < 72 / 2 - knight.length() / 2; i++) {
-                        air.append(" ");
-                    }
-                    air.append(knight);
-                    player.sendMessage(String.valueOf(air));
-                    air.delete(0, air.length());
-                    //member
-                    player.sendMessage("§7--------------------§2MEMBER§7--------------------");
-                    ranks.forEach(memberUser -> {
-                        if (memberUser.getRank() == 0) {
-                            member.append("§2" + UUIDFetcher.getName(memberUser.getUuid()) + "§7, ");
-                        }
-                    });
-                    for (int i = 0; i < 68 / 2 - member.length() / 2; i++) {
-                        air.append(" ");
-                    }
-                    air.append(member);
-                    player.sendMessage(String.valueOf(air));
-                    air.delete(0, air.length());
-                    //invited
-                    player.sendMessage("§7--------------------§8INVITED§7--------------------");
-                    ranks.forEach(invitedUser -> {
-                        if (invitedUser.getRank() == -1) {
-                            invited.append("§8" + UUIDFetcher.getName(invitedUser.getUuid()) + "§7, ");
-                        }
-                    });
-                    for (int i = 0; i < 68 / 2 - invited.length() / 2; i++) {
-                        air.append(" ");
-                    }
-                    air.append(invited);
-                    player.sendMessage(String.valueOf(air));
-                    air.delete(0, air.length());
-
-                    TextComponent textComponent = new TextComponent();
-                    textComponent.setText("§7[§eClick Here§7]");
-                    textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to see the FactionInfo").create()));
-                    textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/faction info"));
-                    player.spigot().sendMessage(textComponent);
-                } else {
-                    player.sendMessage("§cThere is no Faction");
-                }
-            } else {
-                player.sendMessage("§cYou aren't in a Faction");
-            }
-        } else {
-            player.sendMessage("§cYou aren't in a Faction");
+        if (!factionMemberUtil.isFactionMemberExists(uuid)) {
+            player.sendMessage(ChatColor.RED + "You aren't member of a Faction");
+            return;
         }
+
+        FactionMember factionMember = factionMemberUtil.getFactionMember(uuid);
+        Faction faction = factionUtil.getFaction(factionMember.getFactionID());
+        ArrayList<FactionMember> members = factionMemberUtil.getFactionMembers(faction.getId());
+        StringBuilder message = new StringBuilder();
+        for (int rank = 3; rank > 0; rank--) {
+            switch (rank) {
+                case 3:
+                    message.append(ChatColor.GRAY + "---------------------" + ChatColor.DARK_RED + "KING" + ChatColor.GRAY + "---------------------\n");
+                case 2:
+                    message.append(ChatColor.GRAY + "---------------------" + ChatColor.DARK_PURPLE + "VETERAN" + ChatColor.GRAY + "---------------------\n");
+                case 1:
+                    message.append(ChatColor.GRAY + "---------------------" + ChatColor.BLUE + "KNIGHT" + ChatColor.GRAY + "---------------------\n");
+                default:
+                    message.append(ChatColor.GRAY + "---------------------" + ChatColor.DARK_GREEN + "MEMBER" + ChatColor.GRAY + "---------------------\n");
+            }
+            for (FactionMember member : members) {
+                if (member.getRank() == rank) {
+                    String name = UUIDFetcher.getName(uuid);
+                    for (int i = 0; i < (35 - name.length() / 2); i++) {
+                        message.append(" ");
+                    }
+                    message.append(member.getRankColor() + name + "\n");
+                }
+            }
+        }
+        player.sendMessage(message.toString());
     }
 
     @IMCommand(
@@ -585,38 +513,16 @@ public class FactionCommand {
         Player player = (Player) sender;
         UUID uuid = UUIDFetcher.getUUID(player);
 
-        if(factionMemberUtil.isFactionMemberExists(uuid)){
-            if(factionMemberUtil.isFactionMemberInFaction(uuid)){
-                int factionId = factionMemberUtil.getFactionMember(uuid).getFactionID();
-                Faction faction = factionUtil.getFaction(factionId);
-                FactionPlot factionPlot = factionPlotUtil.getFactionPlot(factionId);
-                if(!factionPlot.isLoading()){
-                    if(!scheduler.getCountdowns().containsKey(player)) {
-
-                        String world = player.getWorld().getName();
-
-                        if (world.equals("world")) {
-                            scheduler.getCountdowns().put(player, 5);
-                        } else if(world.equals("FactionPlots_world")){
-                            scheduler.getCountdowns().put(player, 5);
-                        }else {
-                            scheduler.getCountdowns().put(player, 20);
-                        }
-
-                        scheduler.getLocations().put(player, factionPlot.getHome());
-
-                    }else{
-                        player.sendMessage("§cYou are already teleporting");
-                    }
-                }else {
-                    player.sendMessage("§cYour FactionPlot is loading");
-                }
-            }else{
-                player.sendMessage("§cYou aren't in a Faction");
-            }
-        }else{
-            player.sendMessage("§cYou aren't in a Faction");
+        if (!factionMemberUtil.isFactionMemberExists(uuid)) {
+            player.sendMessage(ChatColor.RED + "You aren't member of a Faction");
+            return;
         }
+        FactionMember factionMember = factionMemberUtil.getFactionMember(uuid);
+        if (factionPlotUtil.getFactionPlot(factionMember.getFactionID()).isLoading()) {
+            player.sendMessage(ChatColor.RED + "Your FactionPlot is loading. Please wait");
+            return;
+        }
+        factionUtil.teleportHome(factionMember);
     }
 
     @IMCommand(
@@ -631,29 +537,26 @@ public class FactionCommand {
     public void sethome(CommandSender sender) {
         Player player = (Player) sender;
         UUID uuid = UUIDFetcher.getUUID(player);
-        if(factionMemberUtil.isFactionMemberExists(uuid)) {
-            if(factionMemberUtil.isFactionMemberInFaction(uuid)) {
-                FactionMember factionMember = factionMemberUtil.getFactionMember(uuid);
-                FactionPlot factionPlot = factionPlotUtil.getFactionPlot(factionMember.getFactionID());
-                Location edgeDownFrontLeft = factionPlot.getEdgeDownFrontLeft();
-                Location edgeUpBackRight = factionPlot.getEdgeUpBackRight();
-                String world = player.getWorld().getName();
-                if(world.equals("FactionPlots_world")) {
-                    if(LocationChecker.isLocationInsideCube(player.getLocation(), edgeDownFrontLeft, edgeUpBackRight)) {
-                        factionPlot.setHome(player.getLocation());
-                        player.sendMessage("§aSet home to " + LocationBuilder.getString(player.getLocation()));
-                    }else{
-                        player.sendMessage("§cSet your home inside your FactionPlot");
-                    }
-                }else {
-                    player.sendMessage("§cYou can only change your home at your FactionPlot");
-                }
-            }else{
-                player.sendMessage("§cYou aren't in a Faction");
-            }
-        }else{
-            player.sendMessage("§cYou aren't in a Faction");
+
+        if (factionMemberUtil.isFactionMemberExists(uuid)) {
+            player.sendMessage(ChatColor.RED + "You aren't member of a Faction");
+            return;
         }
+        if (!player.getLocation().getWorld().getName().equalsIgnoreCase("FactionPlots_world")) {
+            player.sendMessage(ChatColor.RED + "You can only change your home at your FactionPlot");
+            return;
+        }
+        FactionMember factionMember = factionMemberUtil.getFactionMember(uuid);
+        FactionPlot factionPlot = factionPlotUtil.getFactionPlot(factionMember.getFactionID());
+        Location edgeDownFrontLeft = factionPlot.getEdgeDownFrontLeft();
+        Location edgeUpBackRight = factionPlot.getEdgeUpBackRight();
+        if (!LocationChecker.isLocationInsideCube(player.getLocation(), edgeDownFrontLeft, edgeUpBackRight)) {
+            player.sendMessage(ChatColor.RED + "You have to set the home inside the FactionPlot");
+            return;
+        }
+
+        factionPlot.setHome(player.getLocation());
+        player.sendMessage(ChatColor.GREEN + "Set home to " + ChatColor.YELLOW + LocationBuilder.getString(player.getLocation()));
     }
 
     private void add(String usage, String description) {

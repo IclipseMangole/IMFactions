@@ -78,13 +78,14 @@ public class RaidCommand {
             minArgs = 0,
             maxArgs = 0,
             permissions = "im.factions.raid.start",
-            parent = "raid"
+            parent = "raid",
+            noConsole = true
     )
     public void start(CommandSender sender) {
         Player player = (Player) sender;
         UUID uuid = UUIDFetcher.getUUID(player);
 
-        if (factionMemberUtil.isFactionMemberInFaction(uuid)) {
+        if (factionMemberUtil.isFactionMemberExists(uuid)) {
             int factionID = factionMemberUtil.getFactionMember(uuid).getFactionID();
             if (factionMemberUtil.getFactionMember(uuid).getRank() == 3) {
                 if (!raidUtil.isFactionRaiding(factionID)) {
@@ -94,7 +95,7 @@ public class RaidCommand {
 
                                 //neuer Raid
                                 int raidID = raidUtil.getHighestRaidID() + 1;
-                                raidUtil.createStartingRaid(raidID, factionID);
+                                raidUtil.createPreparingRaid(raidID, factionID);
                                 Raid raid = raidUtil.getRaid(raidID);
                                 raidUtil.getRaidTeams().put(raid, factionMemberUtil.getFactionMember(uuid));
                                 //raidEnergy abziehen
@@ -150,7 +151,7 @@ public class RaidCommand {
         Player player = (Player) sender;
         UUID uuid = UUIDFetcher.getUUID(player);
 
-        if (factionMemberUtil.isFactionMemberInFaction(uuid)) {
+        if (factionMemberUtil.isFactionMemberExists(uuid)) {
             int factionID = factionMemberUtil.getFactionMember(uuid).getFactionID();
             if (raidUtil.isFactionRaiding(factionID)) {
                 int raidID = raidUtil.getActiveRaidID(factionID);
@@ -194,7 +195,7 @@ public class RaidCommand {
         Player player = (Player) sender;
         UUID uuid = player.getUniqueId();
 
-        if(factionMemberUtil.isFactionMemberInFaction(uuid)){
+        if(factionMemberUtil.isFactionMemberExists(uuid)){
             FactionMember factionUser = factionMemberUtil.getFactionMember(uuid);
             int factionID = factionUser.getFactionID();
             if(raidUtil.isFactionRaiding(factionID)){
@@ -237,7 +238,7 @@ public class RaidCommand {
         Player player = (Player) sender;
         UUID uuid = player.getUniqueId();
 
-        if(factionMemberUtil.isFactionMemberInFaction(uuid)){
+        if(factionMemberUtil.isFactionMemberExists(uuid)){
             FactionMember factionUser = factionMemberUtil.getFactionMember(uuid);
             int factionID = factionUser.getFactionID();
             if(raidUtil.isFactionRaiding(factionID)){
@@ -247,7 +248,7 @@ public class RaidCommand {
                     if(raid.getRaidState().equals("scouting")){
                         FactionPlot factionPlot = factionPlotUtil.getFactionPlot(player.getLocation());
                         Faction enemy = factionUtil.getFaction(factionPlot.getFactionID());
-                        raidUtil.updateRaidToActive(raidID, enemy.getId());
+                        raidUtil.updateRaidToRaiding(raidID, enemy.getId());
                     }else{
                         player.sendMessage("§cNo");
                     }
@@ -275,7 +276,7 @@ public class RaidCommand {
         Player player = (Player) sender;
         UUID uuid = UUIDFetcher.getUUID(player);
 
-        if (factionMemberUtil.isFactionMemberInFaction(uuid)) {
+        if (factionMemberUtil.isFactionMemberExists(uuid)) {
             FactionMember factionUser = factionMemberUtil.getFactionMember(uuid);
             if (raidUtil.isFactionRaiding(factionUser.getFactionID())) {
                 int raidID = raidUtil.getActiveRaidID(factionUser.getFactionID());

@@ -71,14 +71,14 @@ public class RaidUtil {
         return faction;
     }
 
-    public void createStartingRaid(int raidID, int factionIDAttackers){
-        raids.add(new Raid(raidID, "starting", factionIDAttackers, -1, null, 0));
+    public void createPreparingRaid(int raidID, int factionIDAttackers){
+        raids.add(new Raid(raidID, RaidState.PREPARING, factionIDAttackers, -1, null, 0));
     }
 
-    public void updateRaidToActive(int raidID, int factionIDDefenders){
+    public void updateRaidToRaiding(int raidID, int factionIDDefenders){
         Raid raid = getRaid(raidID);
 
-        raid.setRaidState("active");
+        raid.setRaidState(RaidState.RAIDING);
         raid.setTime(0);
         raid.setStart(Date.from(Instant.now()));
         raid.setFactionIdDefenders(factionIDDefenders);
@@ -87,7 +87,7 @@ public class RaidUtil {
     public void updateRaidToDone(int raidID){
         Raid raid = getRaid(raidID);
 
-        raid.setRaidState("done");
+        raid.setRaidState(RaidState.DONE);
         raid.setTime(System.currentTimeMillis() - raid.getStart().getTime());
     }
 
@@ -190,12 +190,12 @@ public class RaidUtil {
     }
 
     /** RaidStates:
-     *  starting,
+     *  preparing,
      *  scouting,
-     *  active,
+     *  raiding,
      *  done
      */
-    public String getRaidState(int raidID){
+    public RaidState getRaidState(int raidID){
         Raid raid = getRaid(raidID);
         return raid.getRaidState();
     }

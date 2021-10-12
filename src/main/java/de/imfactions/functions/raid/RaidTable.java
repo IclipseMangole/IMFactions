@@ -10,9 +10,9 @@ import java.util.ArrayList;
 
 public class RaidTable {
 
-    private Data data;
-    private MySQL mySQL;
-    private RaidUtil raidUtil;
+    private final Data data;
+    private final MySQL mySQL;
+    private final RaidUtil raidUtil;
 
     public RaidTable(RaidUtil raidUtil, Data data){
         this.data = data;
@@ -30,7 +30,7 @@ public class RaidTable {
         try {
             ResultSet rs = mySQL.querry("SELECT `raidID`, `raidState`, `factionIdAttackers`, `factionIdDefenders`, `start`, `time` FROM raids WHERE 1");
             while (rs.next()) {
-                raids.add(new Raid(rs.getInt("raidID"), rs.getString("raidState"), rs.getInt("factionIdAttackers"), rs.getInt("factionIdDefenders"), rs.getDate("start"), rs.getLong("time")));
+                raids.add(new Raid(rs.getInt("raidID"), RaidState.getStateFromString(rs.getString("raidState")), rs.getInt("factionIdAttackers"), rs.getInt("factionIdDefenders"), rs.getDate("start"), rs.getLong("time")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -39,6 +39,6 @@ public class RaidTable {
     }
     
     public void saveRaid(Raid raid){
-        mySQL.update("UPDATE `raids` SET `raidID` = '" + raid.raidID + "', `raidState` = '" + raid.raidState + "', `factionIdAttackers` = '" + raid.factionIdAttackers + "', `factionIdDefenders` = '" + raid.factionIdDefenders + "', `start` = '" + raid.start + "', `time` = '" + raid.time + "'");
+        mySQL.update("UPDATE `raids` SET `raidID` = '" + raid.raidID + "', `raidState` = '" + RaidState.getStringFromState(raid.raidState) + "', `factionIdAttackers` = '" + raid.factionIdAttackers + "', `factionIdDefenders` = '" + raid.factionIdDefenders + "', `start` = '" + raid.start + "', `time` = '" + raid.time + "'");
     }
 }

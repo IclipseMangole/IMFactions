@@ -58,17 +58,8 @@ public class FactionMemberUtil {
         return false;
     }
 
-    public boolean isFactionMemberInFaction(UUID uuid) {
-        for (FactionMember FactionMember : factionMembers) {
-            if (FactionMember.getUuid().equals(uuid)) {
-                if (FactionMember.getRank() != -1) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        }
-        return false;
+    public boolean isFactionMemberInFaction(FactionMember factionMember, Faction faction){
+        return factionMember.getFactionID() == faction.getId();
     }
 
     public Player getPlayer(UUID uuid){
@@ -146,7 +137,7 @@ public class FactionMemberUtil {
 
     public void leaveFaction(FactionMember factionMember){
         Faction faction = factionUtil.getFaction(factionMember.factionId);
-        faction.setUserAmount(faction.getUserAmount() - 1);
+        faction.memberLeave();
         deleteFactionMember(factionMember);
     }
 

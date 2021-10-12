@@ -12,13 +12,13 @@ import org.bukkit.entity.Player;
 
 public class FactionPlotCommand {
 
-    private IMFactions imFactions;
-    private FactionMemberUtil factionMemberUtil;
-    private FactionUtil factionUtil;
-    private FactionPlotUtil factionPlotUtil;
+    private final IMFactions imFactions;
+    private final FactionMemberUtil factionMemberUtil;
+    private final FactionUtil factionUtil;
+    private final FactionPlotUtil factionPlotUtil;
     private StringBuilder stringBuilder;
-    private Data data;
-    private WorldLoader worldLoader;
+    private final Data data;
+    private final WorldLoader worldLoader;
 
     public FactionPlotCommand(IMFactions imFactions) {
         this.imFactions = imFactions;
@@ -60,7 +60,7 @@ public class FactionPlotCommand {
         Player player = (Player) sender;
 
         worldLoader.loadMap("FactionPlot", player.getLocation());
-        player.sendMessage("§aThe FactionPlot is loading");
+        player.sendMessage(ChatColor.GREEN + "The FactionPlot is loading");
     }
 
     @IMCommand(
@@ -76,7 +76,7 @@ public class FactionPlotCommand {
         Player player = (Player) sender;
 
         worldLoader.deleteMap(player.getLocation());
-        player.sendMessage("§aThe FactionPlot will be uninstalled soon");
+        player.sendMessage(ChatColor.GREEN + "The FactionPlot will be uninstalled soon");
     }
 
     private void add(String usage, String description) {

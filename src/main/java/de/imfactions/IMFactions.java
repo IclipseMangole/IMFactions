@@ -77,6 +77,7 @@ public class IMFactions extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new LobbyListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PVPListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PlotListener(this), this);
+        Bukkit.getPluginManager().registerEvents(data.getFactionUtil().getFactionHomeScheduler(), this);
     }
 
     public void updateGamerules() {

@@ -29,13 +29,13 @@ public class FactionTable {
     public void createFaction(int factionID, String name, String shortcut, int userAmount, Date foundingDate, long raidProtection, int raidEnergy) {
         if (!factionUtil.isFactionExists(factionID)) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            data.getMySQL().update("INSERT INTO imFactions (`factionID`, `userAmount`, `name`, `shortcut`, `foundingDate`, `raidProtection`, `raidEnergy`) VALUES ('" + factionID + "', '" + userAmount + "', '" + name + "', '" + shortcut + "', '" + sdf.format(foundingDate) + "', '" + raidProtection + "', '" + raidEnergy + "')");
+            data.getMySQL().update("INSERT INTO factions (`factionID`, `userAmount`, `name`, `shortcut`, `foundingDate`, `raidProtection`, `raidEnergy`) VALUES ('" + factionID + "', '" + userAmount + "', '" + name + "', '" + shortcut + "', '" + sdf.format(foundingDate) + "', '" + raidProtection + "', '" + raidEnergy + "')");
         }
     }
 
     public void loadFactions() {
         try {
-            ResultSet rs = data.getMySQL().querry("SELECT `factionID`, `userAmount`, `name`, `shortcut`, `foundingDate`, `raidProtection`, `raidEnergy` FROM `imFactions` WHERE 1");
+            ResultSet rs = data.getMySQL().querry("SELECT `factionID`, `userAmount`, `name`, `shortcut`, `foundingDate`, `raidProtection`, `raidEnergy` FROM `factions` WHERE 1");
             while (rs.next()) {
                 Faction faction = new Faction(rs.getInt("factionID"), rs.getString("name"), rs.getString("shortcut"), rs.getInt("userAmount"), rs.getDate("foundingDate"), rs.getLong("raidProtection"), rs.getInt("raidEnergy"));
                 factionUtil.getFactions().add(faction);
@@ -48,7 +48,7 @@ public class FactionTable {
     public ArrayList<Faction> getFactions() {
         ArrayList<Faction> factions = new ArrayList<>();
         try {
-            ResultSet rs = mySQL.querry("SELECT `factionID`, `userAmount`, `name`, `shortcut`, `foundingDate`, `raidProtection`, `raidEnergy` FROM `imFactions` WHERE 1");
+            ResultSet rs = mySQL.querry("SELECT `factionID`, `userAmount`, `name`, `shortcut`, `foundingDate`, `raidProtection`, `raidEnergy` FROM `factions` WHERE 1");
             while (rs.next()) {
                 Faction faction = new Faction(rs.getInt("factionID"), rs.getString("name"), rs.getString("shortcut"), rs.getInt("userAmount"), rs.getDate("foundingDate"), rs.getLong("raidProtection"), rs.getInt("raidEnergy"));
                 factions.add(faction);
@@ -61,7 +61,7 @@ public class FactionTable {
 
     public int getHighestFactionID() {
         try {
-            ResultSet rs = mySQL.querry("SELECT MAX(`factionID`) AS `factionID` FROM `imFactions` WHERE 1");
+            ResultSet rs = mySQL.querry("SELECT MAX(`factionID`) AS `factionID` FROM `factions` WHERE 1");
             if (rs.next()) {
                 return rs.getInt("factionID");
             }
