@@ -29,7 +29,7 @@ public class FactionPlotTable {
 
     public void createFactionPlot(int factionID, Location edgeDownFrontLeft, Location edgeUpBackRight, Location home, boolean loading, int position) {
         if (!factionPlotUtil.isFactionPlotExists(factionID)) {
-            mySQL.update("INSERT INTO factionPlots (`factionID`, `edgeDownFrontLeft`, `edgeUpBackRight`, `home`, `loading`, `position`) VALUES ('" + factionID + "', '" + LocationBuilder.toString(edgeDownFrontLeft) + "', '" + LocationBuilder.toString(edgeUpBackRight) + "', '" + LocationBuilder.toString(home) + "', '" + loading + "', '" + position + "')");
+            mySQL.update("INSERT INTO factionPlots (`factionID`, `edgeDownFrontLeft`, `edgeUpBackRight`, `home`, `loading`, `position`) VALUES (" + factionID + ", '" + LocationBuilder.toString(edgeDownFrontLeft) + "', '" + LocationBuilder.toString(edgeUpBackRight) + "', '" + LocationBuilder.toString(home) + "', " + loading + ", " + position + ")");
         }
     }
 

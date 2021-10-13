@@ -74,7 +74,6 @@ public class UserUtil {
     }
 
     public void saveUsers() {
-        System.out.println("Save Users");
         for (User user : users) {
             userTable.saveUser(user);
         }
