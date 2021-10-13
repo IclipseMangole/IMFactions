@@ -1,13 +1,9 @@
-package de.imfactions.functions.faction;
+package de.imfactions.commands.spawn;
 
 import de.imfactions.Data;
 import de.imfactions.IMFactions;
-import de.imfactions.functions.factionMember.FactionMember;
-import de.imfactions.functions.factionPlot.FactionPlot;
-import de.imfactions.functions.factionPlot.FactionPlotUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,37 +12,30 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
 
-public class FactionHomeScheduler implements Listener {
+public class SpawnScheduler implements Listener {
 
     private final IMFactions imFactions;
     private final Data data;
-    private final FactionPlotUtil factionPlotUtil;
     private HashMap<Player, BukkitTask> activeTasks = new HashMap<>();
 
-    public FactionHomeScheduler(Data data) {
-        this.data = data;
-        imFactions = data.getImFactions();
-        factionPlotUtil = data.getFactionPlotUtil();
+    public SpawnScheduler(IMFactions imFactions) {
+        this.imFactions = imFactions;
+        data = imFactions.getData();
     }
 
-    public void teleportHome(FactionMember factionMember, int seconds) {
-        Player player = Bukkit.getPlayer(factionMember.getUuid());
+    public void teleportSpawn(Player player, int seconds) {
         if(!activeTasks.containsKey(player)) {
             activeTasks.put(player, Bukkit.getScheduler().runTaskTimer(imFactions, new Runnable() {
                 int timer = seconds;
-                final FactionPlot factionPlot = factionPlotUtil.getFactionPlot(factionMember.getFactionID());
-                final Location home = factionPlot.getHome();
-                final Player player = Bukkit.getPlayer(factionMember.getUuid());
 
                 @Override
                 public void run() {
                     if (timer <= 0) {
-                        player.teleport(home);
+                        player.teleport(data.getWorldSpawn());
                         player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0f, 1.0f);
                         cancelTeleport(player);
                     }

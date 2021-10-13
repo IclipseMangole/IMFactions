@@ -49,7 +49,6 @@ public class FactionPlotTable {
 
     public void saveFactionPlot(FactionPlot factionPlot){
         mySQL.update("UPDATE factionPlots SET `edgeDownFrontLeft` = '" + LocationBuilder.toString(factionPlot.edgeDownFrontLeft) + "', `edgeUpBackRight` = '" + LocationBuilder.toString(factionPlot.edgeUpBackRight) + "', `home` = '" + LocationBuilder.toString(factionPlot.home) + "', `loading` = '" + factionPlot.loading + "', `position` = '" + factionPlot.position + "' WHERE `factionID` = '" + factionPlot.factionID + "'");
-
     }
 
     public void deleteFactionPlot(FactionPlot factionPlot){

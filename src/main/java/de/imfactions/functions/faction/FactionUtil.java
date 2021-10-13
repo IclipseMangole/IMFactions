@@ -7,12 +7,7 @@ import de.imfactions.functions.factionMember.FactionMemberUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Random;
 
 public class FactionUtil {
@@ -20,18 +15,14 @@ public class FactionUtil {
     private ArrayList<Faction> factions;
     private final IMFactions imFactions;
     private final Data data;
-    private final FactionTable factionTable;
-    private final FactionMemberUtil factionMemberUtil;
-    private final FactionHomeScheduler factionHomeScheduler;
+    private FactionTable factionTable;
+    private FactionMemberUtil factionMemberUtil;
+    private FactionHomeScheduler factionHomeScheduler;
     private int raidEnergyCooldown;
 
     public FactionUtil(Data data) {
         this.data = data;
         imFactions = data.getImFactions();
-        factionTable = new FactionTable(this, data);
-        factionMemberUtil = data.getFactionMemberUtil();
-        factionHomeScheduler = new FactionHomeScheduler(data);
-        factions = factionTable.getFactions();
         raidEnergyCooldown = 0;
         Bukkit.getScheduler().runTaskTimerAsynchronously(imFactions, new Runnable() {
             @Override
@@ -40,7 +31,7 @@ public class FactionUtil {
 
                 for(Faction faction : factions){
                     if(faction.getRaidEnergy() < 20){
-                        if(raidEnergyCooldown == 6){
+                        if(raidEnergyCooldown == 12){
                             faction.setRaidEnergy(faction.getRaidEnergy() + 1);
                             raidEnergyCooldown = raidEnergyCooldown - 6;
                         }else{
@@ -53,10 +44,17 @@ public class FactionUtil {
         }, 0, 10 * 60 * 20);
     }
 
-    public ArrayList<Faction> getRaidableFactions(){
+    public void loadUtils(){
+        factionTable = new FactionTable(this, data);
+        factionMemberUtil = data.getFactionMemberUtil();
+        factionHomeScheduler = new FactionHomeScheduler(data);
+        factions = factionTable.getFactions();
+    }
+
+    public ArrayList<Faction> getRaidableFactions(int factionID) {
         ArrayList<Faction> raidableFactions = new ArrayList<>();
-        for(Faction faction : factions){
-            if(faction.isRaidable()){
+        for (Faction faction : factions) {
+            if (faction.isRaidable() && faction.getId() != factionID) {
                 raidableFactions.add(faction);
             }
         }
@@ -107,15 +105,11 @@ public class FactionUtil {
         return factionTable.getHighestFactionID();
     }
 
-    public Faction getRandomFactionForRaid(int factionID){
+    public Faction getRandomFactionForRaid(int factionID) {
         Random random = new Random();
 
-        ArrayList<Faction> raidableFactions = getRaidableFactions();
-        Faction faction = raidableFactions.get(random.nextInt(factions.size()));
-        while(faction.getId() == factionID){
-            faction = factions.get(random.nextInt(factions.size()));
-        }
-        return faction;
+        ArrayList<Faction> raidableFactions = getRaidableFactions(factionID);
+        return raidableFactions.get(random.nextInt(factions.size()));
     }
 
     public boolean isFactionExists(int factionID) {

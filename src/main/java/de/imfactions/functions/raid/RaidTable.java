@@ -1,7 +1,6 @@
 package de.imfactions.functions.raid;
 
 import de.imfactions.Data;
-import de.imfactions.functions.factionPlot.FactionPlotUtil;
 import de.imfactions.util.MySQL;
 
 import java.sql.ResultSet;
@@ -37,8 +36,12 @@ public class RaidTable {
         }
         return raids;
     }
-    
-    public void saveRaid(Raid raid){
+
+    public void saveRaid(Raid raid) {
         mySQL.update("UPDATE `raids` SET `raidID` = '" + raid.raidID + "', `raidState` = '" + RaidState.getStringFromState(raid.raidState) + "', `factionIdAttackers` = '" + raid.factionIdAttackers + "', `factionIdDefenders` = '" + raid.factionIdDefenders + "', `start` = '" + raid.start + "', `time` = '" + raid.time + "'");
+    }
+
+    public void deleteRaid(Raid raid) {
+        mySQL.update("DELETE FROM `raids` WHERE `raidID` = '" + raid.raidID + "'");
     }
 }

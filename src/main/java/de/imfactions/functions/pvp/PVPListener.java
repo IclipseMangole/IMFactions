@@ -22,7 +22,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityPortalEnterEvent;
+import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
 import static de.imfactions.util.ColorConverter.toHex;
@@ -157,12 +157,14 @@ public class PVPListener implements Listener {
     }
 
     @EventHandler
-    public void onPortal(EntityPortalEnterEvent event){
+    public void onPortal(EntityPortalEvent event) {
         World world = event.getEntity().getWorld();
-        if(!world.getName().equalsIgnoreCase("world"))
+        if (!world.getName().equalsIgnoreCase("world"))
             return;
-        if(!(event.getEntity() instanceof Player))
+        if (!(event.getEntity() instanceof Player)) {
+            event.setCancelled(true);
             return;
+        }
         Player player = (Player) event.getEntity();
         player.teleport(data.getWorldSpawn());
         player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);

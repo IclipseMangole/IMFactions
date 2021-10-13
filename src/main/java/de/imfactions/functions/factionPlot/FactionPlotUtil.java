@@ -13,20 +13,23 @@ public class FactionPlotUtil {
     private final IMFactions imFactions;
     private final Data data;
     private int loadingFactionPlots;
-    private final FactionPlotTable factionPlotTable;
+    private FactionPlotTable factionPlotTable;
 
     public FactionPlotUtil(Data data) {
         this.data = data;
         imFactions = data.getImFactions();
         loadingFactionPlots = 0;
-        factionPlotTable = new FactionPlotTable(this, data);
-        factionPlots = factionPlotTable.getFactionPlots();
         Bukkit.getScheduler().runTaskTimerAsynchronously(imFactions, new Runnable() {
             @Override
             public void run() {
                 saveFactionPlots();
             }
         }, 0, 10 * 60 * 20);
+    }
+
+    public void loadUtils(){
+        factionPlotTable = new FactionPlotTable(this, data);
+        factionPlots = factionPlotTable.getFactionPlots();
     }
 
     public FactionPlot getFactionPlot(int factionID) {
