@@ -1,6 +1,5 @@
 package de.imfactions.functions.factionPlot;
 
-import de.imfactions.util.LocationBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 

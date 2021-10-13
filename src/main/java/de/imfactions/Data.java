@@ -1,5 +1,6 @@
 package de.imfactions;
 
+import de.imfactions.commands.spawn.SpawnScheduler;
 import de.imfactions.functions.Scheduler;
 import de.imfactions.functions.Scoreboard;
 import de.imfactions.functions.Tablist;
@@ -37,6 +38,7 @@ public class Data {
 
     //Scheduler
     private Scheduler scheduler;
+    private SpawnScheduler spawnScheduler;
 
     //Scoreboard
     private Scoreboard scoreboard;
@@ -63,6 +65,14 @@ public class Data {
         raidUtil = new RaidUtil(this);
         userUtil = new UserUtil(this);
         userSettingsUtil = new UserSettingsUtil(this);
+        loadUtils();
+    }
+
+    private void loadUtils(){
+        factionUtil.loadUtils();
+        factionPlotUtil.loadUtils();
+        factionMemberUtil.loadUtils();
+        raidUtil.loadUtils();
     }
 
     public void loadWorlds() {
@@ -83,6 +93,7 @@ public class Data {
 
     public void loadScheduler(){
         scheduler = new Scheduler(imFactions);
+        spawnScheduler = new SpawnScheduler(imFactions);
     }
 
     public void loadScoreboards(){
@@ -158,8 +169,13 @@ public class Data {
     public MySQL getMySQL() {
         return mysql;
     }
+
     public Scheduler getScheduler() {
         return scheduler;
+    }
+
+    public SpawnScheduler getSpawnScheduler(){
+        return spawnScheduler;
     }
 
     public IMFactions getImFactions(){

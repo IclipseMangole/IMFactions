@@ -1,6 +1,7 @@
 package de.imfactions;
 
 import de.imfactions.commands.*;
+import de.imfactions.commands.spawn.Spawn;
 import de.imfactions.functions.faction.FactionCommand;
 import de.imfactions.functions.factionPlot.FactionPlotCommand;
 import de.imfactions.functions.factionPlot.PlotListener;
@@ -10,6 +11,7 @@ import de.imfactions.functions.raid.RaidCommand;
 import de.imfactions.listener.*;
 import de.imfactions.functions.WorldLoader;
 import org.bukkit.Bukkit;
+import org.bukkit.Difficulty;
 import org.bukkit.GameRule;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -74,11 +76,13 @@ public class IMFactions extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new PVPListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PlotListener(this), this);
         Bukkit.getPluginManager().registerEvents(data.getFactionUtil().getFactionHomeScheduler(), this);
+        Bukkit.getPluginManager().registerEvents(data.getSpawnScheduler(), this);
     }
 
     public void updateGamerules() {
         Bukkit.getWorlds().forEach(world -> world.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false));
         Bukkit.getWorlds().forEach(world -> world.setGameRule(GameRule.DO_IMMEDIATE_RESPAWN, true));
+        Bukkit.getWorlds().forEach(world -> world.setDifficulty(Difficulty.HARD));
     }
 
     public WorldLoader getWorldLoader() {

@@ -21,7 +21,7 @@ import java.util.Map;
 
 public class RaidUtil {
 
-    private IMFactions imFactions;
+    private final IMFactions imFactions;
     private ArrayList<Raid> raids;
     private HashMap<Raid, FactionMember> raidTeams;
     private Scheduler scheduler;
@@ -29,14 +29,11 @@ public class RaidUtil {
     private FactionUtil factionUtil;
     private RaidTable raidTable;
     private Data data;
+    private RaidScheduler raidScheduler;
 
     public RaidUtil(Data data) {
         this.data = data;
         imFactions = data.getImFactions();
-        scheduler = data.getScheduler();
-        factionMemberUtil = data.getFactionMemberUtil();
-        factionUtil = data.getFactionUtil();
-        raidTable = new RaidTable(this, data);
         raids = raidTable.getRaids();
         raidTeams = new HashMap<>();
         Bukkit.getScheduler().runTaskTimerAsynchronously(imFactions, new Runnable() {
@@ -45,6 +42,14 @@ public class RaidUtil {
                 saveRaids();
             }
         }, 0, 20 * 60 * 10);
+    }
+
+    public void loadUtils(){
+        scheduler = data.getScheduler();
+        factionMemberUtil = data.getFactionMemberUtil();
+        factionUtil = data.getFactionUtil();
+        raidTable = new RaidTable(this, data);
+        raidScheduler = new RaidScheduler(data);
     }
 
     public ArrayList<Raid> getRaids(){
@@ -73,6 +78,12 @@ public class RaidUtil {
 
     public void createPreparingRaid(int raidID, int factionIDAttackers){
         raids.add(new Raid(raidID, RaidState.PREPARING, factionIDAttackers, -1, null, 0));
+    }
+
+    public void updateRaidToScouting(int raidID){
+        Raid raid = getRaid(raidID);
+
+        raid.setRaidState(RaidState.SCOUTING);
     }
 
     public void updateRaidToRaiding(int raidID, int factionIDDefenders){
@@ -163,7 +174,7 @@ public class RaidUtil {
     public int getActiveRaidID(int factionID){
         for (Raid raid : raids) {
             if (raid.getFactionIdAttackers() == factionID) {
-                if (!raid.getRaidState().equals("done"))
+                if (!raid.getRaidState().equals(RaidState.DONE))
                     return raid.getRaidID();
             }
         }
@@ -173,7 +184,7 @@ public class RaidUtil {
     public ArrayList<Raid> getActiveRaids(){
         ArrayList<Raid> activeRaids = new ArrayList<>();
         for(Raid raid : raids){
-            if(raid.getRaidState().equals("active")){
+            if(!raid.getRaidState().equals(RaidState.DONE)){
                 activeRaids.add(raid);
             }
         }
@@ -208,5 +219,9 @@ public class RaidUtil {
 
     public HashMap<Raid, FactionMember> getRaidTeams() {
         return raidTeams;
+    }
+
+    public RaidScheduler getRaidScheduler(){
+        return raidScheduler;
     }
 }

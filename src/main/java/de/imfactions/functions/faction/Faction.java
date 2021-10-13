@@ -12,10 +12,11 @@ public class Faction {
     private String shortcut;
     private Date foundingDate;
     private long raidProtection;
+    private boolean gettingRaided;
     // maxmimale Energie: 10; RaidKosten: 5; +1 Energie pro 2 Stunden
     private int raidEnergy;
 
-    public Faction(int factionID, String name, String shortcut, int userAmount, Date foundingDate, long raidProtection, int raidEnergy) {
+    public Faction(int factionID, String name, String shortcut, int memberAmount, Date foundingDate, long raidProtection, int raidEnergy, boolean gettingRaided) {
         this.factionID = factionID;
         this.name = name;
         this.shortcut = shortcut;
@@ -23,6 +24,7 @@ public class Faction {
         this.foundingDate = foundingDate;
         this.raidProtection = raidProtection;
         this.raidEnergy = raidEnergy;
+        this.gettingRaided = gettingRaided;
     }
 
     public Faction(int factionID, String name, String shortcut) {
@@ -60,9 +62,8 @@ public class Faction {
     }
 
     public boolean isRaidable(){
-        if(System.currentTimeMillis() >= raidProtection){
+        if(System.currentTimeMillis() >= raidProtection && !isGettingRaided())
             return true;
-        }
         return false;
     }
 
@@ -108,5 +109,21 @@ public class Faction {
 
     public void memberLeave(){
         memberAmount -= 1;
+    }
+
+    public boolean canRaid(){
+        return raidEnergy >= 5;
+    }
+
+    public void raid(){
+        raidEnergy -= 5;
+    }
+
+    public boolean isGettingRaided(){
+        return isGettingRaided();
+    }
+
+    public void setGettingRaided(boolean gettingRaided){
+        this.gettingRaided = gettingRaided;
     }
 }

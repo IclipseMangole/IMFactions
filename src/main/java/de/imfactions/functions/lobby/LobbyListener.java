@@ -2,6 +2,7 @@ package de.imfactions.functions.lobby;
 
 import de.imfactions.Data;
 import de.imfactions.IMFactions;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
@@ -114,6 +115,7 @@ public class LobbyListener implements Listener {
             return;
         Player player = (Player) event.getEntity();
         player.teleport(data.getPVP_worldSpawn());
-        player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
+        player.playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 1.0F, 1.0F);
+        player.sendTitle(ChatColor.DARK_RED + "PVP", ChatColor.DARK_RED + "ZONE", 5, 20, 5);
     }
 }

@@ -19,22 +19,24 @@ public class FactionMemberUtil {
     private final IMFactions imFactions;
     private final Data data;
     private ArrayList<FactionMember> factionMembers;
-    private final FactionMemberTable factionMemberTable;
-    private final FactionUtil factionUtil;
+    private FactionMemberTable factionMemberTable;
+    private FactionUtil factionUtil;
 
     public FactionMemberUtil(Data data) {
         this.data = data;
         imFactions = data.getImFactions();
-        factionMemberTable = new FactionMemberTable(this, data);
-        factionUtil = data.getFactionUtil();
-        factionMembers = factionMemberTable.getFactionMembers();
         Bukkit.getScheduler().runTaskTimerAsynchronously(imFactions, new Runnable() {
             @Override
             public void run() {
                 saveFactionMembers();
             }
         }, 0, 20 * 60 * 10);
+    }
 
+    public void loadUtils(){
+        factionMemberTable = new FactionMemberTable(this, data);
+        factionUtil = data.getFactionUtil();
+        factionMembers = factionMemberTable.getFactionMembers();
     }
 
     public void createFactionMember(UUID uuid, int factionId, int rank) {

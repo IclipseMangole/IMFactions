@@ -20,18 +20,14 @@ public class FactionUtil {
     private ArrayList<Faction> factions;
     private final IMFactions imFactions;
     private final Data data;
-    private final FactionTable factionTable;
-    private final FactionMemberUtil factionMemberUtil;
-    private final FactionHomeScheduler factionHomeScheduler;
+    private FactionTable factionTable;
+    private FactionMemberUtil factionMemberUtil;
+    private FactionHomeScheduler factionHomeScheduler;
     private int raidEnergyCooldown;
 
     public FactionUtil(Data data) {
         this.data = data;
         imFactions = data.getImFactions();
-        factionTable = new FactionTable(this, data);
-        factionMemberUtil = data.getFactionMemberUtil();
-        factionHomeScheduler = new FactionHomeScheduler(data);
-        factions = factionTable.getFactions();
         raidEnergyCooldown = 0;
         Bukkit.getScheduler().runTaskTimerAsynchronously(imFactions, new Runnable() {
             @Override
@@ -40,7 +36,7 @@ public class FactionUtil {
 
                 for(Faction faction : factions){
                     if(faction.getRaidEnergy() < 20){
-                        if(raidEnergyCooldown == 6){
+                        if(raidEnergyCooldown == 12){
                             faction.setRaidEnergy(faction.getRaidEnergy() + 1);
                             raidEnergyCooldown = raidEnergyCooldown - 6;
                         }else{
@@ -51,6 +47,13 @@ public class FactionUtil {
 
             }
         }, 0, 10 * 60 * 20);
+    }
+
+    public void loadUtils(){
+        factionTable = new FactionTable(this, data);
+        factionMemberUtil = data.getFactionMemberUtil();
+        factionHomeScheduler = new FactionHomeScheduler(data);
+        factions = factionTable.getFactions();
     }
 
     public ArrayList<Faction> getRaidableFactions(){
