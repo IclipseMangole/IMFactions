@@ -2,7 +2,6 @@ package de.imfactions.functions.raid;
 
 import de.imfactions.Data;
 import de.imfactions.IMFactions;
-import de.imfactions.functions.Scheduler;
 import de.imfactions.functions.faction.Faction;
 import de.imfactions.functions.faction.FactionUtil;
 import de.imfactions.functions.factionMember.FactionMember;
@@ -17,7 +16,6 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -34,7 +32,6 @@ public class RaidCommand {
     private final FactionPlotUtil factionPlotUtil;
     private final RaidUtil raidUtil;
     private StringBuilder builder;
-    private final Scheduler scheduler;
     private final RaidScheduler raidScheduler;
 
     public RaidCommand(IMFactions imFactions) {
@@ -44,7 +41,6 @@ public class RaidCommand {
         factionPlotUtil = data.getFactionPlotUtil();
         factionMemberUtil = data.getFactionMemberUtil();
         raidUtil = data.getRaidUtil();
-        scheduler = data.getScheduler();
         raidScheduler = raidUtil.getRaidScheduler();
     }
 
@@ -105,11 +101,11 @@ public class RaidCommand {
             player.sendMessage(ChatColor.RED + "Your Faction is already raiding");
             return;
         }
-        if(!faction.canRaid()){
+        if (!faction.canRaid()) {
             player.sendMessage(ChatColor.RED + "Your Faction needs at least 5⚡ Raid-Energy to start a Raid");
             return;
         }
-        if(factionUtil.getRaidableFactions().size() < 2){
+        if (factionUtil.getRaidableFactions(faction.getId()).size() == 0) {
             player.sendMessage(ChatColor.RED + "There are currently no Factions that could be raided");
             return;
         }
@@ -117,8 +113,7 @@ public class RaidCommand {
         int raidID = raidUtil.getHighestRaidID() + 1;
         raidUtil.createPreparingRaid(raidID, faction.getId());
         Raid raid = raidUtil.getRaid(raidID);
-        raidUtil.getRaidTeams().put(raid, factionMemberUtil.getFactionMember(uuid));
-        faction.raid();
+        raidUtil.getRaidTeams().put(raid, factionMember);
         raidScheduler.startPreparingRaid(raidID, 60);
 
         factionMemberUtil.getOnlineMembers(faction.getId()).forEach(member -> {
@@ -140,7 +135,8 @@ public class RaidCommand {
             minArgs = 0,
             maxArgs = 0,
             permissions = "im.factions.raid.join",
-            parent = "raid"
+            parent = "raid",
+            noConsole = true
     )
     public void join(CommandSender sender) {
         Player player = (Player) sender;
@@ -152,22 +148,26 @@ public class RaidCommand {
         }
         FactionMember factionMember = factionMemberUtil.getFactionMember(uuid);
         Faction faction = factionUtil.getFaction(factionMember.getFactionID());
-        if(!raidUtil.isFactionRaiding(faction.getId())){
+        if (!raidUtil.isFactionRaiding(faction.getId())) {
             player.sendMessage(ChatColor.RED + "There is no active Raid to join");
             return;
         }
         int raidID = raidUtil.getActiveRaidID(faction.getId());
         Raid raid = raidUtil.getRaid(raidID);
-        if(player.getWorld().getName().equalsIgnoreCase("FactionPVP_world")){
+        if (raidUtil.getRaidTeam(raidID).contains(factionMember)) {
+            player.sendMessage(ChatColor.RED + "You joined the Raid already");
+            return;
+        }
+        if (player.getWorld().getName().equalsIgnoreCase("FactionPVP_world")) {
             player.sendMessage(ChatColor.RED + "You can't join a Raid while being in the PVP_Zone");
             return;
         }
-        if(!raid.getRaidState().equals(RaidState.PREPARING)){
+        if (!raid.getRaidState().equals(RaidState.PREPARING)) {
             player.sendMessage(ChatColor.RED + "The time to join the Raid is up");
             return;
         }
 
-        for(FactionMember raidMember : raidUtil.getRaidTeam(raidID)){
+        for (FactionMember raidMember : raidUtil.getRaidTeam(raidID)) {
             Player raidPlayer = Bukkit.getPlayer(raidMember.getUuid());
             raidPlayer.sendMessage(ChatColor.YELLOW + player.getName() + ChatColor.GREEN + " joined the Raid");
         }
@@ -182,54 +182,43 @@ public class RaidCommand {
             minArgs = 0,
             maxArgs = 0,
             permissions = "im.factions.raid.scout",
-            parent = "raid"
+            parent = "raid",
+            noConsole = true
     )
     public void scout(CommandSender sender) {
         Player player = (Player) sender;
         UUID uuid = player.getUniqueId();
 
-        if(!factionMemberUtil.isFactionMemberExists(uuid)){
+        if (!factionMemberUtil.isFactionMemberExists(uuid)) {
             player.sendMessage(ChatColor.RED + "You aren't member of a Faction");
             return;
         }
         FactionMember factionMember = factionMemberUtil.getFactionMember(uuid);
         Faction faction = factionUtil.getFaction(factionMember.getFactionID());
-        if(!raidUtil.isFactionRaiding(faction.getId())){
-
+        if (!raidUtil.isFactionRaiding(faction.getId())) {
+            player.sendMessage(ChatColor.RED + "Your Faction isn't raiding");
+            return;
+        }
+        int raidID = raidUtil.getActiveRaidID(faction.getId());
+        Raid raid = raidUtil.getRaid(raidID);
+        if (raidUtil.isFactionMemberJoinedRaid(factionMember)) {
+            player.sendMessage("You aren't part of the Raidteam");
+            return;
+        }
+        if (!raid.getRaidState().equals(RaidState.SCOUTING)) {
+            player.sendMessage(ChatColor.RED + "You aren't in the Scouting Phase right now");
+            return;
+        }
+        FactionPlot scouted = factionPlotUtil.getFactionPlot(player.getLocation());
+        int currentlyScouted = scouted.getFactionID();
+        if (raidUtil.getScoutableFactions(raidID, currentlyScouted).size() == 0) {
+            player.sendMessage(ChatColor.RED + "There is no other Faction to scout");
+            return;
         }
 
-
-
-
-
-        if(factionMemberUtil.isFactionMemberExists(uuid)){
-            FactionMember factionUser = factionMemberUtil.getFactionMember(uuid);
-            int factionID = factionUser.getFactionID();
-            if(raidUtil.isFactionRaiding(factionID)){
-                if(raidUtil.isFactionMemberJoinedRaid(factionMemberUtil.getFactionMember(uuid))){
-                    int raidID = raidUtil.getActiveRaidID(factionID);
-                    Raid raid = raidUtil.getRaid(raidID);
-                    if(raid.getRaidState().equals("scouting")){
-                        FactionPlot scouting = factionPlotUtil.getFactionPlot(player.getLocation());
-                        Faction newFaction = raidUtil.getFactionForScout(raidID, scouting.getFactionID());
-                        FactionPlot newFactionPlot = factionPlotUtil.getFactionPlot(newFaction.getId());
-                        raidUtil.getRaidTeam(raidID).forEach(member -> {
-                            Player player1 = Bukkit.getPlayer(member.getUuid());
-                            player1.teleport(newFactionPlot.getRaidSpawn());
-                        });
-                    }else{
-                        player.sendMessage("§cYour Faction can't scout right now");
-                    }
-                }else{
-                    player.sendMessage("§cYou didn't join the Raid");
-                }
-            }else{
-                player.sendMessage("§cYour Faction isn't raiding");
-            }
-        }else{
-            player.sendMessage("§cYou aren't in a Faction");
-        }
-
+        FactionPlot defenders = factionPlotUtil.getFactionPlot(player.getLocation());
+        Faction newDefenders = raidUtil.getFactionForScout(raidID, defenders.getFactionID());
+        raidScheduler.startScoutingRaid(raidID, newDefenders.getId(), 300);
     }
 
     @IMCommand(
@@ -239,35 +228,39 @@ public class RaidCommand {
             minArgs = 0,
             maxArgs = 0,
             permissions = "im.factions.raid.begin",
-            parent = "raid"
+            parent = "raid",
+            noConsole = true
     )
     public void begin(CommandSender sender) {
         Player player = (Player) sender;
         UUID uuid = player.getUniqueId();
 
-        if(factionMemberUtil.isFactionMemberExists(uuid)){
-            FactionMember factionUser = factionMemberUtil.getFactionMember(uuid);
-            int factionID = factionUser.getFactionID();
-            if(raidUtil.isFactionRaiding(factionID)){
-                if(raidUtil.isFactionMemberJoinedRaid(factionUser)){
-                    int raidID = raidUtil.getActiveRaidID(factionID);
-                    Raid raid = raidUtil.getRaid(raidID);
-                    if(raid.getRaidState().equals("scouting")){
-                        FactionPlot factionPlot = factionPlotUtil.getFactionPlot(player.getLocation());
-                        Faction enemy = factionUtil.getFaction(factionPlot.getFactionID());
-                        raidUtil.updateRaidToRaiding(raidID, enemy.getId());
-                    }else{
-                        player.sendMessage("§cNo");
-                    }
-                }else{
-                    player.sendMessage("§cYou didn't join the Raid");
-                }
-            }else{
-                player.sendMessage("§cYour Faction isn't raiding");
-            }
-        }else{
-            player.sendMessage("§cYou aren't in a Faction");
+        if (!factionMemberUtil.isFactionMemberExists(uuid)) {
+            player.sendMessage(ChatColor.RED + "You aren't member of a Faction");
+            return;
         }
+        FactionMember factionMember = factionMemberUtil.getFactionMember(uuid);
+        Faction faction = factionUtil.getFaction(factionMember.getFactionID());
+        if (raidUtil.isFactionRaiding(faction.getId())) {
+            player.sendMessage(ChatColor.RED + "You are cringe. You aren't raiding");
+            return;
+        }
+        int raidID = raidUtil.getActiveRaidID(faction.getId());
+        Raid raid = raidUtil.getRaid(raidID);
+        if (!raidUtil.getRaidTeam(raidID).contains(factionMember)) {
+            player.sendMessage(ChatColor.RED + "You aren't part of the Raidteam");
+            return;
+        }
+        if (!raid.getRaidState().equals(RaidState.SCOUTING)) {
+            player.sendMessage(ChatColor.RED + "You can only skip the Scouting Phase");
+            return;
+        }
+
+        FactionPlot factionPlot = factionPlotUtil.getFactionPlot(player.getLocation());
+        Faction defenders = factionUtil.getFaction(factionPlot.getFactionID());
+        raidUtil.updateRaidToRaiding(raidID, defenders.getId());
+        raidUtil.getRaidScheduler().cancelScoutingRaid(raidID);
+        raidUtil.getRaidScheduler().startRaidingRaid(raidID, 30 * 60);
     }
 
     @IMCommand(
@@ -277,45 +270,58 @@ public class RaidCommand {
             minArgs = 0,
             maxArgs = 0,
             permissions = "im.factions.raid.leave",
-            parent = "raid"
+            parent = "raid",
+            noConsole = true
     )
     public void leave(CommandSender sender) {
         Player player = (Player) sender;
         UUID uuid = UUIDFetcher.getUUID(player);
 
-        if (factionMemberUtil.isFactionMemberExists(uuid)) {
-            FactionMember factionUser = factionMemberUtil.getFactionMember(uuid);
-            if (raidUtil.isFactionRaiding(factionUser.getFactionID())) {
-                int raidID = raidUtil.getActiveRaidID(factionUser.getFactionID());
-                Raid raid = raidUtil.getRaid(raidID);
-                ArrayList<FactionMember> team = raidUtil.getRaidTeam(raidID);
-                if (raidUtil.isFactionMemberJoinedRaid(factionUser)) {
-                    if (team.size() == 1) {
-                        raidUtil.getRaids().remove(raid);
-                        raidUtil.getRaidTeams().remove(raid);
-
-                        scheduler.getCountdowns().remove(player);
-                        scheduler.getRaids().remove(player);
-
-                        player.sendMessage("§aYou left the Raid. It isn't existing anymore");
-                    } else {
-                        scheduler.getRaids().remove(player);
-                        scheduler.getCountdowns().remove(player);
-
-                        raidUtil.getRaidTeams().remove(raid, factionUser);
-
-                        player.sendMessage("§aYou left the Raid");
-                    }
-                } else {
-                    player.sendMessage("§cYou can't leave because you haven't joined yet");
-                }
-            } else {
-                player.sendMessage("§cThere is no raid you could leave");
-            }
-        } else {
-            player.sendMessage("§cYou aren't in a Faction");
+        if (!factionMemberUtil.isFactionMemberExists(uuid)) {
+            player.sendMessage(ChatColor.RED + "You aren't member of a Faction");
+            return;
+        }
+        FactionMember factionMember = factionMemberUtil.getFactionMember(uuid);
+        Faction faction = factionUtil.getFaction(factionMember.getFactionID());
+        if (!raidUtil.isFactionRaiding(faction.getId())) {
+            player.sendMessage(ChatColor.RED + "There is no active Raid");
+            return;
+        }
+        if (!raidUtil.isFactionMemberJoinedRaid(factionMember)) {
+            player.sendMessage(ChatColor.RED + "To leave the Raid you have to join it first. Stupid Motherf*****");
+            return;
         }
 
+        int raidID = raidUtil.getActiveRaidID(faction.getId());
+        Raid raid = raidUtil.getRaid(raidID);
+        ArrayList<FactionMember> team = raidUtil.getRaidTeam(raidID);
+        raidUtil.getRaidTeams().remove(raid, factionMember);
+
+        if (team.size() == 1) {
+            player.sendMessage(ChatColor.GREEN + "You left the Raid. It isn't active anymore");
+            if (raid.getRaidState().equals(RaidState.PREPARING)) {
+                for (Player member : factionMemberUtil.getOnlineMembers(faction.getId())) {
+                    member.sendMessage(ChatColor.RED + "The Raid got canceled");
+                }
+                raidUtil.getRaidScheduler().cancelPreparingRaid(raidID);
+                raidUtil.deleteRaid(raid);
+                return;
+            }
+            raid.setRaidState(RaidState.DONE);
+            factionUtil.getFaction(raid.getFactionIdDefenders()).setGettingRaided(false);
+            if (raid.getRaidState().equals(RaidState.SCOUTING)) {
+                raidUtil.getRaidScheduler().cancelScoutingRaid(raidID);
+                return;
+            }
+            if (raid.getRaidState().equals(RaidState.RAIDING)) {
+                raidUtil.getRaidScheduler().cancelRaidingRaid(raidID);
+                return;
+            }
+        }
+        player.sendMessage(ChatColor.GREEN + "You left the Raid");
+        for (Player member : factionMemberUtil.getOnlineMembers(faction.getId())) {
+            member.sendMessage(ChatColor.YELLOW + player.getName() + ChatColor.RED + " left the Raid");
+        }
     }
 
     @IMCommand(

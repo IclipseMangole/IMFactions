@@ -2,12 +2,12 @@ package de.imfactions.functions.faction;
 
 import de.imfactions.Data;
 import de.imfactions.IMFactions;
-import de.imfactions.functions.Scheduler;
 import de.imfactions.functions.WorldLoader;
 import de.imfactions.functions.factionMember.FactionMember;
 import de.imfactions.functions.factionMember.FactionMemberUtil;
 import de.imfactions.functions.factionPlot.FactionPlot;
 import de.imfactions.functions.factionPlot.FactionPlotUtil;
+import de.imfactions.functions.raid.RaidUtil;
 import de.imfactions.functions.user.UserUtil;
 import de.imfactions.util.Command.IMCommand;
 import de.imfactions.util.LocationBuilder;
@@ -20,6 +20,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -37,8 +38,8 @@ public class FactionCommand {
     private final FactionMemberUtil factionMemberUtil;
     private final UserUtil userUtil;
     private final FactionPlotUtil factionPlotUtil;
+    private final RaidUtil raidUtil;
     private final WorldLoader worldLoader;
-    private final Scheduler scheduler;
 
     public FactionCommand(IMFactions imFactions) {
         this.imFactions = imFactions;
@@ -47,8 +48,8 @@ public class FactionCommand {
         factionUtil = data.getFactionUtil();
         factionMemberUtil = data.getFactionMemberUtil();
         factionPlotUtil = data.getFactionPlotUtil();
+        raidUtil = data.getRaidUtil();
         this.worldLoader = new WorldLoader(imFactions);
-        this.scheduler = data.getScheduler();
     }
 
     @IMCommand(
@@ -145,12 +146,21 @@ public class FactionCommand {
         FactionPlot factionPlot = factionPlotUtil.getFactionPlot(factionID);
         FactionMember factionMember = factionMemberUtil.getFactionMember(uuid);
 
+        if (raidUtil.isFactionRaiding(factionID) && raidUtil.isFactionMemberJoinedRaid(factionMember)) {
+            player.sendMessage(ChatColor.RED + "You can't leave the Faction while raiding");
+            return;
+        }
         if (player.getWorld().getName().equalsIgnoreCase("FactionPlots_world")) {
             player.teleport(data.getWorldSpawn());
+            player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
         }
         factionMemberUtil.leaveFaction(factionMember);
         //Last one in Faction
         if (faction.getMemberAmount() == 1) {
+            if (faction.isGettingRaided()) {
+                player.sendMessage(ChatColor.RED + "You can't leave because you're getting raided");
+                return;
+            }
             worldLoader.deleteMap(factionPlot.getEdgeDownFrontLeft());
             factionPlotUtil.deleteFactionPlot(factionPlot);
             factionUtil.deleteFaction(faction);

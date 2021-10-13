@@ -12,8 +12,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityPortalEnterEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 
 public class LobbyListener implements Listener {
 
@@ -44,10 +44,26 @@ public class LobbyListener implements Listener {
 
         if (world.equals("world")) {
             event.setCancelled(true);
-            if (event.getDamager() instanceof Player) {
+            if (event.getDamager() instanceof Player && event.getEntity() instanceof Player) {
                 Player player = (Player) event.getDamager();
                 player.sendMessage("§cHere is no PVP. Go into the PVP-Zone to kill someone");
             }
+        }
+    }
+
+    @EventHandler
+    public void onHunger(FoodLevelChangeEvent event) {
+        if (!(event.getEntity() instanceof Player)) {
+            return;
+        }
+        Player player = (Player) event.getEntity();
+        World world = player.getWorld();
+
+        if (!world.getName().equalsIgnoreCase("world")) {
+            return;
+        }
+        if (event.getFoodLevel() <= 2) {
+            event.setCancelled(true);
         }
     }
 
@@ -107,12 +123,14 @@ public class LobbyListener implements Listener {
     }
 
     @EventHandler
-    public void onPortal(EntityPortalEnterEvent event){
+    public void onPortal(EntityPortalEvent event) {
         World world = event.getEntity().getWorld();
-        if(!world.getName().equalsIgnoreCase("world"))
+        if (!world.getName().equalsIgnoreCase("world"))
             return;
-        if(!(event.getEntity() instanceof Player))
+        if (!(event.getEntity() instanceof Player)) {
+            event.setCancelled(true);
             return;
+        }
         Player player = (Player) event.getEntity();
         player.teleport(data.getPVP_worldSpawn());
         player.playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 1.0F, 1.0F);

@@ -7,12 +7,7 @@ import de.imfactions.functions.factionMember.FactionMemberUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Random;
 
 public class FactionUtil {
@@ -56,10 +51,10 @@ public class FactionUtil {
         factions = factionTable.getFactions();
     }
 
-    public ArrayList<Faction> getRaidableFactions(){
+    public ArrayList<Faction> getRaidableFactions(int factionID) {
         ArrayList<Faction> raidableFactions = new ArrayList<>();
-        for(Faction faction : factions){
-            if(faction.isRaidable()){
+        for (Faction faction : factions) {
+            if (faction.isRaidable() && faction.getId() != factionID) {
                 raidableFactions.add(faction);
             }
         }
@@ -110,15 +105,11 @@ public class FactionUtil {
         return factionTable.getHighestFactionID();
     }
 
-    public Faction getRandomFactionForRaid(int factionID){
+    public Faction getRandomFactionForRaid(int factionID) {
         Random random = new Random();
 
-        ArrayList<Faction> raidableFactions = getRaidableFactions();
-        Faction faction = raidableFactions.get(random.nextInt(factions.size()));
-        while(faction.getId() == factionID){
-            faction = factions.get(random.nextInt(factions.size()));
-        }
-        return faction;
+        ArrayList<Faction> raidableFactions = getRaidableFactions(factionID);
+        return raidableFactions.get(random.nextInt(factions.size()));
     }
 
     public boolean isFactionExists(int factionID) {

@@ -18,8 +18,8 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.world.PortalCreateEvent;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -56,6 +56,16 @@ public class PlotListener implements Listener {
         }
         FactionMember factionMember = factionMemberUtil.getFactionMember(uuid);
         FactionPlot factionPlot = factionPlotUtil.getFactionPlot(factionMember.getFactionID());
+        FactionPlot currentPlot = factionPlotUtil.getFactionPlot(location);
+
+        if (currentPlot != factionPlot) {
+            Location edgeDownFrontLeft = currentPlot.getEdgeDownFrontLeft();
+            Location edgeUpBackRight = currentPlot.getEdgeUpBackRight();
+            if (LocationChecker.isLocationInsideCube(location, edgeDownFrontLeft, edgeUpBackRight)) {
+                event.setCancelled(true);
+                return;
+            }
+        }
         Location edgeDownFrontLeft = factionPlot.getEdgeDownFrontLeft();
         Location edgeUpBackRight = factionPlot.getEdgeUpBackRight();
         if (!LocationChecker.isLocationInsideCube(location, edgeDownFrontLeft, edgeUpBackRight))
@@ -78,6 +88,16 @@ public class PlotListener implements Listener {
         }
         FactionMember factionMember = factionMemberUtil.getFactionMember(uuid);
         FactionPlot factionPlot = factionPlotUtil.getFactionPlot(factionMember.getFactionID());
+        FactionPlot currentPlot = factionPlotUtil.getFactionPlot(location);
+
+        if (currentPlot != factionPlot) {
+            Location edgeDownFrontLeft = currentPlot.getEdgeDownFrontLeft();
+            Location edgeUpBackRight = currentPlot.getEdgeUpBackRight();
+            if (LocationChecker.isLocationInsideCube(location, edgeDownFrontLeft, edgeUpBackRight)) {
+                event.setCancelled(true);
+                return;
+            }
+        }
         Location edgeDownFrontLeft = factionPlot.getEdgeDownFrontLeft();
         Location edgeUpBackRight = factionPlot.getEdgeUpBackRight();
         if (!LocationChecker.isLocationInsideCube(location, edgeDownFrontLeft, edgeUpBackRight))
@@ -140,14 +160,27 @@ public class PlotListener implements Listener {
             return;
         Player player = event.getEntity();
         UUID uuid = UUIDFetcher.getUUID(player);
-        if (factionMemberUtil.isFactionMemberExists(uuid)) {
-            FactionMember factionMember = factionMemberUtil.getFactionMember(uuid);
-            FactionPlot factionPlot = factionPlotUtil.getFactionPlot(factionMember.getFactionID());
-            player.teleport(factionPlot.getHome());
+
+        if (!factionMemberUtil.isFactionMemberExists(uuid)) {
+            player.teleport(data.getWorldSpawn());
             player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
             return;
         }
-        player.teleport(data.getWorldSpawn());
-        player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
+        FactionMember factionMember = factionMemberUtil.getFactionMember(uuid);
+        FactionPlot currentPlot = factionPlotUtil.getFactionPlot(player.getLocation());
+        FactionPlot factionPlot = factionPlotUtil.getFactionPlot(factionMember.getFactionID());
+        if (currentPlot == factionPlot) {
+            player.teleport(factionPlot.getHome());
+            player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
+        }
+    }
+
+    @EventHandler
+    public void onPortalBuild(PortalCreateEvent event) {
+        World world = event.getWorld();
+
+        if (world.getName().equalsIgnoreCase("FactionPlots_world")) {
+            event.setCancelled(true);
+        }
     }
 }
