@@ -107,6 +107,7 @@ public class Data {
 
     public void loadScheduler(){
         scheduler = new Scheduler(imFactions);
+        spawnScheduler = new SpawnScheduler(imFactions);
     }
 
     public void loadScoreboards(){

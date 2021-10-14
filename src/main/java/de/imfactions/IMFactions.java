@@ -87,7 +87,6 @@ public class IMFactions extends JavaPlugin {
         Bukkit.getWorlds().forEach(world -> world.setDifficulty(Difficulty.HARD));
         Bukkit.getWorlds().forEach(world -> world.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false));
         Bukkit.getWorlds().forEach(world -> world.setGameRule(GameRule.DO_IMMEDIATE_RESPAWN, true));
-        Bukkit.getWorlds().forEach(world -> world.setDifficulty(Difficulty.HARD));
     }
 
     public WorldLoader getWorldLoader() {
