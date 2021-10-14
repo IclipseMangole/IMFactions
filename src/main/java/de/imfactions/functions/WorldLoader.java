@@ -52,14 +52,14 @@ public class WorldLoader {
 
     public void loadLobby() {
         //if (mapUpdate) {
-        File from = new File("/home/IMNetzwerk/Welten/Factions/FactionLobby_world");
+        File from = new File("/home/IMNetzwerk/Server/Bauserver/FactionLobby_world");
         File to = new File(imFactions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/world");
 
         WorldCopy.copy(from, to);
     }
 
     public void loadPVP() {
-        File from = new File("/home/IMNetzwerk/Welten/Factions/FactionPVP_world");
+        File from = new File("/home/IMNetzwerk/Server/Bauserver/FactionPVP_world");
         File to = new File(imFactions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPVP_world");
 
         WorldCopy.copy(from, to);

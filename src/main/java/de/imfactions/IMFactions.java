@@ -34,6 +34,7 @@ public class IMFactions extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        updateGamerules();
         data = new Data(this);
         data.createUtils();
         data.loadWorlds();
@@ -42,7 +43,6 @@ public class IMFactions extends JavaPlugin {
         worldLoader.loadManagers();
         registerCommands();
         registerListener();
-        updateGamerules();
     }
 
     @Override
@@ -84,6 +84,7 @@ public class IMFactions extends JavaPlugin {
     }
 
     public void updateGamerules() {
+        Bukkit.getWorlds().forEach(world -> world.setDifficulty(Difficulty.HARD));
         Bukkit.getWorlds().forEach(world -> world.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false));
         Bukkit.getWorlds().forEach(world -> world.setGameRule(GameRule.DO_IMMEDIATE_RESPAWN, true));
         Bukkit.getWorlds().forEach(world -> world.setDifficulty(Difficulty.HARD));

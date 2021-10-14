@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 import java.text.DecimalFormat;
 
 import static de.imfactions.util.ColorConverter.toHex;
+import static de.imfactions.util.RainbowColor.rainbowColor;
 
 /**
  * Created by Iclipse on 10.07.2020
@@ -130,14 +131,4 @@ public class Tablist {
         return line;
     }
 
-
-    private ChatColor rainbowColor(int duration) {
-        return rainbowColor(duration, 0, 0);
-    }
-
-    private ChatColor rainbowColor(double duration, int place, int max) {
-        float hsv = (float) ((System.currentTimeMillis() % (duration * 1000.0)) / (duration * 1000.0));
-        hsv += place * (((duration * 1000.0) / max) / (duration * 1000.0));
-        return ChatColor.of(toHex(hsv, 1f, 1f));
-    }
 }

@@ -7,7 +7,9 @@ import de.imfactions.functions.Tablist;
 import de.imfactions.functions.faction.FactionUtil;
 import de.imfactions.functions.factionMember.FactionMemberUtil;
 import de.imfactions.functions.factionPlot.FactionPlotUtil;
+import de.imfactions.functions.lobby.lottery.LotteryUtil;
 import de.imfactions.functions.raid.RaidUtil;
+import de.imfactions.functions.texture.TextureUtil;
 import de.imfactions.functions.user.UserSettingsUtil;
 import de.imfactions.functions.user.UserUtil;
 import de.imfactions.util.Command.CommandRegistration;
@@ -44,12 +46,14 @@ public class Data {
     private Scoreboard scoreboard;
 
     //Utils
+    private TextureUtil textureUtil;
     private FactionUtil factionUtil;
     private FactionPlotUtil factionPlotUtil;
     private FactionMemberUtil factionMemberUtil;
     private RaidUtil raidUtil;
     private UserUtil userUtil;
     private UserSettingsUtil userSettingsUtil;
+    private LotteryUtil lotteryUtil;
 
     public Data(IMFactions imFactions) {
         this.imFactions = imFactions;
@@ -59,12 +63,14 @@ public class Data {
     }
 
     public void createUtils() {
+        textureUtil = new TextureUtil(imFactions);
         factionUtil = new FactionUtil(this);
         factionPlotUtil = new FactionPlotUtil(this);
         factionMemberUtil = new FactionMemberUtil(this);
         raidUtil = new RaidUtil(this);
         userUtil = new UserUtil(this);
         userSettingsUtil = new UserSettingsUtil(this);
+        //lotteryUtil = new LotteryUtil(imFactions);
         loadUtils();
     }
 
@@ -101,7 +107,6 @@ public class Data {
 
     public void loadScheduler(){
         scheduler = new Scheduler(imFactions);
-        spawnScheduler = new SpawnScheduler(imFactions);
     }
 
     public void loadScoreboards(){
@@ -190,6 +195,10 @@ public class Data {
         return imFactions;
     }
 
+    public TextureUtil getTextureUtil() {
+        return textureUtil;
+    }
+
     public FactionUtil getFactionUtil() {
         return factionUtil;
     }
@@ -212,5 +221,9 @@ public class Data {
 
     public UserSettingsUtil getUserSettingsUtil() {
         return userSettingsUtil;
+    }
+
+    public LotteryUtil getLotteryUtil() {
+        return lotteryUtil;
     }
 }
