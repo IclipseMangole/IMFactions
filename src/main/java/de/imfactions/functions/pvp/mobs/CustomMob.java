@@ -18,5 +18,6 @@ public class CustomMob extends EntityMonster {
         super(type, ((CraftWorld) world).getHandle());
         this.name = name;
         this.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+        this.setInvisible(false);
     }
 }

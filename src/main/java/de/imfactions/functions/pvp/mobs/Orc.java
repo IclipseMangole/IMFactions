@@ -11,6 +11,6 @@ public class Orc extends CustomMob {
     }
 
     private void setAttributes() {
-        customAttributes.setSize(10.0F, 10.0F);
+        customAttributes.setSize(2.0F, 2.0F);
     }
 }
