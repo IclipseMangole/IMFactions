@@ -43,16 +43,6 @@ public class Scheduler {
                 /**
                  * Countdown if FactionPlot is reachable after founding a Faction
                  */
-                if (!loadingFactionPlotsTime.isEmpty()) {
-                    loadingFactionPlotsTime.forEach(integer -> {
-                        if (integer == 0) {
-                            loadingFactionPlotsTime.remove(integer);
-                            factionPlotUtil.addLoadingFactionPlots(-1);
-                        } else {
-                            loadingFactionPlotsTime.set(loadingFactionPlotsTime.indexOf(integer), integer - 1);
-                        }
-                    });
-                }
             }
         }, 0, 20);
     }

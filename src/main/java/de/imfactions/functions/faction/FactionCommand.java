@@ -146,6 +146,10 @@ public class FactionCommand {
         FactionPlot factionPlot = factionPlotUtil.getFactionPlot(factionID);
         FactionMember factionMember = factionMemberUtil.getFactionMember(uuid);
 
+        if (factionPlot.isLoading()) {
+            player.sendMessage(ChatColor.RED + "Wait until your FactionPlot isn't loading anymore");
+            return;
+        }
         if (raidUtil.isFactionRaiding(factionID) && raidUtil.isFactionMemberJoinedRaid(factionMember)) {
             player.sendMessage(ChatColor.RED + "You can't leave the Faction while raiding");
             return;

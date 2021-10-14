@@ -1,7 +1,7 @@
 package de.imfactions.functions.pvp.mobs;
 
 import de.imfactions.functions.pvp.mobs.abilities.CustomAttributes;
-import de.imfactions.functions.pvp.mobs.abilities.CustomPathfinder;
+import de.imfactions.functions.pvp.mobs.abilities.pathfinders.CustomPathfinder;
 import net.minecraft.network.chat.ChatComponentText;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.monster.EntityMonster;

@@ -1,7 +1,8 @@
-package de.imfactions.functions.pvp.mobs;
+package de.imfactions.functions.pvp.mobs.abilities;
 
 import de.imfactions.Data;
 import de.imfactions.IMFactions;
+import de.imfactions.functions.pvp.mobs.Orc;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;

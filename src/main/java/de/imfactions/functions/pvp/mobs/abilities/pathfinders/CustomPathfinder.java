@@ -1,4 +1,4 @@
-package de.imfactions.functions.pvp.mobs.abilities;
+package de.imfactions.functions.pvp.mobs.abilities.pathfinders;
 
 import net.minecraft.world.entity.monster.EntityMonster;
 import net.minecraft.world.level.pathfinder.Pathfinder;

@@ -153,8 +153,8 @@ public class FactionPlotUtil {
         Location edgeUpBackRight = getEdgeUpBackRight(edgeDownFrontLeft);
         Location home = new Location(edgeDownFrontLeft.getWorld(), edgeDownFrontLeft.getX(), edgeDownFrontLeft.getY() + 17, edgeDownFrontLeft.getZ());
 
-        FactionPlot factionPlot = new FactionPlot(factionID, edgeDownFrontLeft, edgeUpBackRight, home, true, position);
+        FactionPlot factionPlot = new FactionPlot(factionID, edgeDownFrontLeft, edgeUpBackRight, home, false, position);
         factionPlots.add(factionPlot);
-        factionPlotTable.createFactionPlot(factionID, edgeDownFrontLeft, edgeUpBackRight, home, true, position);
+        factionPlotTable.createFactionPlot(factionID, edgeDownFrontLeft, edgeUpBackRight, home, false, position);
     }
 }
