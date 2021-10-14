@@ -152,6 +152,9 @@ public class FactionPlotUtil {
         Location edgeDownFrontLeft = getEdgeDownFrontLeft(position);
         Location edgeUpBackRight = getEdgeUpBackRight(edgeDownFrontLeft);
         Location home = new Location(edgeDownFrontLeft.getWorld(), edgeDownFrontLeft.getX(), edgeDownFrontLeft.getY() + 17, edgeDownFrontLeft.getZ());
+
+        FactionPlot factionPlot = new FactionPlot(factionID, edgeDownFrontLeft, edgeUpBackRight, home, true, position);
+        factionPlots.add(factionPlot);
         factionPlotTable.createFactionPlot(factionID, edgeDownFrontLeft, edgeUpBackRight, home, true, position);
     }
 }

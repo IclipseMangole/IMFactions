@@ -1,6 +1,5 @@
 package de.imfactions.functions.faction;
 
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Date;
 
@@ -35,6 +34,7 @@ public class Faction {
         foundingDate = Date.from(Instant.now());
         raidProtection = System.currentTimeMillis() +  12*60*60*1000;
         raidEnergy = 10;
+        gettingRaided = false;
     }
 
     public String getName() {
@@ -120,7 +120,7 @@ public class Faction {
     }
 
     public boolean isGettingRaided(){
-        return isGettingRaided();
+        return gettingRaided;
     }
 
     public void setGettingRaided(boolean gettingRaided){

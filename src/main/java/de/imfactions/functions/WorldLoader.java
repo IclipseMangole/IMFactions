@@ -126,7 +126,7 @@ public class WorldLoader {
     }
 
     public File getSchematicFile(String name) {
-        return new File("/home/IMNetzwerk/Server/BauServer/plugins/WorldEdit/schematics/" + name + ".schem");
+        return new File("/home/IMNetzwerk/Server/Bauserver/plugins/WorldEdit/schematics/" + name + ".schem");
     }
 
     public void deleteMap(Location edgeDownFrontLeft){

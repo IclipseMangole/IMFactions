@@ -42,7 +42,7 @@ public class SpawnScheduler implements Listener {
                     player.sendTitle(ChatColor.GREEN + "" + timer, "", 3, 14, 3);
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1.0f, 0.5f);
                     if (!player.hasPotionEffect(PotionEffectType.CONFUSION))
-                        player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, seconds * 20, 0));
+                        player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, timer * 20, 0));
                     timer--;
                 }
             }, 0, 20));

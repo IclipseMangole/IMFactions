@@ -62,7 +62,9 @@ public class FactionUtil {
     }
 
     public void createFaction(int factionID, String name, String shortcut) {
-        new Faction(factionID, name, shortcut);
+        Faction faction = new Faction(factionID, name, shortcut);
+        factions.add(faction);
+        factionTable.createFaction(faction.getId(), faction.getName(), faction.getShortcut(), faction.getMemberAmount(), faction.getFoundingDate(), faction.getRaidProtection(), faction.getRaidEnergy(), faction.isGettingRaided());
     }
 
     public Faction getFaction(int factionID) {

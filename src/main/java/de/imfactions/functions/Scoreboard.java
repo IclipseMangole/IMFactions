@@ -26,13 +26,13 @@ import java.util.UUID;
 
 public class Scoreboard {
 
-    private IMFactions imFactions;
-    private Data data;
-    private FactionUtil factionUtil;
-    private FactionMemberUtil factionMemberUtil;
-    private RaidUtil raidUtil;
-    private UserUtil userUtil;
-    private HashMap<Player, org.bukkit.scoreboard.Scoreboard> scoreboards;
+    private final IMFactions imFactions;
+    private final Data data;
+    private final FactionUtil factionUtil;
+    private final FactionMemberUtil factionMemberUtil;
+    private final RaidUtil raidUtil;
+    private final UserUtil userUtil;
+    private final HashMap<Player, org.bukkit.scoreboard.Scoreboard> scoreboards;
 
     public Scoreboard(IMFactions imFactions) {
         this.imFactions = imFactions;
@@ -87,7 +87,7 @@ public class Scoreboard {
         String timeLeft = "30:00";
         ArrayList<FactionMember> raidTeam = raidUtil.getRaidTeam(raidID);
 
-        if (raidState.equals("active")) {
+        if (raidState.equals(RaidState.RAIDING)) {
             Faction factionDefenders = factionUtil.getFaction(raid.getFactionIdDefenders());
             defenders = factionDefenders.getName();
             long time = ((raid.getStart().getTime() + 1000 * 60 * 30) - System.currentTimeMillis()) / 1000;
@@ -102,14 +102,14 @@ public class Scoreboard {
         objective.getScore("§6§lState:").setScore(19);
         objective.getScore(raidState).setScore(18);
         objective.getScore(ChatColor.of(Color.GREEN) + "").setScore(17);
-        objective.getScore( faction.getName() + " §6vs §f" + defenders).setScore(16);
+        objective.getScore(faction.getName() + " §6vs §f" + defenders).setScore(16);
         objective.getScore(ChatColor.of(Color.BLUE) + "").setScore(15);
         objective.getScore("§6§lTime Left:").setScore(14);
         objective.getScore(timeLeft).setScore(13);
         objective.getScore(ChatColor.of(Color.PINK) + "").setScore(12);
         objective.getScore("§6§lRaid Team:").setScore(11);
         for (int i = 10; i > 10 - raidTeam.size(); i--) {
-            FactionMember member = raidTeam.get(-i+10);
+            FactionMember member = raidTeam.get(-i + 10);
             Player player1 = factionMemberUtil.getPlayer(member.getUuid());
             objective.getScore(player1.getName()).setScore(i);
         }
@@ -194,6 +194,7 @@ public class Scoreboard {
         objective.getScore(onlineMembers).setScore(6);
         objective.getScore(ChatColor.of(Color.BLUE) + "").setScore(5);
         objective.getScore("§6§lWorld:").setScore(4);
+        objective.getScore("").setScore(3);
         objective.getScore("" + getWorldColor(worldName) + world).setScore(3);
         objective.getScore(ChatColor.of(Color.PINK) + "").setScore(2);
         objective.getScore("§6§lEther").setScore(1);

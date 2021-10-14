@@ -81,6 +81,12 @@ public class PVPListener implements Listener {
                 Player player = (Player) event.getEntity();
 
                 if (!LocationChecker.isLocationInsideCube(player.getLocation(), edgeDownFrontLeft, edgeUpBackRight)) {
+
+                    if (!factionMemberUtil.isFactionMemberExists(player.getUniqueId()))
+                        return;
+                    if (!factionMemberUtil.isFactionMemberExists(damager.getUniqueId()))
+                        return;
+
                     int factionIDPlayer = factionMemberUtil.getFactionMember(UUIDFetcher.getUUID(player)).getFactionID();
                     int factionIDDamager = factionMemberUtil.getFactionMember(UUIDFetcher.getUUID(damager)).getFactionID();
 
@@ -125,7 +131,7 @@ public class PVPListener implements Listener {
         if (world.equals("FactionPVP_world")) {
             event.setDeathMessage(null);
 
-            String health = String.format("%.1f", killer.getHealth());
+            String health = String.format("%.0f", killer.getHealth() / 2);
             dead.sendMessage("§4You got killed by §c" + killer.getName() + "§7(§c" + health + ChatColor.of(toHex(153, 0, 0)) + "❤§7)");
             killer.sendMessage("§4You killed §c" + dead.getName());
             killer.sendMessage("§4You earned §c10 §4Ether");

@@ -11,7 +11,7 @@ public class CustomAttributes {
     }
 
     public void setSize(float hoehe, float breite) {
-        entityMonster.getEntityType().m().a(hoehe, breite);
+
     }
 
     public void setMaxHealth(double health) {
