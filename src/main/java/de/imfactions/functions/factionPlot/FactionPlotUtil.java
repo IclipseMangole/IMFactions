@@ -96,23 +96,23 @@ public class FactionPlotUtil {
     }
 
     public Location getEdgeUpBackRight(Location edgeDownFrontLeft){
-        return new Location(Bukkit.getWorld("FactionPlots_world"), edgeDownFrontLeft.getX() + 99, edgeDownFrontLeft.getY() + 150, edgeDownFrontLeft.getZ() + 99);
+        return new Location(Bukkit.getWorld("FactionPlots_world"), edgeDownFrontLeft.getX() + 79, edgeDownFrontLeft.getY() + 128, edgeDownFrontLeft.getZ() + 79);
     }
 
     public Location getRaidEdgeLeft(Location edgeDownFrontLeft){
-        return new Location(Bukkit.getWorld("FactionPlots_world"), edgeDownFrontLeft.getX() - 14, edgeDownFrontLeft.getY(), edgeDownFrontLeft.getZ() - 14);
+        return new Location(Bukkit.getWorld("FactionPlots_world"), edgeDownFrontLeft.getX() - 19, edgeDownFrontLeft.getY(), edgeDownFrontLeft.getZ() - 19);
     }
 
     public Location getRaidEdgeRight(Location RaidEdgeLeft){
-        return new Location(Bukkit.getWorld("FactionPlots_world"), RaidEdgeLeft.getX() + 128, RaidEdgeLeft.getY() + 150, RaidEdgeLeft.getZ() + 128);
+        return new Location(Bukkit.getWorld("FactionPlots_world"), RaidEdgeLeft.getX() + 118, RaidEdgeLeft.getY() + 128, RaidEdgeLeft.getZ() + 118);
     }
 
     public Location getCompleteEdgeLeft(Location edgeDownFrontLeft){
-        return new Location(Bukkit.getWorld("FactionPlots_world"), edgeDownFrontLeft.getX() - 46, edgeDownFrontLeft.getY(), edgeDownFrontLeft.getZ() - 46);
+        return new Location(Bukkit.getWorld("FactionPlots_world"), edgeDownFrontLeft.getX() - 55, edgeDownFrontLeft.getY(), edgeDownFrontLeft.getZ() - 55);
     }
 
     public Location getCompleteEdgeRight(Location CompleteEdgeLeft){
-        return new Location(Bukkit.getWorld("FactionPlots_world"), CompleteEdgeLeft.getX() + 191, CompleteEdgeLeft.getY() + 150, CompleteEdgeLeft.getZ() + 191);
+        return new Location(Bukkit.getWorld("FactionPlots_world"), CompleteEdgeLeft.getX() + 189, CompleteEdgeLeft.getY() + 128, CompleteEdgeLeft.getZ() + 189);
     }
 
     public FactionPlot getFactionPlot(Location location){

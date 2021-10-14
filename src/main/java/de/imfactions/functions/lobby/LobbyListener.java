@@ -11,6 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import org.bukkit.event.entity.*;
+import org.bukkit.event.player.PlayerPortalEvent;
 
 public class LobbyListener implements Listener {
 
@@ -124,11 +125,16 @@ public class LobbyListener implements Listener {
         World world = event.getEntity().getWorld();
         if (!world.getName().equalsIgnoreCase("world"))
             return;
-        if (!(event.getEntity() instanceof Player)) {
+        if (!(event.getEntity() instanceof Player))
             event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onPortalPlayer(PlayerPortalEvent event) {
+        World world = event.getPlayer().getWorld();
+        if (!world.getName().equalsIgnoreCase("world"))
             return;
-        }
-        Player player = (Player) event.getEntity();
+        Player player = event.getPlayer();
         player.teleport(data.getPVP_worldSpawn());
         player.playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 1.0F, 1.0F);
         player.sendTitle(ChatColor.DARK_RED + "PVP", ChatColor.DARK_RED + "ZONE", 5, 20, 5);

@@ -22,6 +22,7 @@ import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.entity.*;
+import org.bukkit.event.player.PlayerPortalEvent;
 
 import static de.imfactions.util.ColorConverter.toHex;
 
@@ -157,13 +158,18 @@ public class PVPListener implements Listener {
     @EventHandler
     public void onPortal(EntityPortalEvent event) {
         World world = event.getEntity().getWorld();
-        if (!world.getName().equalsIgnoreCase("world"))
+        if (!world.getName().equalsIgnoreCase("FactionPVP_world"))
             return;
-        if (!(event.getEntity() instanceof Player)) {
+        if (!(event.getEntity() instanceof Player))
             event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onPortalPlayer(PlayerPortalEvent event) {
+        World world = event.getPlayer().getWorld();
+        if (!world.getName().equalsIgnoreCase("FactionPVP_world"))
             return;
-        }
-        Player player = (Player) event.getEntity();
+        Player player = event.getPlayer();
         player.teleport(data.getWorldSpawn());
         player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
     }

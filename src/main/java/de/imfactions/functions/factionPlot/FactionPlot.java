@@ -22,7 +22,7 @@ public class FactionPlot {
     }
 
     public Location getRaidSpawn(){
-        return new Location(Bukkit.getWorld("FactionPlots_world"), edgeDownFrontLeft.getX() - 16, 17, edgeDownFrontLeft.getZ() - 16);
+        return new Location(Bukkit.getWorld("FactionPlots_world"), edgeDownFrontLeft.getX() - 20, 17, edgeDownFrontLeft.getZ() - 20);
     }
 
 

@@ -20,12 +20,9 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import de.imfactions.IMFactions;
 import de.imfactions.functions.factionPlot.FactionPlotUtil;
-import de.imfactions.util.EmptyChunkGenerator;
 import de.imfactions.util.WorldCopy;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.WorldCreator;
 import org.bukkit.craftbukkit.libs.org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -129,7 +126,7 @@ public class WorldLoader {
     }
 
     public File getSchematicFile(String name) {
-        return new File("/home/IMNetzwerk/BuildServer/plugins/WorldEdit/schematics/" + name + ".schem");
+        return new File("/home/IMNetzwerk/Server/BauServer/plugins/WorldEdit/schematics/" + name + ".schem");
     }
 
     public void deleteMap(Location edgeDownFrontLeft){
