@@ -35,14 +35,13 @@ public class RaidUtil {
     public RaidUtil(Data data) {
         this.data = data;
         imFactions = data.getImFactions();
-        raids = raidTable.getRaids();
         raidTeams = new HashMap<>();
         Bukkit.getScheduler().runTaskTimerAsynchronously(imFactions, new Runnable() {
             @Override
             public void run() {
                 saveRaids();
             }
-        }, 0, 20 * 60 * 10);
+        }, 20 * 60, 20 * 60 * 10);
     }
 
     public void loadUtils(){
@@ -52,6 +51,7 @@ public class RaidUtil {
         raidTable = new RaidTable(this, data);
         raidScheduler = new RaidScheduler(data);
         factionPlotUtil = data.getFactionPlotUtil();
+        raids = raidTable.getRaids();
     }
 
     public ArrayList<Raid> getRaids(){

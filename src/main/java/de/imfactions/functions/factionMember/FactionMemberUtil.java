@@ -6,11 +6,8 @@ import de.imfactions.functions.faction.Faction;
 import de.imfactions.functions.faction.FactionUtil;
 import de.imfactions.util.UUIDFetcher;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -30,7 +27,7 @@ public class FactionMemberUtil {
             public void run() {
                 saveFactionMembers();
             }
-        }, 0, 20 * 60 * 10);
+        }, 20 * 60, 20 * 60 * 10);
     }
 
     public void loadUtils(){

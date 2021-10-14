@@ -31,17 +31,17 @@ public class FactionUtil {
 
                 for(Faction faction : factions){
                     if(faction.getRaidEnergy() < 20){
-                        if(raidEnergyCooldown == 12){
+                        if (raidEnergyCooldown == 12) {
                             faction.setRaidEnergy(faction.getRaidEnergy() + 1);
                             raidEnergyCooldown = raidEnergyCooldown - 6;
-                        }else{
+                        } else {
                             raidEnergyCooldown = raidEnergyCooldown + 1;
                         }
                     }
                 }
 
             }
-        }, 0, 10 * 60 * 20);
+        }, 20 * 60, 10 * 60 * 20);
     }
 
     public void loadUtils(){
