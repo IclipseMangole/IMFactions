@@ -10,10 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityPortalEvent;
-import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.entity.*;
 
 public class LobbyListener implements Listener {
 
@@ -135,5 +132,15 @@ public class LobbyListener implements Listener {
         player.teleport(data.getPVP_worldSpawn());
         player.playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 1.0F, 1.0F);
         player.sendTitle(ChatColor.DARK_RED + "PVP", ChatColor.DARK_RED + "ZONE", 5, 20, 5);
+    }
+
+    @EventHandler
+    public void onSpawn(CreatureSpawnEvent event) {
+        World world = event.getLocation().getWorld();
+
+        if (!world.getName().equalsIgnoreCase("world"))
+            return;
+        if (event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.NATURAL))
+            event.setCancelled(true);
     }
 }

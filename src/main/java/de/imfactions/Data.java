@@ -68,19 +68,27 @@ public class Data {
         loadUtils();
     }
 
-    private void loadUtils(){
+    private void loadUtils() {
         factionUtil.loadUtils();
         factionPlotUtil.loadUtils();
         factionMemberUtil.loadUtils();
         raidUtil.loadUtils();
     }
 
+    public void saveUtils() {
+        factionUtil.saveFactions();
+        factionPlotUtil.saveFactionPlots();
+        factionMemberUtil.saveFactionMembers();
+        raidUtil.saveRaids();
+        userUtil.saveUsers();
+    }
+
     public void loadWorlds() {
         world = Bukkit.getWorld("world");
         PVP_world = Bukkit.createWorld(new WorldCreator("FactionPVP_world"));
-        if(!new File(imFactions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlotsSave_world/").exists()){
+        if (!new File(imFactions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlotsSave_world/").exists()) {
             FactionPlots_world = new WorldCreator("FactionPlotsSave_world").generator(new EmptyChunkGenerator()).createWorld();
-        }else{
+        } else {
             FactionPlots_world = Bukkit.createWorld(new WorldCreator("FactionPlots_world"));
         }
         worldSpawn = new Location(world, 0.5, 31, -17.5);

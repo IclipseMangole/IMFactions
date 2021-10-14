@@ -10,18 +10,19 @@ import de.imfactions.functions.factionPlot.FactionPlot;
 import de.imfactions.functions.factionPlot.FactionPlotUtil;
 import de.imfactions.util.LocationChecker;
 import de.imfactions.util.UUIDFetcher;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Sound;
-import org.bukkit.World;
+import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
+import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.UUID;
 
 public class RaidListener implements Listener {
@@ -32,6 +33,7 @@ public class RaidListener implements Listener {
     private final FactionPlotUtil factionPlotUtil;
     private final FactionMemberUtil factionMemberUtil;
     private final FactionUtil factionUtil;
+    private HashMap<Block, Integer> obsidian = new HashMap<>();
 
     public RaidListener(IMFactions imFactions) {
         this.imFactions = imFactions;
@@ -121,6 +123,49 @@ public class RaidListener implements Listener {
             event.setCancelled(true);
         }
     }
+
+    @EventHandler
+    public void onExplosionObisidian(ExplosionPrimeEvent event) {
+        World world = event.getEntity().getWorld();
+
+        if (world.getName().equalsIgnoreCase("FactionPlots_world"))
+            return;
+        Block source = event.getEntity().getLocation().getBlock();
+        if (source.isLiquid())
+            return;
+        for (Block damagedObsidian : getDamagedObsidian(source, event.getRadius())) {
+            if (!obsidian.containsKey(damagedObsidian))
+                obsidian.put(damagedObsidian, 0);
+            int damage = obsidian.get(damagedObsidian);
+            obsidian.replace(damagedObsidian, damage, damage + 1);
+            if (obsidian.get(damagedObsidian) >= 2)
+                damagedObsidian.setType(Material.AIR);
+            obsidian.remove(damagedObsidian);
+        }
+    }
+
+
+    private ArrayList<Block> getDamagedObsidian(Block source, float radius) {
+        ArrayList<Block> damagedObsidian = new ArrayList<>();
+        World world = source.getWorld();
+        int r = (int) Math.ceil(radius);
+        Location s = source.getLocation();
+
+        for (int x = -r; x < r; x++) {
+            for (int y = -r; y < r; y++) {
+                for (int z = -r; z < r; z++) {
+                    Block obsidian = world.getBlockAt(s.getBlockX() + x, s.getBlockY() + y, s.getBlockZ() + z);
+                    if (!obsidian.getType().equals(Material.OBSIDIAN))
+                        continue;
+                    if (s.distance(obsidian.getLocation()) <= r)
+                        damagedObsidian.add(obsidian);
+                }
+            }
+        }
+
+        return damagedObsidian;
+    }
+
 
     private boolean isRaidingOtherFaction(Player player) {
         UUID uuid = UUIDFetcher.getUUID(player);

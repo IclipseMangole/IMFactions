@@ -165,10 +165,7 @@ public class RaidScheduler implements Listener {
             @Override
             public void run() {
                 if (timer <= 0) {
-                    for (Player player : members) {
-                        player.teleport(data.getWorldSpawn());
-                        player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
-                    }
+                    raidUtil.teleportRaidTeamHome(ID);
                     raidUtil.updateRaidToDone(ID);
                     cancelRaidingRaid(ID);
                     return;

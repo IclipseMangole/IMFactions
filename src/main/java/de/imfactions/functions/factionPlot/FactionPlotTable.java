@@ -1,7 +1,6 @@
 package de.imfactions.functions.factionPlot;
 
 import de.imfactions.Data;
-import de.imfactions.functions.factionMember.FactionMemberUtil;
 import de.imfactions.util.LocationBuilder;
 import de.imfactions.util.MySQL;
 import org.bukkit.Location;
@@ -29,7 +28,7 @@ public class FactionPlotTable {
 
     public void createFactionPlot(int factionID, Location edgeDownFrontLeft, Location edgeUpBackRight, Location home, boolean loading, int position) {
         if (!factionPlotUtil.isFactionPlotExists(factionID)) {
-            mySQL.update("INSERT INTO factionPlots (`factionID`, `edgeDownFrontLeft`, `edgeUpBackRight`, `home`, `loading`, `position`) VALUES (" + factionID + ", '" + LocationBuilder.toString(edgeDownFrontLeft) + "', '" + LocationBuilder.toString(edgeUpBackRight) + "', '" + LocationBuilder.toString(home) + "', " + loading + ", " + position + ")");
+            mySQL.update("INSERT INTO `factionPlots` (`factionID`, `edgeDownFrontLeft`, `edgeUpBackRight`, `home`, `loading`, `position`) VALUES (" + factionID + ", '" + LocationBuilder.toString(edgeDownFrontLeft) + "', '" + LocationBuilder.toString(edgeUpBackRight) + "', '" + LocationBuilder.toString(home) + "', " + loading + ", " + position + ")");
         }
     }
 
@@ -48,10 +47,10 @@ public class FactionPlotTable {
     }
 
     public void saveFactionPlot(FactionPlot factionPlot){
-        mySQL.update("UPDATE factionPlots SET `edgeDownFrontLeft` = '" + LocationBuilder.toString(factionPlot.edgeDownFrontLeft) + "', `edgeUpBackRight` = '" + LocationBuilder.toString(factionPlot.edgeUpBackRight) + "', `home` = '" + LocationBuilder.toString(factionPlot.home) + "', `loading` = '" + factionPlot.loading + "', `position` = '" + factionPlot.position + "' WHERE `factionID` = '" + factionPlot.factionID + "'");
+        mySQL.update("UPDATE `factionPlots` SET `edgeDownFrontLeft` = '" + LocationBuilder.toString(factionPlot.edgeDownFrontLeft) + "', `edgeUpBackRight` = '" + LocationBuilder.toString(factionPlot.edgeUpBackRight) + "', `home` = '" + LocationBuilder.toString(factionPlot.home) + "', `loading` = " + factionPlot.loading + ", `position` = " + factionPlot.position + " WHERE `factionID` = " + factionPlot.factionID + "");
     }
 
     public void deleteFactionPlot(FactionPlot factionPlot){
-        mySQL.update("DELETE FROM factionPlots WHERE `factionID` = '" + factionPlot.factionID + "'");
+        mySQL.update("DELETE FROM `factionPlots` WHERE `factionID` = " + factionPlot.factionID + "");
     }
 }

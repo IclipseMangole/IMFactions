@@ -50,6 +50,7 @@ public class IMFactions extends JavaPlugin {
         data.getUserUtil().saveUsers();
         data.getMySQL().close();
         data.getScheduler().stopSchedulers();
+        data.saveUtils();
         worldLoader.savePlots();
     }
 

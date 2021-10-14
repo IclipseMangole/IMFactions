@@ -13,6 +13,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,10 +21,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityPortalEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.*;
 
 import static de.imfactions.util.ColorConverter.toHex;
 
@@ -168,5 +166,17 @@ public class PVPListener implements Listener {
         Player player = (Player) event.getEntity();
         player.teleport(data.getWorldSpawn());
         player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
+    }
+
+    @EventHandler
+    public void onSpawn(CreatureSpawnEvent event) {
+        World world = event.getLocation().getWorld();
+
+        if (!world.getName().equalsIgnoreCase("FactionPVP_world"))
+            return;
+        if (!(event.getEntity() instanceof Mob))
+            return;
+        if (event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.NATURAL))
+            event.setCancelled(true);
     }
 }

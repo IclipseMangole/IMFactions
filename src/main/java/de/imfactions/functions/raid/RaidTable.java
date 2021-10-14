@@ -38,7 +38,7 @@ public class RaidTable {
     }
 
     public void saveRaid(Raid raid) {
-        mySQL.update("UPDATE `raids` SET `raidID` = '" + raid.raidID + "', `raidState` = '" + RaidState.getStringFromState(raid.raidState) + "', `factionIdAttackers` = '" + raid.factionIdAttackers + "', `factionIdDefenders` = '" + raid.factionIdDefenders + "', `start` = '" + raid.start + "', `time` = '" + raid.time + "'");
+        mySQL.update("UPDATE `raids` SET `raidID` = '" + raid.raidID + "', `raidState` = '" + RaidState.getStringFromState(raid.raidState) + "', `factionIdAttackers` = " + raid.factionIdAttackers + ", `factionIdDefenders` = " + raid.factionIdDefenders + ", `start` = '" + raid.start + "', `time` = '" + raid.time + "'");
     }
 
     public void deleteRaid(Raid raid) {

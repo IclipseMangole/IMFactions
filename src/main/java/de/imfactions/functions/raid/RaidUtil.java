@@ -7,8 +7,11 @@ import de.imfactions.functions.faction.Faction;
 import de.imfactions.functions.faction.FactionUtil;
 import de.imfactions.functions.factionMember.FactionMember;
 import de.imfactions.functions.factionMember.FactionMemberUtil;
+import de.imfactions.functions.factionPlot.FactionPlot;
+import de.imfactions.functions.factionPlot.FactionPlotUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import java.sql.ResultSet;
@@ -25,6 +28,7 @@ public class RaidUtil {
     private FactionMemberUtil factionMemberUtil;
     private FactionUtil factionUtil;
     private RaidTable raidTable;
+    private FactionPlotUtil factionPlotUtil;
     private Data data;
     private RaidScheduler raidScheduler;
 
@@ -47,6 +51,7 @@ public class RaidUtil {
         factionUtil = data.getFactionUtil();
         raidTable = new RaidTable(this, data);
         raidScheduler = new RaidScheduler(data);
+        factionPlotUtil = data.getFactionPlotUtil();
     }
 
     public ArrayList<Raid> getRaids(){
@@ -221,7 +226,30 @@ public class RaidUtil {
 
     public void saveRaids() {
         for (Raid raid : raids) {
+            if (raid.getRaidState().equals(RaidState.PREPARING)) {
+                raidScheduler.cancelPreparingRaid(raid.getRaidID());
+                continue;
+            }
+            if (raid.getRaidState().equals(RaidState.SCOUTING)) {
+                teleportRaidTeamHome(raid.getRaidID());
+                raidScheduler.cancelScoutingRaid(raid.getRaidID());
+                continue;
+            }
+            if (raid.getRaidState().equals(RaidState.RAIDING)) {
+                raid.setRaidState(RaidState.DONE);
+                teleportRaidTeamHome(raid.getRaidID());
+                raidScheduler.cancelRaidingRaid(raid.getRaidID());
+            }
             raidTable.saveRaid(raid);
+        }
+    }
+
+    public void teleportRaidTeamHome(int raidID) {
+        for (FactionMember factionMember : getRaidTeam(raidID)) {
+            Player player = Bukkit.getPlayer(factionMember.getUuid());
+            FactionPlot factionPlot = factionPlotUtil.getFactionPlot(factionMember.getFactionID());
+            player.teleport(factionPlot.getHome());
+            player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
         }
     }
 

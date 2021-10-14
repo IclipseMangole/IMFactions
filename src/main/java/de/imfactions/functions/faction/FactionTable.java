@@ -1,7 +1,6 @@
 package de.imfactions.functions.faction;
 
 import de.imfactions.Data;
-import de.imfactions.util.LocationBuilder;
 import de.imfactions.util.MySQL;
 
 import java.sql.ResultSet;
@@ -73,10 +72,10 @@ public class FactionTable {
     }
 
     public void saveFaction(Faction faction){
-        mySQL.update("UPDATE `factions` SET `factionID` = '" + faction.getId() + "', `memberAmount` = '" + faction.getMemberAmount() + "', `name` = '" + faction.getName() + "', `shortcut` = '" + faction.getShortcut() + "', `foundingDate` = '" + faction.getFoundingDate() + "', `raidProtection` = '" + faction.getRaidProtection() + "', `raidEnergy` = '" + faction.getRaidEnergy() + "', `gettingRaided` = '" + faction.isGettingRaided() + "' WHERE `factionID` = '" + faction.getId() + "'");
+        mySQL.update("UPDATE `factions` SET `factionID` = " + faction.getId() + ", `memberAmount` = " + faction.getMemberAmount() + ", `name` = '" + faction.getName() + "', `shortcut` = '" + faction.getShortcut() + "', `foundingDate` = '" + faction.getFoundingDate() + "', `raidProtection` = '" + faction.getRaidProtection() + "', `raidEnergy` = " + faction.getRaidEnergy() + ", `gettingRaided` = " + faction.isGettingRaided() + " WHERE `factionID` = " + faction.getId() + "");
     }
 
     public void deleteFaction(Faction faction){
-        mySQL.update("DELETE FROM `factions` WHERE `factionID` = '" + faction.getId() + "'");
+        mySQL.update("DELETE FROM `factions` WHERE `factionID` = " + faction.getId() + "");
     }
 }
