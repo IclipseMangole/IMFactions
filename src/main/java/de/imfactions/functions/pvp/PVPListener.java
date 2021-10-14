@@ -169,6 +169,7 @@ public class PVPListener implements Listener {
         World world = event.getPlayer().getWorld();
         if (!world.getName().equalsIgnoreCase("FactionPVP_world"))
             return;
+        event.setCancelled(true);
         Player player = event.getPlayer();
         player.teleport(data.getWorldSpawn());
         player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);

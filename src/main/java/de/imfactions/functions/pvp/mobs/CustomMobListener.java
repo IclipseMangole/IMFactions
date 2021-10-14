@@ -2,6 +2,7 @@ package de.imfactions.functions.pvp.mobs;
 
 import de.imfactions.Data;
 import de.imfactions.IMFactions;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -25,6 +26,6 @@ public class CustomMobListener implements Listener {
         if (!(event.getEntity() instanceof Zombie))
             return;
         event.setCancelled(true);
-        new Orc("Der Boss", event.getLocation());
+        new Orc(ChatColor.GREEN + "Der Boss", event.getLocation());
     }
 }
