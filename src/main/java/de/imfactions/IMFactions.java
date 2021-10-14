@@ -8,6 +8,7 @@ import de.imfactions.functions.factionPlot.FactionPlotCommand;
 import de.imfactions.functions.factionPlot.PlotListener;
 import de.imfactions.functions.lobby.LobbyListener;
 import de.imfactions.functions.pvp.PVPListener;
+import de.imfactions.functions.pvp.mobs.CustomMobListener;
 import de.imfactions.functions.raid.RaidCommand;
 import de.imfactions.functions.raid.RaidListener;
 import de.imfactions.listener.JoinListener;
@@ -81,6 +82,7 @@ public class IMFactions extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(data.getFactionUtil().getFactionHomeScheduler(), this);
         Bukkit.getPluginManager().registerEvents(data.getSpawnScheduler(), this);
         Bukkit.getPluginManager().registerEvents(new RaidListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new CustomMobListener(this), this);
     }
 
     public void updateGamerules() {
