@@ -235,23 +235,23 @@ public class FactionCommand {
 
         TextComponent message = new TextComponent(ChatColor.GREEN + "You got invited by the Faction " + ChatColor.YELLOW + faction.getName());
         TextComponent accept = new TextComponent(ChatColor.DARK_GREEN + "[Accept]");
-        accept.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/faction accept " + faction.getName()));
+        accept.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/faction accept3454rv23f6 " + faction.getName()));
         accept.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.YELLOW + "Click to join").create()));
-        invited.spigot().sendMessage(message);
+        invited.spigot().sendMessage(new ComponentBuilder().append(message).append(accept).create());
         invited.spigot().sendMessage(accept);
     }
 
     @IMCommand(
-            name = "accept",
-            usage = "§c/faction accept <Name>",
-            description = "faction.accept.description",
+            name = "accept3454rv23f6",
+            usage = "§c/faction accept3454rv23f6 <Name>",
+            description = "faction.accept3454rv23f6.description",
             minArgs = 1,
             maxArgs = 1,
             parent = "faction",
-            permissions = "im.imFactions.faction.accept",
+            permissions = "im.imFactions.faction.accept3454rv23f6",
             noConsole = true
     )
-    public void accept(CommandSender sender, String name) {
+    public void accept3454rv23f6(CommandSender sender, String name) {
         Player player = (Player) sender;
         UUID uuid = UUIDFetcher.getUUID(player);
 
@@ -263,7 +263,6 @@ public class FactionCommand {
             player.sendMessage(ChatColor.RED + "This Factions doesn't exist");
             return;
         }
-        player.sendMessage(ChatColor.GREEN + "You joined the Faction " + ChatColor.YELLOW + name);
         Faction faction = factionUtil.getFaction(name);
         factionMemberUtil.createFactionMember(uuid, faction.getId(), 0);
         faction.memberJoin();

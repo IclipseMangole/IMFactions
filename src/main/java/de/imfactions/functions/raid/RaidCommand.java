@@ -115,16 +115,15 @@ public class RaidCommand {
         raidUtil.getRaidTeams().put(raid, factionMember);
         raidScheduler.startPreparingRaid(raidID, 60);
 
-        factionMemberUtil.getOnlineMembers(faction.getId()).forEach(member -> {
-            TextComponent textComponent = new TextComponent("[HERE]");
-            textComponent.setColor(net.md_5.bungee.api.ChatColor.of("990000"));
-            textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to join the Raid").create()));
-            textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/raid join"));
-            ComponentBuilder componentBuilder = new ComponentBuilder();
-            componentBuilder.append("A new Raid has been started. You have 60 seconds to join. Click ").color(net.md_5.bungee.api.ChatColor.of("CC4400"));
-            textComponent.setExtra(componentBuilder.getParts());
-            member.spigot().sendMessage(textComponent);
-        });
+        for (Player member : factionMemberUtil.getOnlineMembers(faction.getId())) {
+            if (member != player) {
+                TextComponent join = new TextComponent(ChatColor.DARK_GREEN + "[Join]");
+                join.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.DARK_GREEN + "Click to join the Raid").create()));
+                join.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/raid join"));
+                TextComponent message = new TextComponent(ChatColor.YELLOW + player.getName() + ChatColor.GREEN + " started a new Raid. You have 60 seconds to join. ");
+                member.spigot().sendMessage(new ComponentBuilder(message).append(join).create());
+            }
+        }
     }
 
     @IMCommand(
@@ -305,6 +304,7 @@ public class RaidCommand {
 
         if (team.size() == 1) {
             player.sendMessage(ChatColor.GREEN + "You left the Raid. It isn't active anymore");
+            player.teleport(factionPlotUtil.getFactionPlot(faction.getId()).getHome());
             if (raid.getRaidState().equals(RaidState.PREPARING)) {
                 for (Player member : factionMemberUtil.getOnlineMembers(faction.getId())) {
                     member.sendMessage(ChatColor.RED + "The Raid got canceled");
@@ -313,6 +313,8 @@ public class RaidCommand {
                 raidUtil.deleteRaid(raid);
                 return;
             }
+            Faction raided = factionUtil.getFaction(raid.getFactionIdDefenders());
+            raided.setGettingRaided(false);
             if (raid.getRaidState().equals(RaidState.SCOUTING)) {
                 raidUtil.getRaidScheduler().cancelScoutingRaid(raidID);
                 raid.setRaidState(RaidState.DONE);
@@ -321,9 +323,9 @@ public class RaidCommand {
             if (raid.getRaidState().equals(RaidState.RAIDING)) {
                 raidUtil.getRaidScheduler().cancelRaidingRaid(raidID);
                 raid.setRaidState(RaidState.DONE);
+                raided.setRaidProtection(System.currentTimeMillis() + 1000 * 60);
                 return;
             }
-            factionUtil.getFaction(raid.getFactionIdDefenders()).setGettingRaided(false);
         }
         player.sendMessage(ChatColor.GREEN + "You left the Raid");
         player.teleport(factionPlotUtil.getFactionPlot(faction.getId()).getHome());

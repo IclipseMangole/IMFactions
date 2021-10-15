@@ -17,9 +17,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerPortalEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,10 +45,8 @@ public class RaidListener implements Listener {
     }
 
     @EventHandler
-    public void onPortal(EntityPortalEvent event) {
-        if (!(event.getEntity() instanceof Player))
-            return;
-        Player player = (Player) event.getEntity();
+    public void onPortal(PlayerPortalEvent event) {
+        Player player = (event.getPlayer());
         if (!event.getFrom().getWorld().getName().equalsIgnoreCase("world"))
             return;
         if (!factionMemberUtil.isFactionMemberExists(player.getUniqueId()))
@@ -57,7 +55,6 @@ public class RaidListener implements Listener {
         Faction faction = factionUtil.getFaction(factionMember.getFactionID());
         if (!raidUtil.isFactionRaiding(faction.getId()))
             return;
-        int raidID = raidUtil.getActiveRaidID(faction.getId());
         if (raidUtil.isFactionMemberJoinedRaid(factionMember)) {
             player.chat("/raid leave");
             player.sendMessage(ChatColor.RED + "You got kicked from the Raid because you joined the PVP Zone");
