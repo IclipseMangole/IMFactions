@@ -1,15 +1,12 @@
 package de.imfactions.functions.pvp.mobs.abilities.pathfinders;
 
 import net.minecraft.world.entity.monster.EntityMonster;
-import net.minecraft.world.level.pathfinder.Pathfinder;
-import net.minecraft.world.level.pathfinder.PathfinderAbstract;
 
-public class CustomPathfinder extends Pathfinder {
+public class CustomPathfinder {
 
     private EntityMonster entityMonster;
 
-    public CustomPathfinder(PathfinderAbstract var0, int var1, EntityMonster entityMonster) {
-        super(var0, var1);
+    public CustomPathfinder(EntityMonster entityMonster) {
         this.entityMonster = entityMonster;
     }
 

@@ -194,7 +194,6 @@ public class Scoreboard {
         objective.getScore(onlineMembers).setScore(6);
         objective.getScore(ChatColor.of(Color.BLUE) + "").setScore(5);
         objective.getScore("§6§lWorld:").setScore(4);
-        objective.getScore("").setScore(3);
         objective.getScore("" + getWorldColor(worldName) + world).setScore(3);
         objective.getScore(ChatColor.of(Color.PINK) + "").setScore(2);
         objective.getScore("§6§lEther").setScore(1);

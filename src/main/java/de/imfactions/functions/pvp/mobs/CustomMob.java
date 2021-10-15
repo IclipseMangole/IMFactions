@@ -14,7 +14,7 @@ public class CustomMob extends EntityMonster {
 
     public String name;
     public CustomAttributes customAttributes = new CustomAttributes(this);
-    public CustomPathfinder customPathfinder;
+    public CustomPathfinder customPathfinder = new CustomPathfinder(this);
 
     public CustomMob(EntityTypes<? extends EntityMonster> type, World world, String name, Location location) {
         super(type, ((CraftWorld) world).getHandle());
@@ -24,5 +24,10 @@ public class CustomMob extends EntityMonster {
         this.setInvisible(false);
         net.minecraft.world.level.World worldServer = ((CraftWorld) world).getHandle();
         worldServer.addEntity(this, CreatureSpawnEvent.SpawnReason.CUSTOM);
+    }
+
+    public void setName() {
+        float maxHealth = getMaxHealth();
+        float health = getHealth();
     }
 }

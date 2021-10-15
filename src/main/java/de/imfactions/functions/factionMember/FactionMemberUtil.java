@@ -84,8 +84,10 @@ public class FactionMemberUtil {
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             UUID uuid = UUIDFetcher.getUUID(player);
+            if (!isFactionMemberExists(uuid))
+                continue;
             int factionIDPlayer = getFactionMember(uuid).getFactionID();
-            if(factionIDPlayer == factionID){
+            if (factionIDPlayer == factionID) {
                 online.add(player);
             }
         }

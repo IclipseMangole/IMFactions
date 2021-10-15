@@ -25,6 +25,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 
 import java.io.*;
 import java.nio.file.*;
@@ -151,12 +152,15 @@ public class WorldManager {
 
     public void deleteMap(Location edgeDownFrontLeft){
         Location loc1 = new Location(edgeDownFrontLeft.getWorld(), edgeDownFrontLeft.getX() - 46, 0, edgeDownFrontLeft.getZ() - 46);
-        Location loc2 = new Location(edgeDownFrontLeft.getWorld(), edgeDownFrontLeft.getX() + 45 + 100, edgeDownFrontLeft.getY() + 150, edgeDownFrontLeft.getZ() + 45 + 100);
+        Location loc2 = new Location(edgeDownFrontLeft.getWorld(), edgeDownFrontLeft.getX() + 45 + 100, edgeDownFrontLeft.getY() + 128, edgeDownFrontLeft.getZ() + 45 + 100);
 
         for(int x = (int) loc1.getX(); x < loc2.getX(); x++){
             for(int y = (int) loc1.getY(); y < loc2.getY(); y++){
-                for(int z = (int) loc1.getZ(); z < loc2.getZ(); z++){
-                    new Location(edgeDownFrontLeft.getWorld(), x, y, z).getBlock().setType(Material.AIR);
+                for(int z = (int) loc1.getZ(); z < loc2.getZ(); z++) {
+                    Block block = new Location(edgeDownFrontLeft.getWorld(), x, y, z).getBlock();
+                    if (block.getType().isAir())
+                        continue;
+                    block.setType(Material.AIR);
                 }
             }
         }
