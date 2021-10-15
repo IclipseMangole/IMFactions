@@ -8,6 +8,7 @@ import de.imfactions.functions.faction.FactionUtil;
 import de.imfactions.functions.factionMember.FactionMemberUtil;
 import de.imfactions.functions.factionPlot.FactionPlotUtil;
 import de.imfactions.functions.lobby.lottery.LotteryUtil;
+import de.imfactions.functions.npc.NPCUtil;
 import de.imfactions.functions.raid.RaidUtil;
 import de.imfactions.functions.texture.TextureUtil;
 import de.imfactions.functions.user.UserSettingsUtil;
@@ -47,6 +48,7 @@ public class Data {
 
     //Utils
     private TextureUtil textureUtil;
+    private NPCUtil npcUtil;
     private FactionUtil factionUtil;
     private FactionPlotUtil factionPlotUtil;
     private FactionMemberUtil factionMemberUtil;
@@ -64,13 +66,14 @@ public class Data {
 
     public void createUtils() {
         textureUtil = new TextureUtil(imFactions);
+        npcUtil = new NPCUtil(imFactions);
         factionUtil = new FactionUtil(this);
         factionPlotUtil = new FactionPlotUtil(this);
         factionMemberUtil = new FactionMemberUtil(this);
         raidUtil = new RaidUtil(this);
         userUtil = new UserUtil(this);
         userSettingsUtil = new UserSettingsUtil(this);
-        //lotteryUtil = new LotteryUtil(imFactions);
+        lotteryUtil = new LotteryUtil(imFactions);
         loadUtils();
     }
 
@@ -93,12 +96,13 @@ public class Data {
         world = Bukkit.getWorld("world");
         PVP_world = Bukkit.createWorld(new WorldCreator("FactionPVP_world"));
         if (!new File(imFactions.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + "/FactionPlotsSave_world/").exists()) {
-            FactionPlots_world = new WorldCreator("FactionPlotsSave_world").generator(new EmptyChunkGenerator()).createWorld();
+            FactionPlots_world = new WorldCreator("FactionPlots_world").generator(new EmptyChunkGenerator()).createWorld();
         } else {
             FactionPlots_world = Bukkit.createWorld(new WorldCreator("FactionPlots_world"));
         }
+        imFactions.getWorldManager().startAutoSave();
         worldSpawn = new Location(world, 0.5, 31, -17.5);
-        PVP_worldSpawn = new Location(PVP_world, 63.5, 80.5, 1265.5);
+        PVP_worldSpawn = new Location(PVP_world, 63.5, 80.5, 1265.5, -180, 0);
         FactionPlots_worldSpawn = new Location(FactionPlots_world, 0, 17, 0);
         world.setSpawnLocation(worldSpawn);
         PVP_world.setSpawnLocation(PVP_worldSpawn);
@@ -198,6 +202,10 @@ public class Data {
 
     public TextureUtil getTextureUtil() {
         return textureUtil;
+    }
+
+    public NPCUtil getNpcUtil() {
+        return npcUtil;
     }
 
     public FactionUtil getFactionUtil() {

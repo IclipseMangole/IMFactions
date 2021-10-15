@@ -2,7 +2,7 @@ package de.imfactions.functions.faction;
 
 import de.imfactions.Data;
 import de.imfactions.IMFactions;
-import de.imfactions.functions.WorldLoader;
+import de.imfactions.functions.WorldManager;
 import de.imfactions.functions.factionMember.FactionMember;
 import de.imfactions.functions.factionMember.FactionMemberUtil;
 import de.imfactions.functions.factionPlot.FactionPlot;
@@ -39,7 +39,7 @@ public class FactionCommand {
     private final UserUtil userUtil;
     private final FactionPlotUtil factionPlotUtil;
     private final RaidUtil raidUtil;
-    private final WorldLoader worldLoader;
+    private final WorldManager worldLoader;
 
     public FactionCommand(IMFactions imFactions) {
         this.imFactions = imFactions;
@@ -49,7 +49,7 @@ public class FactionCommand {
         factionMemberUtil = data.getFactionMemberUtil();
         factionPlotUtil = data.getFactionPlotUtil();
         raidUtil = data.getRaidUtil();
-        this.worldLoader = new WorldLoader(imFactions);
+        this.worldLoader = new WorldManager(imFactions);
     }
 
     @IMCommand(

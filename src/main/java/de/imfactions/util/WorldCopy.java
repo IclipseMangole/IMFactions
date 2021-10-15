@@ -19,33 +19,33 @@ import java.nio.file.StandardCopyOption;
  * Created by Iclipse on 04.06.2021
  */
 public class WorldCopy {
-    private WorldCopy(){}
+    private WorldCopy() {
+    }
 
-    public static void copy(File from, File to){
+    public static void copy(File from, File to, boolean playerdata) {
         try {
-            if(to.exists()) {
+            if (to.exists()) {
                 FileUtils.deleteDirectory(to);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            to.mkdir();
 
-        File regionFrom = new File(from.getAbsolutePath() + "/region");
-        File regionTo = new File(to.getAbsolutePath() + "/region");
-        
-        File poiFrom = new File(from.getAbsolutePath() + "/poi");
-        File poiTo = new File(to.getAbsolutePath() + "/poi");
-
-        File dataFrom = new File(from.getAbsolutePath() + "/data");
-        File dataTo = new File(to.getAbsolutePath() + "/data");
-
-        try {
-            FileUtils.copyDirectory(regionFrom, regionTo);
-            FileUtils.copyDirectory(poiFrom, poiTo);
-            FileUtils.copyDirectory(dataFrom, dataTo);
-            Files.copy(new File(from.getAbsolutePath() + "/level.dat").toPath(), new File(to.getAbsolutePath() + "/level.dat").toPath(), StandardCopyOption.REPLACE_EXISTING);
-            new File(to.getAbsolutePath() + "/data").mkdir();
-            new File(to.getAbsolutePath() + "/playerdata").mkdir();
+            for (File file : from.listFiles()) {
+                if (file.isDirectory()) {
+                    if (!playerdata) {
+                        if (file.getName().equals("playerdata") || file.getName().equals("advancements") || file.getName().equals("stats")) {
+                            continue;
+                        }
+                    }
+                    FileUtils.copyDirectory(file, new File(to.getAbsolutePath() + "/" + file.getName()));
+                } else {
+                    FileUtils.copyFile(file, new File(to.getAbsolutePath()  + "/" + file.getName()));
+                }
+            }
+            if(!playerdata){
+                new File(to.getAbsolutePath()  + "/" + "playerdata").mkdir();
+                new File(to.getAbsolutePath()  + "/" + "advancements").mkdir();
+                new File(to.getAbsolutePath()  + "/" + "stats").mkdir();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

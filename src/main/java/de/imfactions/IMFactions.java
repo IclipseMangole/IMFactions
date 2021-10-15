@@ -2,7 +2,7 @@ package de.imfactions;
 
 import de.imfactions.commands.Ether;
 import de.imfactions.commands.spawn.Spawn;
-import de.imfactions.functions.WorldLoader;
+import de.imfactions.functions.WorldManager;
 import de.imfactions.functions.faction.FactionCommand;
 import de.imfactions.functions.factionPlot.FactionPlotCommand;
 import de.imfactions.functions.factionPlot.PlotListener;
@@ -16,20 +16,21 @@ import de.imfactions.listener.QuitListener;
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
 import org.bukkit.GameRule;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class IMFactions extends JavaPlugin {
 
     private Data data;
-    private WorldLoader worldLoader;
+    private WorldManager worldManager;
 
     @Override
     public void onLoad() {
-        worldLoader = new WorldLoader(this);
+        worldManager = new WorldManager(this);
         if (Bukkit.getWorlds().size() == 0) {
-            worldLoader.loadLobby();
-            worldLoader.loadPVP();
-            worldLoader.loadPlots();
+            worldManager.loadLobby();
+            worldManager.loadPVP();
+            worldManager.loadPlots();
         }
     }
 
@@ -41,18 +42,21 @@ public class IMFactions extends JavaPlugin {
         data.loadWorlds();
         data.loadScheduler();
         data.loadScoreboards();
-        worldLoader.loadManagers();
+        worldManager.loadManagers();
         registerCommands();
         registerListener();
     }
 
     @Override
     public void onDisable() {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            player.kickPlayer("Der Server restartet/reloadet");
+        }
         data.getUserUtil().saveUsers();
         data.getMySQL().close();
         data.getScheduler().stopSchedulers();
         data.saveUtils();
-        worldLoader.savePlots();
+        worldManager.savePlots();
     }
 
     public Data getData() {
@@ -82,6 +86,7 @@ public class IMFactions extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(data.getFactionUtil().getFactionHomeScheduler(), this);
         Bukkit.getPluginManager().registerEvents(data.getSpawnScheduler(), this);
         Bukkit.getPluginManager().registerEvents(new RaidListener(this), this);
+        Bukkit.getPluginManager().registerEvents(data.getNpcUtil(), this);
         Bukkit.getPluginManager().registerEvents(new CustomMobListener(this), this);
     }
 
@@ -91,7 +96,7 @@ public class IMFactions extends JavaPlugin {
         Bukkit.getWorlds().forEach(world -> world.setGameRule(GameRule.DO_IMMEDIATE_RESPAWN, true));
     }
 
-    public WorldLoader getWorldLoader() {
-        return worldLoader;
+    public WorldManager getWorldManager() {
+        return worldManager;
     }
 }

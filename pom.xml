@@ -63,46 +63,46 @@
             <id>dmulloy2-repo</id>
             <url>https://repo.dmulloy2.net/repository/public/</url>
         </repository>
+
+        <!-- FAWE API-->
         <repository>
-            <id>sk89q-repo</id>
-            <url>https://maven.enginehub.org/repo/</url>
+            <id>IntellectualSites Releases</id>
+            <url>https://mvn.intellectualsites.com/content/repositories/releases/</url>
         </repository>
         <repository>
-            <id>github-asyncworldedit-api</id>
-            <url>https://raw.githubusercontent.com/SBPrime/AsyncWorldEdit/maven-artifact/</url>
+            <id>IntellectualSites Snapshots</id>
+            <url>https://mvn.intellectualsites.com/content/repositories/snapshots/</url>
         </repository>
+
     </repositories>
 
     <dependencies>
-        <dependency>
-            <groupId>com.sk89q.worldguard</groupId>
-            <artifactId>worldguard-bukkit</artifactId>
-            <version>7.0.6</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.sk89q.worldedit</groupId>
-            <artifactId>worldedit-bukkit</artifactId>
-            <version>7.2.6</version>
-            <scope>provided</scope>
-        </dependency>
-        <!-- This doesn't depend on any platform -->
-        <dependency>
-            <groupId>com.sk89q.worldedit</groupId>
-            <artifactId>worldedit-core</artifactId>
-            <version>7.2.6</version>
-            <scope>provided</scope>
-        </dependency>
         <dependency>
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib</artifactId>
             <version>4.7.0</version>
         </dependency>
+
+        <!-- FAWE Core API -->
         <dependency>
-            <groupId>org.primesoft.asyncworldedit</groupId>
-            <artifactId>AsyncWorldEdit-API</artifactId>
-            <version>[2.2.0-rc-01, 2.2.0)</version>
-            <type>jar</type>
+            <groupId>com.fastasyncworldedit</groupId>
+            <artifactId>FastAsyncWorldEdit-Core</artifactId>
+            <version>1.17-351</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- FAWE Bukkit API -->
+        <dependency>
+            <groupId>com.fastasyncworldedit</groupId>
+            <artifactId>FastAsyncWorldEdit-Bukkit</artifactId>
+            <version>1.17-351</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>FastAsyncWorldEdit-Core</artifactId>
+                    <groupId>*</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 

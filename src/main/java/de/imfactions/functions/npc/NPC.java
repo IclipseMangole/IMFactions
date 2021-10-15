@@ -31,6 +31,7 @@ import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
@@ -38,12 +39,12 @@ import java.util.ArrayList;
 import java.util.UUID;
 import java.util.logging.Level;
 
-import static de.imfactions.functions.npc.NPCManager.factions;
-
 public abstract class NPC {
 
     public static ArrayList<NPC> npcs = new ArrayList<>();
 
+    private Plugin plugin;
+    
     private EntityPlayer entityPlayer;
     private PlayerInteractManager playerInteractManager;
     private EntityArmorStand entityArmorStand;
@@ -54,8 +55,9 @@ public abstract class NPC {
     private boolean nameVisible;
     private BukkitTask bukkitTask;
 
-    public NPC(String displayName, Property skin, Location location, boolean nameVisible, boolean upsideDown) {
+    public NPC(Plugin plugin, String displayName, Property skin, Location location, boolean nameVisible, boolean upsideDown) {
         npcs.add(this);
+        this.plugin = plugin;
         this.displayName = displayName;
         this.skin = skin;
         MinecraftServer server = ((CraftServer) Bukkit.getServer()).getServer();
@@ -105,6 +107,12 @@ public abstract class NPC {
         hideEntityName(player);
         connection.sendPacket(new PacketPlayOutSpawnEntityLiving(entityArmorStand));
         connection.sendPacket(new PacketPlayOutEntityMetadata(entityArmorStand.getId(), entityArmorStand.getDataWatcher(), true));
+        Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.e, entityPlayer));
+            }
+        }, 30);
     }
 
     public void hideEntityName(Player player) {
@@ -123,6 +131,11 @@ public abstract class NPC {
         team.setNameTagVisibility(ScoreboardTeamBase.EnumNameTagVisibility.b);
         PacketPlayOutScoreboardTeam packet = PacketPlayOutScoreboardTeam.a(team, created);
         ((CraftPlayer) player).getHandle().b.sendPacket(packet);
+    }
+
+    public void remove(Player player){
+        ((CraftPlayer) player).getHandle().b.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.e, entityPlayer));
+        ((CraftPlayer) player).getHandle().b.sendPacket(new PacketPlayOutEntityDestroy(entityPlayer.getId(), entityArmorStand.getId()));
     }
 
     public void remove() {
@@ -159,7 +172,7 @@ public abstract class NPC {
         if (bukkitTask != null) {
             bukkitTask.cancel();
         }
-        bukkitTask = Bukkit.getScheduler().runTaskTimerAsynchronously(factions, new Runnable() {
+        bukkitTask = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, new Runnable() {
             @Override
             public void run() {
                 Vector vector = getVector(player.getEyeLocation());
@@ -187,7 +200,9 @@ public abstract class NPC {
     }
 
     public void rotate(Location location) {
-        byte yaw = getYaw(getVector(location));
+        Vector vector = getVector(location);
+        byte yaw = getYaw(vector);
+        //byte pitch = getPitch(vector);
         PacketPlayOutEntity.PacketPlayOutEntityLook packet = new PacketPlayOutEntity.PacketPlayOutEntityLook(entityPlayer.getId(), yaw, (byte) 0, false);
         PacketPlayOutEntityHeadRotation packet1 = new PacketPlayOutEntityHeadRotation(this.entityPlayer, yaw);
         broadcastPackets(packet, packet1);
@@ -211,7 +226,7 @@ public abstract class NPC {
             entityPlayer = new EntityPlayer(entityPlayer.getMinecraftServer(), entityPlayer.getWorldServer(), profile);
             setProperties(loc);
             show();
-            Bukkit.getScheduler().runTaskLaterAsynchronously(factions, new Runnable() {
+            Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, new Runnable() {
                 @Override
                 public void run() {
                     Bukkit.getOnlinePlayers().forEach(player -> hideEntityName(player));
@@ -255,6 +270,11 @@ public abstract class NPC {
         return (byte) (bukkitYaw / 360 * 265);
     }
 
+    public byte getPitch(Vector vector){
+        byte pitch = (byte) MathHelper.d((Math.toDegrees(Math.atan(vector.getY())) * 256.0F) / 360.0F);
+        return pitch;
+    }
+
     public float getBukkitYaw(double x, double z) {
         if (x == 0) {
             return z > 0 ? 0 : 179;
@@ -280,17 +300,16 @@ public abstract class NPC {
 
     public void enableRotation() {
         if(bukkitTask != null && !bukkitTask.isCancelled()) bukkitTask.cancel();
-        bukkitTask = Bukkit.getScheduler().runTaskTimerAsynchronously(factions, () -> {
+        bukkitTask = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
             for (Player p : Bukkit.getOnlinePlayers()) {
-
+                if(p.getLocation().getWorld() != getLocation().getWorld()) continue;
                 if (getDistance(p.getLocation()) > 5) continue;
-
 
                 rotate(p.getLocation());
 
 
             }
-        }, 1, 10);
+        }, 1, 2);
     }
 
     public void disableRotation() {
@@ -318,7 +337,7 @@ public abstract class NPC {
             PacketPlayOutMount packet4 = new PacketPlayOutMount(sittingHorse);
             broadcastPackets(packet, packet2, packet3, packet3);
 
-            Bukkit.getScheduler().runTaskLaterAsynchronously(factions, new Runnable() {
+            Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, new Runnable() {
                 @Override
                 public void run() {
                     broadcastPackets(packet4);

@@ -2,6 +2,5 @@ name: IMFactions
 version: ${project.version}
 main: de.imfactions.IMFactions
 api-version: 1.17
-depend: [WorldGuard]
 authors: [Iclipse, MangoleHD]
 description: Factions Plugin
