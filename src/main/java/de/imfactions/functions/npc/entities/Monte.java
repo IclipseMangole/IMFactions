@@ -36,5 +36,10 @@ public class Monte extends NPC {
     @Override
     public void onInteract(Player player) {
         player.sendMessage("Verpiss dich du Hurensohn!");
+        if(isSitting()){
+            sitDown();
+        }else{
+            standUp();
+        }
     }
 }

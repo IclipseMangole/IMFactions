@@ -29,6 +29,7 @@ import org.bukkit.craftbukkit.v1_17_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_17_R1.scoreboard.CraftScoreboard;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -112,11 +113,11 @@ public abstract class NPC {
             public void run() {
                 connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.e, entityPlayer));
             }
-        }, 30);
+        }, 50);
     }
 
     public void hideEntityName(Player player) {
-        Scoreboard scoreboard = ((CraftPlayer) player).getHandle().getScoreboard();
+        Scoreboard scoreboard = ((CraftScoreboard) Bukkit.getScoreboardManager().getMainScoreboard()).getHandle();
         ScoreboardTeam team;
         boolean created;
         if (scoreboard.getTeam("packetTeam") == null) {
