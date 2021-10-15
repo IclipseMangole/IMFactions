@@ -69,6 +69,8 @@ public class RaidListener implements Listener {
         Player player = event.getEntity();
 
         if (isRaidingOtherFaction(player)) {
+            if (!factionPlotUtil.isLocationOnFactionPlot(player.getLocation()))
+                return;
             FactionPlot currentPlot = factionPlotUtil.getFactionPlot(player.getLocation());
             player.teleport(currentPlot.getRaidSpawn());
             player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
@@ -81,8 +83,11 @@ public class RaidListener implements Listener {
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
         Player player = event.getPlayer();
+        World world = player.getWorld();
         UUID uuid = UUIDFetcher.getUUID(player);
 
+        if (!world.getName().equalsIgnoreCase("FactionPlots_world"))
+            return;
         if (!isRaidingOtherFaction(player))
             return;
 
@@ -104,8 +109,11 @@ public class RaidListener implements Listener {
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
+        World world = player.getWorld();
         UUID uuid = UUIDFetcher.getUUID(player);
 
+        if (!world.getName().equalsIgnoreCase("FactionPlots_world"))
+            return;
         if (!isRaidingOtherFaction(player))
             return;
 
@@ -186,6 +194,8 @@ public class RaidListener implements Listener {
             return false;
         int raidID = raidUtil.getActiveRaidID(faction.getId());
         Raid raid = raidUtil.getRaid(raidID);
+        if (!factionPlotUtil.isLocationOnFactionPlot(player.getLocation()))
+            return false;
         FactionPlot currentPlot = factionPlotUtil.getFactionPlot(player.getLocation());
         return raid.getFactionIdDefenders() == currentPlot.getFactionID();
     }

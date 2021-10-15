@@ -8,7 +8,8 @@ import de.imfactions.functions.factionMember.FactionMember;
 import de.imfactions.functions.factionMember.FactionMemberUtil;
 import de.imfactions.functions.factionPlot.FactionPlot;
 import de.imfactions.functions.factionPlot.FactionPlotUtil;
-import de.imfactions.util.Actionbar;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
@@ -223,8 +224,11 @@ public class RaidScheduler implements Listener {
         int seconds = timer % 60;
         String time = ChatColor.GRAY + prefix + ChatColor.GOLD + ChatColor.BOLD + String.format("%02d", minutes) + ":" +
                 String.format("%02d", seconds) + ".";
-        Actionbar actionbar = new Actionbar();
-        actionbar.send(player, time);
+        sendActionBar(player, new StringBuilder(time));
+    }
+
+    private void sendActionBar(Player player, StringBuilder message) {
+        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(message.toString()));
     }
 
     public HashMap<Integer, BukkitTask> getPreparingRaids() {

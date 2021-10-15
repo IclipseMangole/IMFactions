@@ -32,7 +32,7 @@ public class Faction {
         this.shortcut = shortcut;
         memberAmount = 1;
         foundingDate = Date.from(Instant.now());
-        raidProtection = System.currentTimeMillis() +  12*60*60*1000;
+        raidProtection = System.currentTimeMillis(); //+  12*60*60*1000;
         raidEnergy = 10;
         gettingRaided = false;
     }
@@ -54,7 +54,9 @@ public class Faction {
     }
 
     public long getRaidProtection() {
-        return raidProtection;
+        if (raidProtection - System.currentTimeMillis() <= 0)
+            return 0;
+        return (raidProtection - System.currentTimeMillis()) / 1000;
     }
 
     public String getShortcut() {

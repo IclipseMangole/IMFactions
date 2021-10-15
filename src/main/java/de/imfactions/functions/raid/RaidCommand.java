@@ -18,7 +18,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -201,12 +200,16 @@ public class RaidCommand {
         }
         int raidID = raidUtil.getActiveRaidID(faction.getId());
         Raid raid = raidUtil.getRaid(raidID);
-        if (raidUtil.isFactionMemberJoinedRaid(factionMember)) {
+        if (!raidUtil.isFactionMemberJoinedRaid(factionMember)) {
             player.sendMessage("You aren't part of the Raidteam");
             return;
         }
         if (!raid.getRaidState().equals(RaidState.SCOUTING)) {
             player.sendMessage(ChatColor.RED + "You aren't in the Scouting Phase right now");
+            return;
+        }
+        if (!factionPlotUtil.isLocationOnFactionPlot(player.getLocation())) {
+            player.sendMessage(ChatColor.RED + "Something went wrong");
             return;
         }
         FactionPlot scouted = factionPlotUtil.getFactionPlot(player.getLocation());
@@ -216,8 +219,7 @@ public class RaidCommand {
             return;
         }
 
-        FactionPlot defenders = factionPlotUtil.getFactionPlot(player.getLocation());
-        Faction newDefenders = raidUtil.getFactionForScout(raidID, defenders.getFactionID());
+        Faction newDefenders = raidUtil.getFactionForScout(raidID, scouted.getFactionID());
         raidScheduler.startScoutingRaid(raidID, newDefenders.getId(), 300);
     }
 
@@ -241,7 +243,7 @@ public class RaidCommand {
         }
         FactionMember factionMember = factionMemberUtil.getFactionMember(uuid);
         Faction faction = factionUtil.getFaction(factionMember.getFactionID());
-        if (raidUtil.isFactionRaiding(faction.getId())) {
+        if (!raidUtil.isFactionRaiding(faction.getId())) {
             player.sendMessage(ChatColor.RED + "You are cringe. You aren't raiding");
             return;
         }
@@ -253,6 +255,10 @@ public class RaidCommand {
         }
         if (!raid.getRaidState().equals(RaidState.SCOUTING)) {
             player.sendMessage(ChatColor.RED + "You can only skip the Scouting Phase");
+            return;
+        }
+        if (!factionPlotUtil.isLocationOnFactionPlot(player.getLocation())) {
+            player.sendMessage(ChatColor.RED + "Something went wrong");
             return;
         }
 
@@ -307,20 +313,23 @@ public class RaidCommand {
                 raidUtil.deleteRaid(raid);
                 return;
             }
-            raid.setRaidState(RaidState.DONE);
-            factionUtil.getFaction(raid.getFactionIdDefenders()).setGettingRaided(false);
             if (raid.getRaidState().equals(RaidState.SCOUTING)) {
                 raidUtil.getRaidScheduler().cancelScoutingRaid(raidID);
+                raid.setRaidState(RaidState.DONE);
                 return;
             }
             if (raid.getRaidState().equals(RaidState.RAIDING)) {
                 raidUtil.getRaidScheduler().cancelRaidingRaid(raidID);
+                raid.setRaidState(RaidState.DONE);
                 return;
             }
+            factionUtil.getFaction(raid.getFactionIdDefenders()).setGettingRaided(false);
         }
         player.sendMessage(ChatColor.GREEN + "You left the Raid");
+        player.teleport(factionPlotUtil.getFactionPlot(faction.getId()).getHome());
         for (Player member : factionMemberUtil.getOnlineMembers(faction.getId())) {
-            member.sendMessage(ChatColor.YELLOW + player.getName() + ChatColor.RED + " left the Raid");
+            if (member != factionMember)
+                member.sendMessage(ChatColor.YELLOW + player.getName() + ChatColor.RED + " left the Raid");
         }
     }
 
@@ -335,11 +344,6 @@ public class RaidCommand {
     )
     public void infos(CommandSender sender) {
         Player player = (Player) sender;
-
-        Inventory inventory = Bukkit.createInventory(player, 1, "Raids");
-
-
-
     }
 
     private void add(String usage, String description) {

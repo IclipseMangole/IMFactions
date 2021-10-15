@@ -23,7 +23,7 @@ public class FactionTable {
     }
 
     private void createFactionTable(){
-        mySQL.update("CREATE TABLE IF NOT EXISTS `factions` (`factionID` MEDIUMINT NOT NULL AUTO_INCREMENT, `memberAmount` INT(10), `name` VARCHAR(30), `shortcut` VARCHAR(3), `foundingDate` DATETIME, `raidProtection` BIGINT, `raidEnergy` INT(2), gettingRaided BOOLEAN, PRIMARY KEY(`factionID`))");
+        mySQL.update("CREATE TABLE IF NOT EXISTS `factions` (`factionID` MEDIUMINT NOT NULL AUTO_INCREMENT, `memberAmount` INT(10), `name` VARCHAR(30), `shortcut` VARCHAR(3), `foundingDate` DATETIME, `raidProtection` BIGINT, `raidEnergy` INT(2), gettingRaided BOOL, PRIMARY KEY(`factionID`))");
     }
 
     public void createFaction(int factionID, String name, String shortcut, int memberAmount, Date foundingDate, long raidProtection, int raidEnergy, boolean gettingRaided) {

@@ -20,6 +20,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.world.PortalCreateEvent;
 
 import java.util.ArrayList;
@@ -57,8 +58,11 @@ public class PlotListener implements Listener {
         }
         FactionMember factionMember = factionMemberUtil.getFactionMember(uuid);
         FactionPlot factionPlot = factionPlotUtil.getFactionPlot(factionMember.getFactionID());
+        if (!factionPlotUtil.isLocationOnFactionPlot(location)) {
+            event.setCancelled(true);
+            return;
+        }
         FactionPlot currentPlot = factionPlotUtil.getFactionPlot(location);
-
         if (currentPlot != factionPlot) {
             Location edgeDownFrontLeft = currentPlot.getEdgeDownFrontLeft();
             Location edgeUpBackRight = currentPlot.getEdgeUpBackRight();
@@ -89,8 +93,11 @@ public class PlotListener implements Listener {
         }
         FactionMember factionMember = factionMemberUtil.getFactionMember(uuid);
         FactionPlot factionPlot = factionPlotUtil.getFactionPlot(factionMember.getFactionID());
+        if (!factionPlotUtil.isLocationOnFactionPlot(location)) {
+            event.setCancelled(true);
+            return;
+        }
         FactionPlot currentPlot = factionPlotUtil.getFactionPlot(location);
-
         if (currentPlot != factionPlot) {
             Location edgeDownFrontLeft = currentPlot.getEdgeDownFrontLeft();
             Location edgeUpBackRight = currentPlot.getEdgeUpBackRight();
@@ -167,6 +174,9 @@ public class PlotListener implements Listener {
             player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
             return;
         }
+        if (!factionPlotUtil.isLocationOnFactionPlot(location))
+            return;
+
         FactionMember factionMember = factionMemberUtil.getFactionMember(uuid);
         FactionPlot currentPlot = factionPlotUtil.getFactionPlot(player.getLocation());
         FactionPlot factionPlot = factionPlotUtil.getFactionPlot(factionMember.getFactionID());
@@ -192,6 +202,20 @@ public class PlotListener implements Listener {
         if (!world.getName().equalsIgnoreCase("FactionPlots_world"))
             return;
         if (event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.NATURAL))
+            event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onMoveOutOfPlot(PlayerMoveEvent event) {
+        World world = event.getPlayer().getWorld();
+        Location to = event.getTo();
+        Location from = event.getFrom();
+
+        if (!world.getName().equalsIgnoreCase("FactionPlots_world"))
+            return;
+        if (!factionPlotUtil.isLocationOnFactionPlot(from))
+            return;
+        if (!factionPlotUtil.isLocationOnFactionPlot(to))
             event.setCancelled(true);
     }
 }

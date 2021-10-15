@@ -76,6 +76,15 @@ public class FactionUtil {
         return null;
     }
 
+    public ArrayList<FactionMember> getMembersWithRank(int factionID, int rank) {
+        ArrayList<FactionMember> members = new ArrayList<>();
+        for (FactionMember factionMember : factionMemberUtil.getFactionMembers(factionID)) {
+            if (factionMember.getRank() == rank)
+                members.add(factionMember);
+        }
+        return members;
+    }
+
     public Faction getFaction(String name) {
         for (Faction faction : factions) {
             if (faction.getName().equals(name)) {
@@ -150,6 +159,7 @@ public class FactionUtil {
 
     public void deleteFaction(Faction faction){
         factionTable.deleteFaction(faction);
+        factions.remove(faction);
     }
 
     public FactionMember getKing(Faction faction){
