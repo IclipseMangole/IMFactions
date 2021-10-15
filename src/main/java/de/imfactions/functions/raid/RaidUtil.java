@@ -90,6 +90,7 @@ public class RaidUtil {
 
     public void createPreparingRaid(int raidID, int factionIDAttackers) {
         raids.add(new Raid(raidID, RaidState.PREPARING, factionIDAttackers, -1, null, 0));
+        raidTable.createRaid(raidID, RaidState.PREPARING, factionIDAttackers, -1, null, 0);
     }
 
     public void updateRaidToScouting(int raidID) {

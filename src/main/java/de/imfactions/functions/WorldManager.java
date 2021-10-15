@@ -121,8 +121,8 @@ public class WorldManager {
                     .createPaste(editSession)
                     .to(BlockVector3.at(location.getX(), location.getY(), location.getZ()))
                     .ignoreAirBlocks(true)
-                    .copyEntities(true)
-                    .copyBiomes(true)
+                    .copyEntities(false)
+                    .copyBiomes(false)
                     .build();
             Operations.complete(operation);
         } catch (WorldEditException e) {

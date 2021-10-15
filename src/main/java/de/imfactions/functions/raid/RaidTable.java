@@ -5,7 +5,9 @@ import de.imfactions.util.MySQL;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class RaidTable {
 
@@ -19,15 +21,20 @@ public class RaidTable {
         mySQL = data.getMySQL();
         createRaidTable();
     }
-    
-    private void createRaidTable(){
+
+    private void createRaidTable() {
         mySQL.update("CREATE TABLE IF NOT EXISTS `raids` (`raidID` MEDIUMINT NOT NULL AUTO_INCREMENT, `raidState` VARCHAR(64), `factionIdAttackers` INT(10), `factionIdDefenders` INT(10), `start` DATETIME, `time` BIGINT, PRIMARY KEY(`raidID`))");
+    }
+
+    public void createRaid(int raidID, RaidState raidState, int factionIDAttackers, int factionIDDefenders, Date start, long time) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        data.getMySQL().update("INSERT INTO `raids` (`raidID`, `raidState`, `factionIdAttackers`, `factionIdDefenders`, `start`, `time`) VALUES ('" + raidID + "', '" + RaidState.getStringFromState(raidState) + "', '" + factionIDAttackers + "', '" + factionIDDefenders + "', '" + sdf.format(start) + "', '" + time + "')");
     }
 
     public ArrayList<Raid> getRaids() {
         ArrayList<Raid> raids = new ArrayList<>();
         try {
-            ResultSet rs = mySQL.querry("SELECT `raidID`, `raidState`, `factionIdAttackers`, `factionIdDefenders`, `start`, `time` FROM raids WHERE 1");
+            ResultSet rs = mySQL.querry("SELECT `raidID`, `raidState`, `factionIdAttackers`, `factionIdDefenders`, `start`, `time` FROM `raids` WHERE 1");
             while (rs.next()) {
                 raids.add(new Raid(rs.getInt("raidID"), RaidState.getStateFromString(rs.getString("raidState")), rs.getInt("factionIdAttackers"), rs.getInt("factionIdDefenders"), rs.getDate("start"), rs.getLong("time")));
             }

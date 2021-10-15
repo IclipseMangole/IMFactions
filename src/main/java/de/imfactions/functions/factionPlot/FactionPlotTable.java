@@ -27,15 +27,13 @@ public class FactionPlotTable {
     }
 
     public void createFactionPlot(int factionID, Location edgeDownFrontLeft, Location edgeUpBackRight, Location home, boolean loading, int position) {
-        if (!factionPlotUtil.isFactionPlotExists(factionID)) {
             mySQL.update("INSERT INTO `factionPlots` (`factionID`, `edgeDownFrontLeft`, `edgeUpBackRight`, `home`, `loading`, `position`) VALUES (" + factionID + ", '" + LocationBuilder.toString(edgeDownFrontLeft) + "', '" + LocationBuilder.toString(edgeUpBackRight) + "', '" + LocationBuilder.toString(home) + "', " + loading + ", " + position + ")");
-        }
     }
 
     public ArrayList<FactionPlot> getFactionPlots() {
         ArrayList<FactionPlot> factionPlots = new ArrayList<>();
         try {
-            ResultSet rs = mySQL.querry("SELECT `factionID`, `edgeDownFrontLeft`, `edgeUpBackRight`, `home`, `loading`, `position` FROM factionPlots WHERE 1");
+            ResultSet rs = mySQL.querry("SELECT `factionID`, `edgeDownFrontLeft`, `edgeUpBackRight`, `home`, `loading`, `position` FROM `factionPlots` WHERE 1");
             while (rs.next()) {
                 FactionPlot factionPlot = new FactionPlot(rs.getInt("factionID"), LocationBuilder.fromString(rs.getString("edgeDownFrontLeft")), LocationBuilder.fromString(rs.getString("edgeUpBackRight")), LocationBuilder.fromString(rs.getString("home")), rs.getBoolean("loading"), rs.getInt("position"));
                 factionPlots.add(factionPlot);

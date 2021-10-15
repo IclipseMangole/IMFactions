@@ -27,10 +27,8 @@ public class FactionTable {
     }
 
     public void createFaction(int factionID, String name, String shortcut, int memberAmount, Date foundingDate, long raidProtection, int raidEnergy, boolean gettingRaided) {
-        if (!factionUtil.isFactionExists(factionID)) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            data.getMySQL().update("INSERT INTO factions (`factionID`, `memberAmount`, `name`, `shortcut`, `foundingDate`, `raidProtection`, `raidEnergy`, `gettingRaided`) VALUES ('" + factionID + "', '" + memberAmount + "', '" + name + "', '" + shortcut + "', '" + sdf.format(foundingDate) + "', '" + raidProtection + "', '" + raidEnergy + "', '" + gettingRaided + "')");
-        }
+            data.getMySQL().update("INSERT INTO `factions` (`factionID`, `memberAmount`, `name`, `shortcut`, `foundingDate`, `raidProtection`, `raidEnergy`, `gettingRaided`) VALUES ('" + factionID + "', '" + memberAmount + "', '" + name + "', '" + shortcut + "', '" + sdf.format(foundingDate) + "', '" + raidProtection + "', '" + raidEnergy + "', '" + gettingRaided + "')");
     }
 
     public void loadFactions() {
@@ -60,15 +58,17 @@ public class FactionTable {
     }
 
     public int getHighestFactionID() {
+        int highest = 0;
         try {
-            ResultSet rs = mySQL.querry("SELECT MAX(`factionID`) AS `factionID` FROM `factions` WHERE 1");
-            if (rs.next()) {
-                return rs.getInt("factionID");
+            ResultSet rs = mySQL.querry("SELECT `factionID` FROM `factions` WHERE 1");
+            while (rs.next()) {
+                if (rs.getInt("factionID") > highest)
+                    highest = rs.getInt("factionID");
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return 0;
+        return highest;
     }
 
     public void saveFaction(Faction faction){

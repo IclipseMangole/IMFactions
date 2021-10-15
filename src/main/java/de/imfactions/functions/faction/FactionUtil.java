@@ -104,7 +104,13 @@ public class FactionUtil {
     }
 
     public int getHighestFactionID(){
-        return factionTable.getHighestFactionID();
+        int highest = 0;
+
+        for (Faction faction : factions) {
+            if (faction.getId() > highest)
+                highest = faction.getId();
+        }
+        return highest;
     }
 
     public Faction getRandomFactionForRaid(int factionID) {

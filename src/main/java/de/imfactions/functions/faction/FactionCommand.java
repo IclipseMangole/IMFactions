@@ -158,7 +158,6 @@ public class FactionCommand {
             player.teleport(data.getWorldSpawn());
             player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
         }
-        factionMemberUtil.leaveFaction(factionMember);
         //Last one in Faction
         if (faction.getMemberAmount() == 1) {
             if (faction.isGettingRaided()) {
@@ -171,6 +170,7 @@ public class FactionCommand {
             player.sendMessage(ChatColor.GREEN + "You left the Faction. " + ChatColor.YELLOW + faction.getName() + ChatColor.GREEN + " isn't existing anymore");
             return;
         }
+        factionMemberUtil.leaveFaction(factionMember);
         for (FactionMember teamMember : factionMemberUtil.getFactionMembers(factionID))
             Bukkit.getPlayer(teamMember.getUuid()).sendMessage(ChatColor.YELLOW + player.getName() + ChatColor.GREEN + " left the Faction");
         player.sendMessage(ChatColor.GREEN + "You left the Faction");
@@ -214,6 +214,10 @@ public class FactionCommand {
         }
         Player invited = Bukkit.getPlayer(name);
         UUID uuidInvited = UUIDFetcher.getUUID(player);
+        if (invited == player) {
+            player.sendMessage(ChatColor.RED + "Very funny...");
+            return;
+        }
         if (!invited.isOnline()) {
             player.sendMessage(ChatColor.RED + "The player isn't online");
             return;
@@ -407,7 +411,7 @@ public class FactionCommand {
             return;
         }
         if (factionMember == factionMemberDemoted) {
-            player.kickPlayer(ChatColor.RED + "You can't demote yourself. This would be outrages");
+            player.sendMessage(ChatColor.RED + "You can't demote yourself. This is outrages");
             return;
         }
         if (factionMember.getRank() <= factionMemberDemoted.getRank() || factionMember.getRank() < 2) {
@@ -464,6 +468,7 @@ public class FactionCommand {
         TextComponent textComponent = new TextComponent(ChatColor.GRAY + "[" + ChatColor.YELLOW + "Click Here" + ChatColor.GRAY + "]");
         textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/faction members"));
         textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.YELLOW + "See a List of all Members").create()));
+        player.sendMessage(message.toString());
         player.spigot().sendMessage(textComponent);
     }
 
@@ -477,7 +482,7 @@ public class FactionCommand {
             permissions = "im.imFactions.faction.members",
             noConsole = true
     )
-    public void infoMembers(CommandSender sender) {
+    public void members(CommandSender sender) {
         Player player = (Player) sender;
         UUID uuid = UUIDFetcher.getUUID(player);
 
@@ -490,17 +495,15 @@ public class FactionCommand {
         Faction faction = factionUtil.getFaction(factionMember.getFactionID());
         ArrayList<FactionMember> members = factionMemberUtil.getFactionMembers(faction.getId());
         StringBuilder message = new StringBuilder();
-        for (int rank = 3; rank > 0; rank--) {
-            switch (rank) {
-                case 3:
-                    message.append(ChatColor.GRAY + "---------------------" + ChatColor.DARK_RED + "KING" + ChatColor.GRAY + "---------------------\n");
-                case 2:
-                    message.append(ChatColor.GRAY + "---------------------" + ChatColor.DARK_PURPLE + "VETERAN" + ChatColor.GRAY + "---------------------\n");
-                case 1:
-                    message.append(ChatColor.GRAY + "---------------------" + ChatColor.BLUE + "KNIGHT" + ChatColor.GRAY + "---------------------\n");
-                default:
-                    message.append(ChatColor.GRAY + "---------------------" + ChatColor.DARK_GREEN + "MEMBER" + ChatColor.GRAY + "---------------------\n");
-            }
+        for (int rank = 3; rank >= 0; rank--) {
+            if (rank == 3)
+                message.append(ChatColor.GRAY + "---------------------" + ChatColor.DARK_RED + "KING" + ChatColor.GRAY + "---------------------\n");
+            if (rank == 2)
+                message.append(ChatColor.GRAY + "---------------------" + ChatColor.DARK_PURPLE + "VETERAN" + ChatColor.GRAY + "---------------------\n");
+            if (rank == 1)
+                message.append(ChatColor.GRAY + "---------------------" + ChatColor.BLUE + "KNIGHT" + ChatColor.GRAY + "---------------------\n");
+            if (rank == 0)
+                message.append(ChatColor.GRAY + "---------------------" + ChatColor.DARK_GREEN + "MEMBER" + ChatColor.GRAY + "---------------------\n");
             for (FactionMember member : members) {
                 if (member.getRank() == rank) {
                     String name = UUIDFetcher.getName(uuid);
@@ -552,7 +555,7 @@ public class FactionCommand {
         Player player = (Player) sender;
         UUID uuid = UUIDFetcher.getUUID(player);
 
-        if (factionMemberUtil.isFactionMemberExists(uuid)) {
+        if (!factionMemberUtil.isFactionMemberExists(uuid)) {
             player.sendMessage(ChatColor.RED + "You aren't member of a Faction");
             return;
         }
