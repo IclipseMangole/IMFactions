@@ -19,10 +19,7 @@ import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Team;
 
-import java.awt.*;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.UUID;
 
 public class Scoreboard {
@@ -54,75 +51,144 @@ public class Scoreboard {
         createNormalScoreboard(player);
     }
 
+    public void setRaidScoreboard(Player player, Raid raid) {
+        createRaidScoreboard(player, raid);
+    }
+
     public void updateScoreboard() {
         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            updateNormalScoreboard(onlinePlayer);
-        }
-
-        /*
-        scoreboards.forEach((player, scoreboard) -> {
-            UUID uuid = player.getUniqueId();
-
-            if (factionMemberUtil.isFactionMemberExists(uuid)) {
-                FactionMember factionMember = factionMemberUtil.getFactionMember(uuid);
-                int factionID = factionMember.getFactionID();
-                if (raidUtil.isFactionRaiding(factionID)) {
-                    int raidID = raidUtil.getActiveRaidID(factionID);
-                    Raid raid = raidUtil.getRaid(raidID);
-                    getRaidScoreboard(player, scoreboard, raid);
-                }
+            UUID uuid = UUIDFetcher.getUUID(onlinePlayer);
+            if (!factionMemberUtil.isFactionMemberExists(uuid)) {
+                updateNormalScoreboard(onlinePlayer);
+                return;
             }
-            getNormalScoreboard(player, scoreboard);
-        });
-         */
+            FactionMember factionMember = factionMemberUtil.getFactionMember(uuid);
+            if (!raidUtil.isFactionRaiding(factionMember.getFactionID())) {
+                updateNormalScoreboard(onlinePlayer);
+                return;
+            }
+            int raidID = raidUtil.getActiveRaidID(factionMember.getFactionID());
+            Raid raid = raidUtil.getRaid(raidID);
+            if (!raidUtil.isFactionMemberJoinedRaid(factionMember)) {
+                updateNormalScoreboard(onlinePlayer);
+                return;
+            }
+            updateRaidScoreboard(onlinePlayer, raid);
+        }
     }
 
     /**
      * Scoreboard while being in a Raid
      */
 
-    private void getRaidScoreboard(Player player, org.bukkit.scoreboard.Scoreboard scoreboard, Raid raid) {
+    private void createRaidScoreboard(Player player, Raid raid) {
         UUID uuid = player.getUniqueId();
-        int raidID = raid.getRaidID();
         FactionMember factionMember = factionMemberUtil.getFactionMember(uuid);
         Faction faction = factionUtil.getFaction(factionMember.getFactionID());
 
-        String raidState = RaidState.getStringFromState(raid.getRaidState());
-        String defenders = "None";
-        String timeLeft = "30:00";
-        ArrayList<FactionMember> raidTeam = raidUtil.getRaidTeam(raidID);
+        String name = ChatColor.WHITE + player.getName();
+        String raidState = ChatColor.WHITE + RaidState.getStringFromState(raid.getRaidState());
+        String attackers = ChatColor.WHITE + faction.getName();
+        String defenders = ChatColor.WHITE + "None";
 
-        if (raidState.equals(RaidState.RAIDING)) {
+        if (!raid.getRaidState().equals(RaidState.PREPARING)) {
             Faction factionDefenders = factionUtil.getFaction(raid.getFactionIdDefenders());
-            defenders = factionDefenders.getName();
-            long time = ((raid.getStart().getTime() + 1000 * 60 * 30) - System.currentTimeMillis()) / 1000;
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-            sdf.format(time);
-            timeLeft = "" + time;
+            defenders = ChatColor.WHITE + factionDefenders.getName();
         }
 
-        Objective objective = scoreboard.getObjective("123") != null ? scoreboard.getObjective("123") : scoreboard.registerNewObjective("123", "123", "123");
-        objective.setDisplayName("§6§nRaid");
-        objective.getScore(ChatColor.of(Color.YELLOW) + "").setScore(20);
-        objective.getScore("§6§lState:").setScore(19);
-        objective.getScore(raidState).setScore(18);
-        objective.getScore(ChatColor.of(Color.GREEN) + "").setScore(17);
-        objective.getScore(faction.getName() + " §6vs §f" + defenders).setScore(16);
-        objective.getScore(ChatColor.of(Color.BLUE) + "").setScore(15);
-        objective.getScore("§6§lTime Left:").setScore(14);
-        objective.getScore(timeLeft).setScore(13);
-        objective.getScore(ChatColor.of(Color.PINK) + "").setScore(12);
-        objective.getScore("§6§lRaid Team:").setScore(11);
-        for (int i = 10; i > 10 - raidTeam.size(); i--) {
-            FactionMember member = raidTeam.get(-i + 10);
-            Player player1 = factionMemberUtil.getPlayer(member.getUuid());
-            objective.getScore(player1.getName()).setScore(i);
+        org.bukkit.scoreboard.Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+        Objective objective = scoreboard.registerNewObjective("raid", "raid", "raid");
+
+        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+        objective.setDisplayName(ChatColor.GOLD + "" + ChatColor.UNDERLINE + "Raid");
+        objective.getScore(ChatColor.BOLD + "").setScore(20);
+        objective.getScore(ChatColor.GOLD + "" + ChatColor.BOLD + "Player:").setScore(19);
+
+        Team playerScore = scoreboard.registerNewTeam("playerScore");
+        playerScore.addEntry(ChatColor.BOLD + "" + ChatColor.RESET);
+        playerScore.setPrefix(name);
+        objective.getScore(ChatColor.BOLD + "" + ChatColor.RESET).setScore(18);
+
+        objective.getScore(ChatColor.RED + "").setScore(17);
+        objective.getScore(ChatColor.GOLD + "" + ChatColor.BOLD + "State:").setScore(16);
+
+        Team stateScore = scoreboard.registerNewTeam("stateScore");
+        stateScore.addEntry(ChatColor.RED + "" + ChatColor.BLUE);
+        stateScore.setPrefix(raidState);
+        objective.getScore(ChatColor.RED + "" + ChatColor.BLUE).setScore(15);
+
+        objective.getScore(ChatColor.BLUE + "").setScore(14);
+        objective.getScore(ChatColor.GOLD + "" + ChatColor.BOLD + "Attackers:").setScore(13);
+
+        Team attackerScore = scoreboard.registerNewTeam("attackerScore");
+        attackerScore.addEntry(ChatColor.BLUE + "" + ChatColor.GREEN);
+        attackerScore.setPrefix(attackers);
+        objective.getScore(ChatColor.BLUE + "" + ChatColor.GREEN).setScore(12);
+
+        objective.getScore(ChatColor.GREEN + "").setScore(11);
+        objective.getScore(ChatColor.GOLD + "" + ChatColor.BOLD + "Defenders:").setScore(10);
+
+        Team defenderScore = scoreboard.registerNewTeam("defenderScore");
+        defenderScore.addEntry(ChatColor.GREEN + "" + ChatColor.AQUA);
+        defenderScore.setPrefix(defenders);
+        objective.getScore(ChatColor.GREEN + "" + ChatColor.AQUA).setScore(9);
+
+        objective.getScore(ChatColor.AQUA + "").setScore(8);
+        objective.getScore(ChatColor.GOLD + "" + ChatColor.BOLD + "RaidTeam:").setScore(7);
+
+        int score = 6;
+        for (int rank = 3; rank >= 0; rank--) {
+            ArrayList<FactionMember> raidTeam = factionUtil.getMembersWithRank(faction.getId(), rank);
+            for (int i = raidTeam.size(); i > 0; i--) {
+                Team raidTeamScore = scoreboard.registerNewTeam("raidTeamScore" + score);
+                FactionMember member = raidTeam.get(i - 1);
+                String memberName = UUIDFetcher.getName(member.getUuid());
+                raidTeamScore.addEntry(ChatColor.AQUA + "" + ChatColor.DARK_AQUA);
+                raidTeamScore.setPrefix(member.getRankColor() + memberName);
+                objective.getScore(ChatColor.AQUA + "" + ChatColor.DARK_AQUA).setScore(score);
+                score--;
+            }
         }
 
+        player.setScoreboard(scoreboard);
     }
 
 
-    private void createNormalScoreboard(Player player){
+    private void updateRaidScoreboard(Player player, Raid raid) {
+        UUID uuid = player.getUniqueId();
+        FactionMember factionMember = factionMemberUtil.getFactionMember(uuid);
+        Faction faction = factionUtil.getFaction(factionMember.getFactionID());
+
+        String name = ChatColor.WHITE + player.getName();
+        String raidState = ChatColor.WHITE + RaidState.getStringFromState(raid.getRaidState());
+        String attackers = ChatColor.WHITE + faction.getName();
+        String defenders = ChatColor.WHITE + "None";
+
+        if (!raid.getRaidState().equals(RaidState.PREPARING)) {
+            Faction factionDefenders = factionUtil.getFaction(raid.getFactionIdDefenders());
+            defenders = ChatColor.WHITE + factionDefenders.getName();
+        }
+
+        org.bukkit.scoreboard.Scoreboard scoreboard = player.getScoreboard();
+        scoreboard.getTeam("playerScore").setPrefix(name);
+        scoreboard.getTeam("stateScore").setPrefix(raidState);
+        scoreboard.getTeam("attackerScore").setPrefix(attackers);
+        scoreboard.getTeam("defenderScore").setPrefix(defenders);
+
+        int score = 6;
+        for (int rank = 3; rank >= 0; rank--) {
+            ArrayList<FactionMember> raidTeam = factionUtil.getMembersWithRank(faction.getId(), rank);
+            for (int i = raidTeam.size(); i > 0; i--) {
+                FactionMember member = raidTeam.get(i - 1);
+                String memberName = UUIDFetcher.getName(member.getUuid());
+                scoreboard.getTeam("raidTeamScore" + score).setPrefix(member.getRankColor() + memberName);
+                score--;
+            }
+        }
+    }
+
+
+    private void createNormalScoreboard(Player player) {
         String name = "§f" + player.getName();
         UUID uuid = UUIDFetcher.getUUID(player);
         String factionName = "§fNone";
@@ -188,7 +254,7 @@ public class Scoreboard {
         player.setScoreboard(scoreboard);
     }
 
-    private void updateNormalScoreboard(Player player){
+    private void updateNormalScoreboard(Player player) {
         String name = "§f" + player.getName();
         UUID uuid = UUIDFetcher.getUUID(player);
         String factionName = "§fNone";
@@ -212,94 +278,6 @@ public class Scoreboard {
         scoreboard.getTeam("membersScore").setPrefix(onlineMembers);
         scoreboard.getTeam("worldScore").setPrefix(worldColor + worldName);
         scoreboard.getTeam("etherScore").setPrefix(ether);
-    }
-
-
-
-
-    /**
-     * Normal Scoreboard while playing
-     */
-
-    private void getNormalScoreboard(Player player, org.bukkit.scoreboard.Scoreboard scoreboard) {
-        Objective objective = scoreboard.getObjective("123") != null ? scoreboard.getObjective("123") : scoreboard.registerNewObjective("123", "123", "123");
-
-        String name = "§f" + player.getName();
-        UUID uuid = UUIDFetcher.getUUID(player);
-        String factionName = "§fNone";
-        String onlineMembers = "§f0/0";
-        String world = getWorld(player);
-        String worldName = player.getWorld().getName();
-        String ether = "§f" + userUtil.getUser(player).getEther();
-
-        if (factionMemberUtil.isFactionMemberExists(uuid)) {
-            if (factionMemberUtil.isFactionMemberExists(uuid)) {
-                int factionID = factionMemberUtil.getFactionMember(uuid).getFactionID();
-                Faction faction = factionUtil.getFaction(factionID);
-                factionName = "§f" + faction.getName() + "§e[" + faction.getShortcut() + "]";
-                onlineMembers = "§f" + factionMemberUtil.getOnlineMembersAmount(factionID) + "/" + faction.getMemberAmount();
-            }
-        }
-
-        objective.setDisplayName("§6§nFactions");
-        objective.getScore(ChatColor.of(Color.YELLOW) + "").setScore(14);
-        objective.getScore("§6§lPlayer:").setScore(13);
-        objective.getScore(name).setScore(12);
-        objective.getScore(ChatColor.of(Color.GREEN) + "").setScore(11);
-        objective.getScore("§6§lFaction:").setScore(10);
-        objective.getScore(factionName).setScore(9);
-        objective.getScore(ChatColor.of(Color.RED) + "").setScore(8);
-        objective.getScore("§6§lOnline Members:").setScore(7);
-        objective.getScore(onlineMembers).setScore(6);
-        objective.getScore(ChatColor.of(Color.BLUE) + "").setScore(5);
-        objective.getScore("§6§lWorld:").setScore(4);
-        objective.getScore("" + getWorldColor(worldName) + world).setScore(3);
-        objective.getScore(ChatColor.of(Color.PINK) + "").setScore(2);
-        objective.getScore("§6§lEther").setScore(1);
-        objective.getScore(ether).setScore(0);
-    }
-
-    private void createScoreboard(Player player) {
-        org.bukkit.scoreboard.Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-        Objective objective = scoreboard.getObjective("123") != null ? scoreboard.getObjective("123") : scoreboard.registerNewObjective("123", "123", "123");
-        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-
-        String name = "§f" + player.getName();
-        UUID uuid = UUIDFetcher.getUUID(player);
-        String factionName = "§fNone";
-        String onlineMembers = "§f0/0";
-        String world = getWorld(player);
-        String worldName = player.getWorld().getName();
-        String ether = "§f" + userUtil.getUser(player).getEther();
-
-        if (factionMemberUtil.isFactionMemberExists(uuid)) {
-            if (factionMemberUtil.isFactionMemberExists(uuid)) {
-                int factionID = factionMemberUtil.getFactionMember(uuid).getFactionID();
-                Faction faction = factionUtil.getFaction(factionID);
-                factionName = "§f" + faction.getName() + "§e[" + faction.getShortcut() + "]";
-                onlineMembers = "§f" + factionMemberUtil.getOnlineMembersAmount(factionID) + "/" + faction.getMemberAmount();
-            }
-        }
-
-        objective.setDisplayName("§6§nFactions");
-        objective.getScore(ChatColor.of(Color.YELLOW) + "").setScore(14);
-        objective.getScore("§6§lPlayer:").setScore(13);
-        objective.getScore(name).setScore(12);
-        objective.getScore(ChatColor.of(Color.GREEN) + "").setScore(11);
-        objective.getScore("§6§lFaction:").setScore(10);
-        objective.getScore(factionName).setScore(9);
-        objective.getScore(ChatColor.of(Color.RED) + "").setScore(8);
-        objective.getScore("§6§lOnline Members:").setScore(7);
-        objective.getScore(onlineMembers).setScore(6);
-        objective.getScore(ChatColor.of(Color.BLUE) + "").setScore(5);
-        objective.getScore("§6§lWorld:").setScore(4);
-        objective.getScore("" + getWorldColor(worldName) + world).setScore(3);
-        objective.getScore(ChatColor.of(Color.PINK) + "").setScore(2);
-        objective.getScore("§6§lEther").setScore(1);
-        objective.getScore(ether).setScore(0);
-
-        //scoreboards.put(player, scoreboard);
-        player.setScoreboard(scoreboard);
     }
 
     private String getWorld(Player player) {

@@ -75,7 +75,7 @@ public class FactionPlotCommand {
     public void delete(CommandSender sender) {
         Player player = (Player) sender;
 
-        worldLoader.deleteMap(player.getLocation());
+        worldLoader.loadMap("Luft", player.getLocation());
         player.sendMessage(ChatColor.GREEN + "The FactionPlot will be uninstalled soon");
     }
 

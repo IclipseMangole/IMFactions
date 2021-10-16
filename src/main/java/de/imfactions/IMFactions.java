@@ -36,15 +36,15 @@ public class IMFactions extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        updateGamerules();
         data = new Data(this);
-        data.createUtils();
         data.loadWorlds();
+        data.createUtils();
         data.loadScheduler();
         data.loadScoreboards();
         worldManager.loadManagers();
         registerCommands();
         registerListener();
+        updateGamerules();
     }
 
     @Override

@@ -120,7 +120,7 @@ public class WorldManager {
             Operation operation = new ClipboardHolder(clipboard)
                     .createPaste(editSession)
                     .to(BlockVector3.at(location.getX(), location.getY(), location.getZ()))
-                    .ignoreAirBlocks(true)
+                    .ignoreAirBlocks(false)
                     .copyEntities(false)
                     .copyBiomes(false)
                     .build();
@@ -128,7 +128,6 @@ public class WorldManager {
         } catch (WorldEditException e) {
             e.printStackTrace();
         }
-
     }
 
     public Clipboard loadSchematic(String name) {

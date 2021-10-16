@@ -2,6 +2,7 @@ package de.imfactions.functions.raid;
 
 import de.imfactions.Data;
 import de.imfactions.IMFactions;
+import de.imfactions.functions.Scoreboard;
 import de.imfactions.functions.faction.Faction;
 import de.imfactions.functions.faction.FactionUtil;
 import de.imfactions.functions.factionMember.FactionMember;
@@ -28,6 +29,7 @@ public class RaidScheduler implements Listener {
     private final FactionUtil factionUtil;
     private final FactionPlotUtil factionPlotUtil;
     private final FactionMemberUtil factionMemberUtil;
+    private final Scoreboard scoreboard;
     private final HashMap<Integer, BukkitTask> preparingRaids = new HashMap<>();
     private final HashMap<Integer, BukkitTask> scoutingRaids = new HashMap<>();
     private final HashMap<Integer, BukkitTask> raidingRaids = new HashMap<>();
@@ -39,6 +41,7 @@ public class RaidScheduler implements Listener {
         factionUtil = data.getFactionUtil();
         factionPlotUtil = data.getFactionPlotUtil();
         factionMemberUtil = data.getFactionMemberUtil();
+        scoreboard = data.getScoreboard();
     }
 
     public void startPreparingRaid(int raidID, int seconds){
@@ -94,8 +97,10 @@ public class RaidScheduler implements Listener {
         if (scoutingRaids.containsKey(raidID))
             return;
 
+        Raid raid = raidUtil.getRaid(raidID);
         Faction defenders = factionUtil.getFaction(defendersID);
         FactionPlot defendersPlot = factionPlotUtil.getFactionPlot(defendersID);
+        raid.setFactionIdDefenders(defenders.getId());
         defenders.setGettingRaided(true);
         ArrayList<Player> raidTeam = new ArrayList<>();
         for (FactionMember factionMember : raidUtil.getRaidTeam(raidID)) {
@@ -166,6 +171,8 @@ public class RaidScheduler implements Listener {
             @Override
             public void run() {
                 if (timer <= 0) {
+                    Raid raid = raidUtil.getRaid(ID);
+                    factionUtil.getFaction(raid.getFactionIdDefenders()).setRaidProtection(System.currentTimeMillis() + 1000 * 60);
                     raidUtil.teleportRaidTeamHome(ID);
                     raidUtil.updateRaidToDone(ID);
                     cancelRaidingRaid(ID);
@@ -216,6 +223,14 @@ public class RaidScheduler implements Listener {
         if (raidingRaids.containsKey(raidID)) {
             raidingRaids.get(raidID).cancel();
             raidingRaids.remove(raidID);
+        }
+        setScoreboard(raidID);
+    }
+
+    private void setScoreboard(int raidID) {
+        for (FactionMember factionMember : raidUtil.getRaidTeam(raidID)) {
+            Player player = factionMemberUtil.getPlayer(factionMember.getUuid());
+            scoreboard.setScoreboard(player);
         }
     }
 

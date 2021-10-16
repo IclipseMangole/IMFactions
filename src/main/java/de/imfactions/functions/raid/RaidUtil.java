@@ -9,9 +9,11 @@ import de.imfactions.functions.factionMember.FactionMember;
 import de.imfactions.functions.factionMember.FactionMemberUtil;
 import de.imfactions.functions.factionPlot.FactionPlot;
 import de.imfactions.functions.factionPlot.FactionPlotUtil;
+import de.imfactions.util.UUIDFetcher;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.sql.ResultSet;
@@ -44,21 +46,24 @@ public class RaidUtil {
         }, 20 * 60, 20 * 60 * 10);
     }
 
-    public void loadUtils(){
+    public void loadUtils() {
         scheduler = data.getScheduler();
         factionMemberUtil = data.getFactionMemberUtil();
         factionUtil = data.getFactionUtil();
         raidTable = new RaidTable(this, data);
-        raidScheduler = new RaidScheduler(data);
         factionPlotUtil = data.getFactionPlotUtil();
         raids = raidTable.getRaids();
     }
 
-    public ArrayList<Raid> getRaids(){
-        return raids;
+    public void loadSchedulers() {
+        raidScheduler = data.getRaidScheduler();
     }
 
-    public boolean isFactionRaiding(int factionID){
+    public ArrayList<Raid> getRaids() {
+        return this.raids;
+    }
+
+    public boolean isFactionRaiding(int factionID) {
         for (Raid raid : raids) {
             if (raid.getFactionIdAttackers() == factionID) {
                 if (!raid.getRaidState().equals(RaidState.DONE)) {
@@ -206,22 +211,48 @@ public class RaidUtil {
         return activeRaids;
     }
 
-    public boolean isRaidExists(int raidID){
-        for(Raid raid : raids){
-            if(raid.getRaidID() == raidID){
+    public boolean isRaidExists(int raidID) {
+        for (Raid raid : raids) {
+            if (raid.getRaidID() == raidID) {
                 return true;
             }
         }
         return false;
     }
 
-    /** RaidStates:
-     *  preparing,
-     *  scouting,
-     *  raiding,
-     *  done
+    public boolean isRaidingOtherFaction(Player player) {
+        UUID uuid = UUIDFetcher.getUUID(player);
+        World world = player.getWorld();
+
+        if (!world.getName().equalsIgnoreCase("FactionPlots_world"))
+            return false;
+        if (!factionMemberUtil.isFactionMemberExists(uuid)) {
+            player.teleport(data.getWorldSpawn());
+            player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
+            return false;
+        }
+        FactionMember factionMember = factionMemberUtil.getFactionMember(uuid);
+        Faction faction = factionUtil.getFaction(factionMember.getFactionID());
+        if (!isFactionRaiding(faction.getId()))
+            return false;
+        if (!isFactionMemberJoinedRaid(factionMember))
+            return false;
+        int raidID = getActiveRaidID(faction.getId());
+        Raid raid = getRaid(raidID);
+        if (!factionPlotUtil.isLocationOnFactionPlot(player.getLocation()))
+            return false;
+        FactionPlot currentPlot = factionPlotUtil.getFactionPlot(player.getLocation());
+        return raid.getFactionIdDefenders() == currentPlot.getFactionID();
+    }
+
+    /**
+     * RaidStates:
+     * preparing,
+     * scouting,
+     * raiding,
+     * done
      */
-    public RaidState getRaidState(int raidID){
+    public RaidState getRaidState(int raidID) {
         Raid raid = getRaid(raidID);
         return raid.getRaidState();
     }
@@ -261,6 +292,21 @@ public class RaidUtil {
 
     public RaidScheduler getRaidScheduler() {
         return raidScheduler;
+    }
+
+    public ArrayList<Raid> getRaidsFromFaction(int factionID) {
+        ArrayList<Raid> raidsFromFaction = new ArrayList<>();
+        for (Raid raid : this.raids) {
+            if (raid.getFactionIdAttackers() == factionID)
+                raidsFromFaction.add(raid);
+        }
+        return raidsFromFaction;
+    }
+
+    public void deleteRaidsFromFaction(int factionID) {
+        for (Raid raid : getRaidsFromFaction(factionID)) {
+            deleteRaid(raid);
+        }
     }
 
     public void deleteRaid(Raid raid) {

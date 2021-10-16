@@ -2,6 +2,7 @@ package de.imfactions.functions.raid;
 
 import de.imfactions.Data;
 import de.imfactions.IMFactions;
+import de.imfactions.functions.Scoreboard;
 import de.imfactions.functions.faction.Faction;
 import de.imfactions.functions.faction.FactionUtil;
 import de.imfactions.functions.factionMember.FactionMember;
@@ -16,6 +17,7 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -32,6 +34,7 @@ public class RaidCommand {
     private final RaidUtil raidUtil;
     private StringBuilder builder;
     private final RaidScheduler raidScheduler;
+    private final Scoreboard scoreboard;
 
     public RaidCommand(IMFactions imFactions) {
         this.imFactions = imFactions;
@@ -41,6 +44,7 @@ public class RaidCommand {
         factionMemberUtil = data.getFactionMemberUtil();
         raidUtil = data.getRaidUtil();
         raidScheduler = raidUtil.getRaidScheduler();
+        scoreboard = data.getScoreboard();
     }
 
     @IMCommand(
@@ -49,7 +53,7 @@ public class RaidCommand {
             description = "Overview of all raid commands",
             minArgs = 0,
             maxArgs = 0,
-            permissions = "im.factions.raid"
+            permissions = "im.imFactions.raid"
     )
     public void raid(CommandSender sender) {
         Player player = (Player) sender;
@@ -74,7 +78,7 @@ public class RaidCommand {
             description = "Invites the Faction members to join a new Raid",
             minArgs = 0,
             maxArgs = 0,
-            permissions = "im.factions.raid.start",
+            permissions = "im.imFactions.raid.start",
             parent = "raid",
             noConsole = true
     )
@@ -124,6 +128,7 @@ public class RaidCommand {
                 member.spigot().sendMessage(new ComponentBuilder(message).append(join).create());
             }
         }
+        scoreboard.setRaidScoreboard(player, raid);
     }
 
     @IMCommand(
@@ -132,7 +137,7 @@ public class RaidCommand {
             description = "Joins the active Raid",
             minArgs = 0,
             maxArgs = 0,
-            permissions = "im.factions.raid.join",
+            permissions = "im.imFactions.raid.join",
             parent = "raid",
             noConsole = true
     )
@@ -171,6 +176,7 @@ public class RaidCommand {
         }
         raidUtil.getRaidTeams().put(raid, factionMember);
         player.sendMessage(ChatColor.GREEN + "You joined the Raid");
+        scoreboard.setRaidScoreboard(player, raid);
     }
 
     @IMCommand(
@@ -179,7 +185,7 @@ public class RaidCommand {
             description = "The Team scouts a new random Faction",
             minArgs = 0,
             maxArgs = 0,
-            permissions = "im.factions.raid.scout",
+            permissions = "im.imFactions.raid.scout",
             parent = "raid",
             noConsole = true
     )
@@ -228,7 +234,7 @@ public class RaidCommand {
             description = "The Team begins to raid an Faction",
             minArgs = 0,
             maxArgs = 0,
-            permissions = "im.factions.raid.begin",
+            permissions = "im.imFactions.raid.begin",
             parent = "raid",
             noConsole = true
     )
@@ -274,7 +280,7 @@ public class RaidCommand {
             description = "The Player leaves the Raid",
             minArgs = 0,
             maxArgs = 0,
-            permissions = "im.factions.raid.leave",
+            permissions = "im.imFactions.raid.leave",
             parent = "raid",
             noConsole = true
     )
@@ -305,6 +311,7 @@ public class RaidCommand {
         if (team.size() == 1) {
             player.sendMessage(ChatColor.GREEN + "You left the Raid. It isn't active anymore");
             player.teleport(factionPlotUtil.getFactionPlot(faction.getId()).getHome());
+            scoreboard.setScoreboard(player);
             if (raid.getRaidState().equals(RaidState.PREPARING)) {
                 for (Player member : factionMemberUtil.getOnlineMembers(faction.getId())) {
                     member.sendMessage(ChatColor.RED + "The Raid got canceled");
@@ -329,10 +336,12 @@ public class RaidCommand {
         }
         player.sendMessage(ChatColor.GREEN + "You left the Raid");
         player.teleport(factionPlotUtil.getFactionPlot(faction.getId()).getHome());
+        player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
         for (Player member : factionMemberUtil.getOnlineMembers(faction.getId())) {
             if (member != factionMember)
                 member.sendMessage(ChatColor.YELLOW + player.getName() + ChatColor.RED + " left the Raid");
         }
+        scoreboard.setScoreboard(player);
     }
 
     @IMCommand(
@@ -341,7 +350,7 @@ public class RaidCommand {
             description = "Shows the last 9 Raids",
             minArgs = 0,
             maxArgs = 0,
-            permissions = "im.factions.raid.infos",
+            permissions = "im.imFactions.raid.infos",
             parent = "raid"
     )
     public void infos(CommandSender sender) {

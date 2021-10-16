@@ -150,13 +150,9 @@ public class FactionCommand {
             player.sendMessage(ChatColor.RED + "Wait until your FactionPlot isn't loading anymore");
             return;
         }
-        if (raidUtil.isFactionRaiding(factionID) && raidUtil.isFactionMemberJoinedRaid(factionMember)) {
+        if (raidUtil.isFactionRaiding(factionID)) {
             player.sendMessage(ChatColor.RED + "You can't leave the Faction while raiding");
             return;
-        }
-        if (player.getWorld().getName().equalsIgnoreCase("FactionPlots_world")) {
-            player.teleport(data.getWorldSpawn());
-            player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
         }
         //Last one in Faction
         if (faction.getMemberAmount() == 1) {
@@ -165,10 +161,15 @@ public class FactionCommand {
                 return;
             }
             factionMemberUtil.leaveFaction(factionMember);
-            worldLoader.deleteMap(factionPlot.getEdgeDownFrontLeft());
+            worldLoader.loadMap("Luft", factionPlot.getEdgeDownFrontLeft().add(0, 17, 0));
             factionPlotUtil.deleteFactionPlot(factionPlot);
             factionUtil.deleteFaction(faction);
+            raidUtil.deleteRaidsFromFaction(factionID);
             player.sendMessage(ChatColor.GREEN + "You left the Faction. " + ChatColor.YELLOW + faction.getName() + ChatColor.GREEN + " isn't existing anymore");
+            if (player.getWorld().getName().equalsIgnoreCase("FactionPlots_world")) {
+                player.teleport(data.getWorldSpawn());
+                player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
+            }
             return;
         }
         int rank = factionMember.getRank();
@@ -228,6 +229,11 @@ public class FactionCommand {
             player.sendMessage(ChatColor.RED + "This player is already member of a Faction");
             return;
         }
+        if (raidUtil.isRaidingOtherFaction(player)) {
+            player.sendMessage(ChatColor.RED + "You can't do that while raiding");
+            return;
+        }
+
         player.sendMessage(ChatColor.GREEN + "You invited " + ChatColor.YELLOW + name + ChatColor.GREEN + " to your Faction");
 
         int factionID = factionMember.getFactionID();
@@ -312,6 +318,10 @@ public class FactionCommand {
         }
         if (factionMember.getRank() <= factionMemberKick.getRank()) {
             player.sendMessage(ChatColor.RED + "You have to be higher ranked to kick this member");
+            return;
+        }
+        if (raidUtil.isRaidingOtherFaction(player)) {
+            player.sendMessage(ChatColor.RED + "You can't do that while raiding");
             return;
         }
         Player kicked = Bukkit.getPlayer(uuidKick);
@@ -543,6 +553,10 @@ public class FactionCommand {
             player.sendMessage(ChatColor.RED + "Your FactionPlot is loading. Please wait");
             return;
         }
+        if (raidUtil.isRaidingOtherFaction(player)) {
+            player.sendMessage(ChatColor.RED + "You can't do that while raiding");
+            return;
+        }
         factionUtil.teleportHome(factionMember);
     }
 
@@ -561,6 +575,10 @@ public class FactionCommand {
 
         if (!factionMemberUtil.isFactionMemberExists(uuid)) {
             player.sendMessage(ChatColor.RED + "You aren't member of a Faction");
+            return;
+        }
+        if (raidUtil.isRaidingOtherFaction(player)) {
+            player.sendMessage(ChatColor.RED + "You can't do that while raiding");
             return;
         }
         if (!player.getLocation().getWorld().getName().equalsIgnoreCase("FactionPlots_world")) {

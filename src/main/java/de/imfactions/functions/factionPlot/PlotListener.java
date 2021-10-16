@@ -5,6 +5,7 @@ import de.imfactions.IMFactions;
 import de.imfactions.functions.faction.FactionUtil;
 import de.imfactions.functions.factionMember.FactionMember;
 import de.imfactions.functions.factionMember.FactionMemberUtil;
+import de.imfactions.functions.raid.RaidUtil;
 import de.imfactions.util.LocationChecker;
 import de.imfactions.util.UUIDFetcher;
 import org.bukkit.Location;
@@ -31,6 +32,7 @@ public class PlotListener implements Listener {
     private final IMFactions imFactions;
     private final Data data;
     private final FactionUtil factionUtil;
+    private final RaidUtil raidUtil;
     private final FactionPlotUtil factionPlotUtil;
     private final FactionMemberUtil factionMemberUtil;
 
@@ -40,6 +42,7 @@ public class PlotListener implements Listener {
         factionUtil = data.getFactionUtil();
         factionPlotUtil = data.getFactionPlotUtil();
         factionMemberUtil = data.getFactionMemberUtil();
+        raidUtil = data.getRaidUtil();
     }
 
     //Blöcke abbauen nur im Plot
@@ -56,6 +59,8 @@ public class PlotListener implements Listener {
             event.setCancelled(true);
             return;
         }
+        if (raidUtil.isRaidingOtherFaction(player))
+            return;
         FactionMember factionMember = factionMemberUtil.getFactionMember(uuid);
         FactionPlot factionPlot = factionPlotUtil.getFactionPlot(factionMember.getFactionID());
         if (!factionPlotUtil.isLocationOnFactionPlot(location)) {
@@ -64,12 +69,8 @@ public class PlotListener implements Listener {
         }
         FactionPlot currentPlot = factionPlotUtil.getFactionPlot(location);
         if (currentPlot != factionPlot) {
-            Location edgeDownFrontLeft = currentPlot.getEdgeDownFrontLeft();
-            Location edgeUpBackRight = currentPlot.getEdgeUpBackRight();
-            if (LocationChecker.isLocationInsideCube(location, edgeDownFrontLeft, edgeUpBackRight)) {
-                event.setCancelled(true);
-                return;
-            }
+            event.setCancelled(true);
+            return;
         }
         Location edgeDownFrontLeft = factionPlot.getEdgeDownFrontLeft();
         Location edgeUpBackRight = factionPlot.getEdgeUpBackRight();
@@ -91,6 +92,8 @@ public class PlotListener implements Listener {
             event.setCancelled(true);
             return;
         }
+        if (raidUtil.isRaidingOtherFaction(player))
+            return;
         FactionMember factionMember = factionMemberUtil.getFactionMember(uuid);
         FactionPlot factionPlot = factionPlotUtil.getFactionPlot(factionMember.getFactionID());
         if (!factionPlotUtil.isLocationOnFactionPlot(location)) {
@@ -99,12 +102,8 @@ public class PlotListener implements Listener {
         }
         FactionPlot currentPlot = factionPlotUtil.getFactionPlot(location);
         if (currentPlot != factionPlot) {
-            Location edgeDownFrontLeft = currentPlot.getEdgeDownFrontLeft();
-            Location edgeUpBackRight = currentPlot.getEdgeUpBackRight();
-            if (LocationChecker.isLocationInsideCube(location, edgeDownFrontLeft, edgeUpBackRight)) {
-                event.setCancelled(true);
-                return;
-            }
+            event.setCancelled(true);
+            return;
         }
         Location edgeDownFrontLeft = factionPlot.getEdgeDownFrontLeft();
         Location edgeUpBackRight = factionPlot.getEdgeUpBackRight();

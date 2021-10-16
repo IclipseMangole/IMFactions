@@ -44,11 +44,14 @@ public class FactionUtil {
         }, 20 * 60, 10 * 60 * 20);
     }
 
-    public void loadUtils(){
+    public void loadUtils() {
         factionTable = new FactionTable(this, data);
         factionMemberUtil = data.getFactionMemberUtil();
-        factionHomeScheduler = new FactionHomeScheduler(data);
         factions = factionTable.getFactions();
+    }
+
+    public void loadScheduler() {
+        factionHomeScheduler = data.getFactionHomeScheduler();
     }
 
     public ArrayList<Faction> getRaidableFactions(int factionID) {
@@ -126,7 +129,9 @@ public class FactionUtil {
         Random random = new Random();
 
         ArrayList<Faction> raidableFactions = getRaidableFactions(factionID);
-        return raidableFactions.get(random.nextInt(factions.size()));
+        if (raidableFactions.size() == 0)
+            return null;
+        return raidableFactions.get(random.nextInt(raidableFactions.size()));
     }
 
     public boolean isFactionExists(int factionID) {

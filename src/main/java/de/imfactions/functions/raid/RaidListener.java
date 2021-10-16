@@ -64,17 +64,32 @@ public class RaidListener implements Listener {
     @EventHandler
     public void onKill(PlayerDeathEvent event) {
         Player player = event.getEntity();
+        World world = player.getWorld();
+        if (!world.getName().equalsIgnoreCase("FactionPlots_world"))
+            return;
 
-        if (isRaidingOtherFaction(player)) {
+        if (raidUtil.isRaidingOtherFaction(player)) {
             if (!factionPlotUtil.isLocationOnFactionPlot(player.getLocation()))
                 return;
             FactionPlot currentPlot = factionPlotUtil.getFactionPlot(player.getLocation());
-            player.teleport(currentPlot.getRaidSpawn());
-            player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
+            Bukkit.getScheduler().runTaskLater(imFactions, new Runnable() {
+                @Override
+                public void run() {
+                    player.teleport(currentPlot.getRaidSpawn());
+                    player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
+                }
+            }, 2);
             return;
         }
-        player.teleport(data.getWorldSpawn());
-        player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
+        FactionMember factionMember = factionMemberUtil.getFactionMember(player.getUniqueId());
+        FactionPlot factionPlot = factionPlotUtil.getFactionPlot(factionMember.getFactionID());
+        Bukkit.getScheduler().runTaskLater(imFactions, new Runnable() {
+            @Override
+            public void run() {
+                player.teleport(factionPlot.getRaidSpawn());
+                player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
+            }
+        }, 2);
     }
 
     @EventHandler
@@ -82,25 +97,36 @@ public class RaidListener implements Listener {
         Player player = event.getPlayer();
         World world = player.getWorld();
         UUID uuid = UUIDFetcher.getUUID(player);
+        Location location = event.getBlock().getLocation();
 
         if (!world.getName().equalsIgnoreCase("FactionPlots_world"))
             return;
-        if (!isRaidingOtherFaction(player))
+        if (!raidUtil.isRaidingOtherFaction(player))
             return;
 
         FactionMember factionMember = factionMemberUtil.getFactionMember(uuid);
         int raidID = raidUtil.getActiveRaidID(factionMember.getFactionID());
         Raid raid = raidUtil.getRaid(raidID);
+        FactionPlot currentPlot = factionPlotUtil.getFactionPlot(location);
         FactionPlot factionPlot = factionPlotUtil.getFactionPlot(raid.getFactionIdDefenders());
-        Location raidEdgeLeft = factionPlotUtil.getRaidEdgeLeft(factionPlot.getEdgeDownFrontLeft());
-        Location raidEdgeRight = factionPlotUtil.getRaidEdgeRight(factionPlot.getEdgeUpBackRight());
-        if (raid.getRaidState().equals(RaidState.SCOUTING)) {
+        if (currentPlot != factionPlot) {
             event.setCancelled(true);
             return;
         }
-        if (!LocationChecker.isLocationInsideCube(event.getBlock().getLocation(), raidEdgeLeft, raidEdgeRight)) {
+        Location edgeDownFrontLeft = factionPlot.getEdgeDownFrontLeft();
+        Location edgeUpBackRight = factionPlot.getEdgeUpBackRight();
+        Location raidEdgeLeft = factionPlotUtil.getRaidEdgeLeft(factionPlot.getEdgeDownFrontLeft());
+        Location raidEdgeRight = factionPlotUtil.getRaidEdgeRight(factionPlot.getEdgeUpBackRight());
+        if (!raid.getRaidState().equals(RaidState.RAIDING)) {
             event.setCancelled(true);
+            return;
         }
+        if (!LocationChecker.isLocationInsideCube(location, raidEdgeLeft, raidEdgeRight)) {
+            event.setCancelled(true);
+            return;
+        }
+        if (LocationChecker.isLocationInsideCube(location, edgeDownFrontLeft, edgeUpBackRight))
+            event.setCancelled(true);
     }
 
     @EventHandler
@@ -108,25 +134,36 @@ public class RaidListener implements Listener {
         Player player = event.getPlayer();
         World world = player.getWorld();
         UUID uuid = UUIDFetcher.getUUID(player);
+        Location location = event.getBlock().getLocation();
 
         if (!world.getName().equalsIgnoreCase("FactionPlots_world"))
             return;
-        if (!isRaidingOtherFaction(player))
+        if (!raidUtil.isRaidingOtherFaction(player))
             return;
 
         FactionMember factionMember = factionMemberUtil.getFactionMember(uuid);
         int raidID = raidUtil.getActiveRaidID(factionMember.getFactionID());
         Raid raid = raidUtil.getRaid(raidID);
+        FactionPlot currentPlot = factionPlotUtil.getFactionPlot(location);
         FactionPlot factionPlot = factionPlotUtil.getFactionPlot(raid.getFactionIdDefenders());
-        Location raidEdgeLeft = factionPlotUtil.getRaidEdgeLeft(factionPlot.getEdgeDownFrontLeft());
-        Location raidEdgeRight = factionPlotUtil.getRaidEdgeRight(factionPlot.getEdgeUpBackRight());
-        if (raid.getRaidState().equals(RaidState.SCOUTING)) {
+        if (currentPlot != factionPlot) {
             event.setCancelled(true);
             return;
         }
-        if (!LocationChecker.isLocationInsideCube(event.getBlock().getLocation(), raidEdgeLeft, raidEdgeRight)) {
+        Location edgeDownFrontLeft = factionPlot.getEdgeDownFrontLeft();
+        Location edgeUpBackRight = factionPlot.getEdgeUpBackRight();
+        Location raidEdgeLeft = factionPlotUtil.getRaidEdgeLeft(factionPlot.getEdgeDownFrontLeft());
+        Location raidEdgeRight = factionPlotUtil.getRaidEdgeRight(factionPlot.getEdgeUpBackRight());
+        if (!raid.getRaidState().equals(RaidState.RAIDING)) {
             event.setCancelled(true);
+            return;
         }
+        if (!LocationChecker.isLocationInsideCube(location, raidEdgeLeft, raidEdgeRight)) {
+            event.setCancelled(true);
+            return;
+        }
+        if (LocationChecker.isLocationInsideCube(location, edgeDownFrontLeft, edgeUpBackRight))
+            event.setCancelled(true);
     }
 
     @EventHandler
@@ -169,31 +206,5 @@ public class RaidListener implements Listener {
         }
 
         return damagedObsidian;
-    }
-
-
-    private boolean isRaidingOtherFaction(Player player) {
-        UUID uuid = UUIDFetcher.getUUID(player);
-        World world = player.getWorld();
-
-        if (!world.getName().equalsIgnoreCase("FactionPlots_world"))
-            return false;
-        if (!factionMemberUtil.isFactionMemberExists(uuid)) {
-            player.teleport(data.getWorldSpawn());
-            player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
-            return false;
-        }
-        FactionMember factionMember = factionMemberUtil.getFactionMember(uuid);
-        Faction faction = factionUtil.getFaction(factionMember.getFactionID());
-        if (!raidUtil.isFactionRaiding(faction.getId()))
-            return false;
-        if (!raidUtil.isFactionMemberJoinedRaid(factionMember))
-            return false;
-        int raidID = raidUtil.getActiveRaidID(faction.getId());
-        Raid raid = raidUtil.getRaid(raidID);
-        if (!factionPlotUtil.isLocationOnFactionPlot(player.getLocation()))
-            return false;
-        FactionPlot currentPlot = factionPlotUtil.getFactionPlot(player.getLocation());
-        return raid.getFactionIdDefenders() == currentPlot.getFactionID();
     }
 }
