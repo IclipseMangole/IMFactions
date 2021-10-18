@@ -4,11 +4,14 @@ import de.imfactions.IMFactions;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.PluginDisableEvent;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 
 public class NPCUtil implements Listener {
 
@@ -25,34 +28,31 @@ public class NPCUtil implements Listener {
         for (NPC npc : NPC.npcs) {
             npc.remove();
         }
-        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            reader.eject(onlinePlayer);
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            player.kickPlayer("Der Server restartet/reloadet");
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onJoin(PlayerJoinEvent event) {
-        reader.inject(event.getPlayer());
+        Player player = event.getPlayer();
+        reader.inject(player);
+        Scoreboard scoreboard = player.getScoreboard();
+        Team team = scoreboard.getTeam("npcHideName") == null ? scoreboard.registerNewTeam("npcHideName") : scoreboard.getTeam("npcHideName");
+        team.addEntry("Grumm");
+        team.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.NEVER);
         NPC.npcs.forEach(npc -> {
-            npc.show(event.getPlayer());
+            npc.show(player);
         });
     }
 
+
     @EventHandler
     public void onSwitch(PlayerChangedWorldEvent event) {
-        /*
         Player player = event.getPlayer();
         NPC.npcs.forEach(npc -> {
-            if (event.getPlayer().getWorld().equals(npc.getEntityPlayer().getWorld().getWorld())) {
-                System.out.println("Wird " + player.getName() + " gezeigt!");
-                npc.show(player);
-            }else if(event.getFrom().equals(npc.getEntityPlayer().getWorld().getWorld())){
-                npc.remove();
-            }
+            npc.show(player);
         });
-
-         */
-
     }
 
     @EventHandler

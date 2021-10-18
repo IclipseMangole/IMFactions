@@ -3,8 +3,8 @@ package de.imfactions.functions.npc;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.datafixers.util.Pair;
+import net.md_5.bungee.api.ChatColor;
 import net.minecraft.network.chat.ChatComponentText;
-import net.minecraft.network.chat.IChatBaseComponent;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.network.syncher.DataWatcher;
@@ -12,7 +12,6 @@ import net.minecraft.network.syncher.DataWatcherObject;
 import net.minecraft.network.syncher.DataWatcherRegistry;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.EntityPlayer;
-import net.minecraft.server.level.PlayerInteractManager;
 import net.minecraft.server.level.WorldServer;
 import net.minecraft.server.network.PlayerConnection;
 import net.minecraft.util.MathHelper;
@@ -20,64 +19,60 @@ import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EnumItemSlot;
 import net.minecraft.world.entity.animal.horse.EntityHorse;
 import net.minecraft.world.entity.decoration.EntityArmorStand;
-import net.minecraft.world.scores.Scoreboard;
-import net.minecraft.world.scores.ScoreboardTeam;
-import net.minecraft.world.scores.ScoreboardTeamBase;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_17_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.v1_17_R1.scoreboard.CraftScoreboard;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.UUID;
 import java.util.logging.Level;
 
+import static de.imfactions.util.ColorUtils.convert;
+
 public abstract class NPC {
 
     public static ArrayList<NPC> npcs = new ArrayList<>();
 
-    private Plugin plugin;
-    
+    private final Plugin plugin;
+
     private EntityPlayer entityPlayer;
-    private PlayerInteractManager playerInteractManager;
     private EntityArmorStand entityArmorStand;
     private EntityHorse sittingHorse;
     private String displayName;
-    private Property skin;
+    private String prefix;
+    private ChatColor color;
+    private final Property skin;
     private boolean upsideDown;
+    private boolean sitting;
     private boolean nameVisible;
     private BukkitTask bukkitTask;
 
-    public NPC(Plugin plugin, String displayName, Property skin, Location location, boolean nameVisible, boolean upsideDown) {
+    public NPC(Plugin plugin, String displayName, String prefix, ChatColor color, Property skin, Location location, boolean nameVisible, boolean upsideDown) {
         npcs.add(this);
         this.plugin = plugin;
         this.displayName = displayName;
+        this.prefix = prefix;
+        this.color = color;
         this.skin = skin;
         MinecraftServer server = ((CraftServer) Bukkit.getServer()).getServer();
         WorldServer world = ((CraftWorld) location.getWorld()).getHandle();
         GameProfile profile = new GameProfile(UUID.randomUUID(), upsideDown ? "Grumm" : displayName);
         profile.getProperties().get("textures").add(skin);
         entityPlayer = new EntityPlayer(server, world, profile);
-        playerInteractManager = new PlayerInteractManager(entityPlayer);
         this.upsideDown = upsideDown;
+        this.sitting = false;
         this.nameVisible = nameVisible;
-
         setProperties(location);
-
-        //Displayname
-        entityArmorStand = new EntityArmorStand(world, location.getX(), upsideDown ? (location.getY() - 2.7) : location.getY(), location.getZ());
-        entityArmorStand.setNoGravity(true);
-        entityArmorStand.setInvisible(true);
-        entityArmorStand.setCustomName(new ChatComponentText(displayName));
-        entityArmorStand.setCustomNameVisible(nameVisible);
     }
 
     private void setProperties(Location location) {
@@ -85,8 +80,8 @@ public abstract class NPC {
         entityPlayer.setPositionRotation(location.getX(), location.getY(), location.getZ(), location.getYaw() / 360 * 256, location.getPitch() / 360 * 256);
         entityPlayer.getBukkitEntity().setRemoveWhenFarAway(false);
         entityPlayer.getBukkitEntity().setCanPickupItems(false);
-        entityPlayer.getBukkitEntity().setCustomName("");
-        entityPlayer.getBukkitEntity().setCustomNameVisible(false);
+        entityPlayer.getBukkitEntity().setCustomName(displayName);
+        entityPlayer.getBukkitEntity().setCustomNameVisible(!upsideDown);
     }
 
     public void show() {
@@ -94,6 +89,7 @@ public abstract class NPC {
     }
 
     public void show(Player player) {
+        if (((CraftPlayer) player).getHandle().getWorld() != entityPlayer.getWorld()) return;
         PlayerConnection connection = ((CraftPlayer) player).getHandle().b;
 
         // Show the Second Skin Layer
@@ -105,44 +101,29 @@ public abstract class NPC {
         connection.sendPacket(new PacketPlayOutEntityHeadRotation(entityPlayer, (byte) entityPlayer.getYRot()));
         connection.sendPacket(new PacketPlayOutEntity.PacketPlayOutEntityLook(this.entityPlayer.getId(), (byte) entityPlayer.getYRot(), (byte) entityPlayer.getXRot(), true));
         connection.sendPacket(new PacketPlayOutEntityMetadata(this.entityPlayer.getId(), watcher, true));
-        hideEntityName(player);
-        connection.sendPacket(new PacketPlayOutSpawnEntityLiving(entityArmorStand));
-        connection.sendPacket(new PacketPlayOutEntityMetadata(entityArmorStand.getId(), entityArmorStand.getDataWatcher(), true));
-        Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, new Runnable() {
-            @Override
-            public void run() {
-                connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.e, entityPlayer));
-            }
-        }, 50);
-    }
-
-    public void hideEntityName(Player player) {
-        Scoreboard scoreboard = ((CraftScoreboard) Bukkit.getScoreboardManager().getMainScoreboard()).getHandle();
-        ScoreboardTeam team;
-        boolean created;
-        if (scoreboard.getTeam("packetTeam") == null) {
-            team = new ScoreboardTeam(scoreboard, "packetTeam");
-            created = true;
-        } else {
-            team = scoreboard.getTeam("packetTeam");
-            created = false;
+        if (upsideDown) {
+            enableArmorstand();
+            hideEntityName();
         }
-        if (!team.getPlayerNameSet().contains(entityPlayer.getName())) team.getPlayerNameSet().add(displayName);
-        if (!team.getPlayerNameSet().contains("Grumm")) team.getPlayerNameSet().add("Grumm");
-        team.setNameTagVisibility(ScoreboardTeamBase.EnumNameTagVisibility.b);
-        PacketPlayOutScoreboardTeam packet = PacketPlayOutScoreboardTeam.a(team, created);
-        ((CraftPlayer) player).getHandle().b.sendPacket(packet);
+        setPrefix(prefix, color);
+        Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.e, entityPlayer)), 50);
     }
 
-    public void remove(Player player){
+    public void remove(Player player) {
         ((CraftPlayer) player).getHandle().b.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.e, entityPlayer));
-        ((CraftPlayer) player).getHandle().b.sendPacket(new PacketPlayOutEntityDestroy(entityPlayer.getId(), entityArmorStand.getId()));
+        if (entityArmorStand != null) {
+            ((CraftPlayer) player).getHandle().b.sendPacket(new PacketPlayOutEntityDestroy(entityPlayer.getId(), entityArmorStand.getId()));
+            entityArmorStand = null;
+        } else {
+            ((CraftPlayer) player).getHandle().b.sendPacket(new PacketPlayOutEntityDestroy(entityPlayer.getId()));
+        }
     }
 
     public void remove() {
         sittingHorse = null;
-        broadcastPackets(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.e, entityPlayer), new PacketPlayOutEntityDestroy(entityPlayer.getId(), entityArmorStand.getId()));
+        Bukkit.getOnlinePlayers().forEach(this::remove);
     }
+
 
     public boolean isNameVisible() {
         return nameVisible;
@@ -151,8 +132,92 @@ public abstract class NPC {
     public void setNameVisible(boolean visible) {
         if (this.nameVisible != visible) {
             nameVisible = visible;
-            entityArmorStand.setCustomNameVisible(visible);
-            broadcastPackets(new PacketPlayOutEntityMetadata(entityArmorStand.getId(), entityArmorStand.getDataWatcher(), true));
+            if (visible) {
+                showName();
+            } else {
+                hideName();
+            }
+        }
+    }
+
+    private void showName() {
+        if (upsideDown) {
+            enableArmorstand();
+        } else {
+            showEntityName();
+        }
+    }
+
+    public void hideName() {
+        disableArmorstand();
+        hideEntityName();
+    }
+
+
+    private void enableArmorstand() {
+        if (entityArmorStand != null) return;
+        entityArmorStand = new EntityArmorStand(entityPlayer.getWorld(), entityPlayer.locX(), entityPlayer.locY() - 2.7, entityPlayer.locZ());
+        entityArmorStand.setNoGravity(true);
+        entityArmorStand.setInvisible(true);
+        entityArmorStand.setCustomName(new ChatComponentText(prefix + color + displayName));
+        entityArmorStand.setCustomNameVisible(nameVisible);
+
+        PacketPlayOutSpawnEntityLiving packet = new PacketPlayOutSpawnEntityLiving(entityArmorStand);
+        PacketPlayOutEntityMetadata packet1 = new PacketPlayOutEntityMetadata(entityArmorStand.getId(), entityArmorStand.getDataWatcher(), true);
+        broadcastPackets(packet, packet1);
+    }
+
+    private void disableArmorstand() {
+        if (entityArmorStand == null) return;
+        PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(entityArmorStand.getId());
+        broadcastPackets(packet);
+        entityArmorStand = null;
+    }
+
+    private void showEntityName() {
+        if (entityPlayer.getCustomNameVisible()) return;
+        entityPlayer.setCustomNameVisible(true);
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            showPrefix(player);
+            org.bukkit.scoreboard.Scoreboard scoreboard = player.getScoreboard();
+            Team team = scoreboard.getTeam("npcHideName");
+            team.removeEntry(displayName);
+            /*
+            Scoreboard scoreboard = ((CraftPlayer) player).getHandle().getScoreboard();
+            ScoreboardTeam team = scoreboard.getTeam("packetTeam");
+            if (team == null) return;
+            PacketPlayOutScoreboardTeam packet = PacketPlayOutScoreboardTeam.a(team);
+            ((CraftPlayer) player).getHandle().b.sendPacket(packet);
+             */
+        }
+    }
+
+    private void hideEntityName() {
+        if (!entityPlayer.getCustomNameVisible()) return;
+        entityPlayer.setCustomNameVisible(false);
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            hidePrefix(player);
+            org.bukkit.scoreboard.Scoreboard scoreboard = player.getScoreboard();
+            Team team = scoreboard.getTeam("npcHideName");
+            team.addEntry(displayName);
+
+
+            /*
+            Scoreboard scoreboard = ((CraftPlayer) player).getHandle().getScoreboard();
+            ScoreboardTeam team;
+            boolean created;
+            if (scoreboard.getTeam("packetTeam") == null) {
+                team = new ScoreboardTeam(scoreboard, "packetTeam");
+                created = true;
+            } else {
+                team = scoreboard.getTeam("packetTeam");
+                created = false;
+            }
+            if (!team.getPlayerNameSet().contains("Grumm")) team.getPlayerNameSet().add("Grumm");
+            team.setNameTagVisibility(ScoreboardTeamBase.EnumNameTagVisibility.b);
+            PacketPlayOutScoreboardTeam packet = PacketPlayOutScoreboardTeam.a(team, created);
+            ((CraftPlayer) player).getHandle().b.sendPacket(packet);
+             */
         }
     }
 
@@ -162,8 +227,62 @@ public abstract class NPC {
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
-        entityArmorStand.setCustomName(IChatBaseComponent.a(displayName));
-        broadcastPackets(new PacketPlayOutEntityMetadata(entityArmorStand.getId(), entityArmorStand.getDataWatcher(), true));
+        remove();
+        GameProfile profile = new GameProfile(UUID.randomUUID(), displayName);
+        profile.getProperties().get("textures").add(skin);
+        Location loc = getLocation();
+
+        entityPlayer = new EntityPlayer(entityPlayer.getMinecraftServer(), entityPlayer.getWorldServer(), profile);
+        setProperties(loc);
+        show();
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            Scoreboard scoreboard = player.getScoreboard();
+            String teamName = "NPC" + entityPlayer.getId();
+            Team team = scoreboard.getTeam(teamName);
+            team.getEntries().forEach(team::removeEntry);
+            team.addEntry(displayName);
+        });
+    }
+
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public ChatColor getColor() {
+        return color;
+    }
+
+    public void setPrefix(String prefix, ChatColor color) {
+        this.prefix = prefix;
+        this.color = color;
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            Scoreboard scoreboard = player.getScoreboard();
+            String teamName = "NPC" + entityPlayer.getId();
+            Team team = scoreboard.getTeam(teamName) == null ? scoreboard.registerNewTeam(teamName) : scoreboard.getTeam(teamName);
+            team.setPrefix(prefix);
+            team.setColor(convert(color));
+            if(!team.hasEntry(displayName)) {
+                if (isNameVisible()) showPrefix(player);
+            }
+        });
+    }
+
+    private void showPrefix(Player player) {
+        Scoreboard scoreboard = player.getScoreboard();
+        String teamName = "NPC" + entityPlayer.getId();
+        Team team = scoreboard.getTeam(teamName);
+        if (!team.hasEntry(displayName)) {
+            team.addEntry(displayName);
+        }
+    }
+
+    private void hidePrefix(Player player) {
+        Scoreboard scoreboard = player.getScoreboard();
+        String teamName = "NPC" + entityPlayer.getId();
+        Team team = scoreboard.getTeam(teamName);
+        if (team.hasEntry(displayName)) {
+            team.removeEntry(displayName);
+        }
     }
 
     public void follow(Player player) {
@@ -194,7 +313,7 @@ public abstract class NPC {
 
     public void step(double x, double y, double z, byte yaw, byte pitch) {
         entityPlayer.setLocation(entityPlayer.locX() + x, entityPlayer.locY() + y, entityPlayer.locZ() + z, yaw, pitch);
-        moveArmorstandRel(x, y, z);
+        if (upsideDown) moveArmorstandRel(x, y, z);
         PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook packet = new PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook(entityPlayer.getId(), (short) (x * 4096), (short) (y * 4096), (short) (z * 4096), yaw, pitch, false);
         PacketPlayOutEntityHeadRotation packet1 = new PacketPlayOutEntityHeadRotation(this.entityPlayer, yaw);
         broadcastPackets(packet, packet1);
@@ -203,23 +322,26 @@ public abstract class NPC {
     public void rotate(Location location) {
         Vector vector = getVector(location);
         byte yaw = getYaw(vector);
-        //byte pitch = getPitch(vector);
-        PacketPlayOutEntity.PacketPlayOutEntityLook packet = new PacketPlayOutEntity.PacketPlayOutEntityLook(entityPlayer.getId(), yaw, (byte) 0, false);
+        byte pitch = getPitch(vector);
+        entityPlayer.setYRot(yaw);
+        entityPlayer.setXRot(pitch);
+        PacketPlayOutEntity.PacketPlayOutEntityLook packet = new PacketPlayOutEntity.PacketPlayOutEntityLook(entityPlayer.getId(), yaw, pitch, true);
         PacketPlayOutEntityHeadRotation packet1 = new PacketPlayOutEntityHeadRotation(this.entityPlayer, yaw);
         broadcastPackets(packet, packet1);
     }
 
     private void moveArmorstandRel(double x, double y, double z) {
+        if (entityArmorStand == null) return;
         entityArmorStand.setLocation(entityArmorStand.locX() + x, entityArmorStand.locY() + y, entityArmorStand.locZ() + z, 0, 0);
         PacketPlayOutEntity.PacketPlayOutRelEntityMove packet = new PacketPlayOutEntity.PacketPlayOutRelEntityMove(entityArmorStand.getId(), (short) (x * 4096), (short) (y * 4096), (short) (z * 4096), true);
         broadcastPackets(packet);
     }
 
     public void setUpsideDown(boolean upsideDown) {
+        if (this.upsideDown == upsideDown) return;
         if (!isSitting()) {
             this.upsideDown = upsideDown;
             remove();
-            entityArmorStand.setLocation(entityPlayer.locX(), upsideDown ? (entityPlayer.locY() - 2.7) : entityPlayer.locY(), entityPlayer.locZ(), 0.0f, 0.0f);
             GameProfile profile = new GameProfile(UUID.randomUUID(), upsideDown ? "Grumm" : displayName);
             profile.getProperties().get("textures").add(skin);
             Location loc = getLocation();
@@ -227,12 +349,6 @@ public abstract class NPC {
             entityPlayer = new EntityPlayer(entityPlayer.getMinecraftServer(), entityPlayer.getWorldServer(), profile);
             setProperties(loc);
             show();
-            Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, new Runnable() {
-                @Override
-                public void run() {
-                    Bukkit.getOnlinePlayers().forEach(player -> hideEntityName(player));
-                }
-            }, 10);
         } else {
             Bukkit.getLogger().log(Level.WARNING, "Player is sitting!");
         }
@@ -271,9 +387,11 @@ public abstract class NPC {
         return (byte) (bukkitYaw / 360 * 265);
     }
 
-    public byte getPitch(Vector vector){
-        byte pitch = (byte) MathHelper.d((Math.toDegrees(Math.atan(vector.getY())) * 256.0F) / 360.0F);
-        return pitch;
+    public byte getPitch(Vector vector) {
+        double DistanceXZ = Math.sqrt(Math.sqrt(vector.getX()) + Math.sqrt(vector.getZ()));
+        double DistanceY = Math.sqrt(DistanceXZ * DistanceXZ + vector.getY() * vector.getY());
+        double newPitch = Math.acos(vector.getY() / DistanceY) * 180 / Math.PI - 90;
+        return (byte) newPitch;
     }
 
     public float getBukkitYaw(double x, double z) {
@@ -300,10 +418,10 @@ public abstract class NPC {
 
 
     public void enableRotation() {
-        if(bukkitTask != null && !bukkitTask.isCancelled()) bukkitTask.cancel();
+        if (bukkitTask != null && !bukkitTask.isCancelled()) bukkitTask.cancel();
         bukkitTask = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
             for (Player p : Bukkit.getOnlinePlayers()) {
-                if(p.getLocation().getWorld() != getLocation().getWorld()) continue;
+                if (p.getLocation().getWorld() != getLocation().getWorld()) continue;
                 if (getDistance(p.getLocation()) > 5) continue;
 
                 rotate(p.getLocation());
@@ -318,7 +436,11 @@ public abstract class NPC {
     }
 
     public boolean isSitting() {
-        return sittingHorse != null;
+        return sitting;
+    }
+
+    public boolean isInSitDownAnimation() {
+        return !sitting && sittingHorse != null;
     }
 
     public void sitDown() {
@@ -328,7 +450,7 @@ public abstract class NPC {
             }
             sittingHorse = new EntityHorse(EntityTypes.M, entityPlayer.getWorld());
 
-            sittingHorse.setPositionRotation(entityPlayer.locX(), entityPlayer.locY() - 1.2, entityPlayer.locZ(), entityPlayer.getYRot(), 0);
+            sittingHorse.setPositionRotation(entityPlayer.locX(), entityPlayer.locY() - 1.3, entityPlayer.locZ(), entityPlayer.getYRot(), 0);
             sittingHorse.setInvisible(true);
             entityPlayer.startRiding(sittingHorse);
 
@@ -342,9 +464,25 @@ public abstract class NPC {
                 @Override
                 public void run() {
                     broadcastPackets(packet4);
+                    sitting = true;
+                    if (upsideDown) moveArmorstandRel(0, -0.4, 0);
                 }
             }, 20);
+        } else {
+            Bukkit.getLogger().log(Level.WARNING, "Player is upside down!");
+        }
+    }
 
+    public void standUp() {
+        if (!isUpsideDown()) {
+            if (isSitting()) {
+                PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(sittingHorse.getId());
+                broadcastPackets(packet);
+                remove();
+                Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> show(), 1);
+                if (upsideDown) moveArmorstandRel(0, 0.4, 0);
+                sitting = false;
+            }
         } else {
             Bukkit.getLogger().log(Level.WARNING, "Player is upside down!");
         }
@@ -358,19 +496,6 @@ public abstract class NPC {
         broadcastPackets(packet);
     }
 
-    public void standUp() {
-        if (!isUpsideDown()) {
-            if (isSitting()) {
-                PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(sittingHorse.getId());
-                PacketPlayOutEntity.PacketPlayOutRelEntityMove packet1 = new PacketPlayOutEntity.PacketPlayOutRelEntityMove(entityPlayer.getId(), (short) 0, (short) 1, (short) 0, true);
-                broadcastPackets(packet, packet1);
-                sittingHorse = null;
-            }
-        } else {
-            Bukkit.getLogger().log(Level.WARNING, "Player is upside down!");
-        }
-    }
-
 
     public EntityPlayer getEntityPlayer() {
         return entityPlayer;
@@ -380,7 +505,7 @@ public abstract class NPC {
         this.entityPlayer = entityPlayer;
     }
 
-    public abstract void onInteract(Player player);
+    public abstract void onInteract(Player player, boolean sneaking);
 
     private void broadcastPackets(Packet... packets) {
         Bukkit.getOnlinePlayers().forEach(player -> {

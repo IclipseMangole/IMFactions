@@ -48,7 +48,7 @@ public class PacketReader {
 
                 for (NPC npc : NPC.npcs) {
                     if (npc.getEntityPlayer().getId() == id) {
-                        npc.onInteract(player);
+                        npc.onInteract(player, packet.b());
                     }
                 }
             }
