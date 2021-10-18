@@ -17,6 +17,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
 import org.bukkit.GameRule;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class IMFactions extends JavaPlugin {
@@ -49,9 +50,6 @@ public class IMFactions extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            player.kickPlayer("Der Server restartet/reloadet");
-        }
         data.getUserUtil().saveUsers();
         data.getMySQL().close();
         data.getScheduler().stopSchedulers();

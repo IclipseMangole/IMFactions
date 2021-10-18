@@ -14,7 +14,7 @@ import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.scheduler.BukkitTask;
 
-import static de.imfactions.util.RainbowColor.rainbowColor;
+import static de.imfactions.util.ColorUtils.rainbowColor;
 
 public class LotteryCube implements Listener {
     private IMFactions factions;
