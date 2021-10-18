@@ -45,15 +45,17 @@ public class RaidScheduler implements Listener {
     }
 
     public void startPreparingRaid(int raidID, int seconds){
-        if(preparingRaids.containsKey(raidID))
+        if (preparingRaids.containsKey(raidID))
             return;
+
+        Raid raid = raidUtil.getRaid(raidID);
+        raid.setRaidState(RaidState.PREPARING);
 
         preparingRaids.put(raidID, Bukkit.getScheduler().runTaskTimer(imFactions, new Runnable() {
 
             int timer = seconds;
             final int ID = raidID;
             final Raid raid = raidUtil.getRaid(ID);
-            final Faction attackers = factionUtil.getFaction(raid.getFactionIdAttackers());
 
             @Override
             public void run() {
@@ -62,16 +64,13 @@ public class RaidScheduler implements Listener {
                     raidTeam.add(factionMemberUtil.getPlayer(factionMember.getUuid()));
                 }
                 if (timer <= 0) {
-                    if (factionUtil.getRaidableFactions(attackers.getId()).size() == 0) {
+                    if (raidUtil.getScoutableFactions(raid).size() == 0) {
                         for (Player player : raidTeam)
                             player.sendMessage(ChatColor.RED + "Error. Found no Faction to raid");
                         cancelPreparingRaid(ID);
                         return;
                     }
-                    raidUtil.updateRaidToScouting(ID);
-                    Faction defenders = factionUtil.getRandomFactionForRaid(attackers.getId());
-                    startScoutingRaid(ID, defenders.getId(), 300);
-                    cancelPreparingRaid(ID);
+                    raidUtil.scoutNextFaction(raid);
                     return;
                 }
                 if (timer == 10) {
@@ -98,6 +97,7 @@ public class RaidScheduler implements Listener {
             return;
 
         Raid raid = raidUtil.getRaid(raidID);
+        raid.setRaidState(RaidState.SCOUTING);
         Faction defenders = factionUtil.getFaction(defendersID);
         FactionPlot defendersPlot = factionPlotUtil.getFactionPlot(defendersID);
         raid.setFactionIdDefenders(defenders.getId());
@@ -115,16 +115,12 @@ public class RaidScheduler implements Listener {
         scoutingRaids.put(raidID, Bukkit.getScheduler().runTaskTimer(imFactions, new Runnable() {
 
             int timer = seconds;
-            final int ID = raidID;
-            final Faction defenders = factionUtil.getFaction(defendersID);
             final ArrayList<Player> members = raidTeam;
 
             @Override
             public void run() {
                 if (timer <= 0) {
-                    raidUtil.updateRaidToRaiding(ID, defenders.getId());
-                    startRaidingRaid(ID, 60 * 30);
-                    cancelScoutingRaid(ID);
+                    raidUtil.raidFaction(raidUtil.getRaid(raidID));
                     return;
                 }
                 if (timer == 10) {
@@ -172,10 +168,7 @@ public class RaidScheduler implements Listener {
             public void run() {
                 if (timer <= 0) {
                     Raid raid = raidUtil.getRaid(ID);
-                    factionUtil.getFaction(raid.getFactionIdDefenders()).setRaidProtection(System.currentTimeMillis() + 1000 * 60);
-                    raidUtil.teleportRaidTeamHome(ID);
-                    raidUtil.updateRaidToDone(ID);
-                    cancelRaidingRaid(ID);
+                    raidUtil.endRaid(raid);
                     return;
                 }
                 for (FactionMember factionMember : raidUtil.getRaidTeam(ID)) {

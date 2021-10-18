@@ -7,7 +7,6 @@ import de.imfactions.functions.faction.Faction;
 import de.imfactions.functions.faction.FactionUtil;
 import de.imfactions.functions.factionMember.FactionMember;
 import de.imfactions.functions.factionMember.FactionMemberUtil;
-import de.imfactions.functions.factionPlot.FactionPlot;
 import de.imfactions.functions.factionPlot.FactionPlotUtil;
 import de.imfactions.util.Command.IMCommand;
 import de.imfactions.util.UUIDFetcher;
@@ -113,11 +112,7 @@ public class RaidCommand {
             return;
         }
 
-        int raidID = raidUtil.getHighestRaidID() + 1;
-        raidUtil.createPreparingRaid(raidID, faction.getId());
-        Raid raid = raidUtil.getRaid(raidID);
-        raidUtil.getRaidTeams().put(factionMember, raid);
-        raidScheduler.startPreparingRaid(raidID, 60);
+        raidUtil.createPreparingRaid(factionMember);
 
         for (Player member : factionMemberUtil.getOnlineMembers(faction.getId())) {
             if (member != player) {
@@ -128,7 +123,6 @@ public class RaidCommand {
                 member.spigot().sendMessage(new ComponentBuilder(message).append(join).create());
             }
         }
-        scoreboard.setRaidScoreboard(player, raid);
     }
 
     @IMCommand(
@@ -174,9 +168,12 @@ public class RaidCommand {
             Player raidPlayer = Bukkit.getPlayer(raidMember.getUuid());
             raidPlayer.sendMessage(ChatColor.YELLOW + player.getName() + ChatColor.GREEN + " joined the Raid");
         }
-        raidUtil.getRaidTeams().put(factionMember, raid);
+
+        raidUtil.memberJoinRaid(factionMember, raid);
         player.sendMessage(ChatColor.GREEN + "You joined the Raid");
-        scoreboard.setRaidScoreboard(player, raid);
+        for (FactionMember member : raidUtil.getRaidTeam(raidID)) {
+            scoreboard.setRaidScoreboard(Bukkit.getPlayer(member.getUuid()), raid);
+        }
     }
 
     @IMCommand(
@@ -217,15 +214,12 @@ public class RaidCommand {
             player.sendMessage(ChatColor.RED + "Something went wrong");
             return;
         }
-        FactionPlot scouted = factionPlotUtil.getFactionPlot(player.getLocation());
-        int currentlyScouted = scouted.getFactionID();
-        if (raidUtil.getScoutableFactions(raidID, currentlyScouted).size() == 0) {
+        if (raidUtil.getScoutableFactions(raid).size() == 0) {
             player.sendMessage(ChatColor.RED + "There is no other Faction to scout");
             return;
         }
 
-        Faction newDefenders = raidUtil.getFactionForScout(raidID, scouted.getFactionID());
-        raidScheduler.startScoutingRaid(raidID, newDefenders.getId(), 300);
+        raidUtil.scoutNextFaction(raid);
     }
 
     @IMCommand(
@@ -267,11 +261,7 @@ public class RaidCommand {
             return;
         }
 
-        FactionPlot factionPlot = factionPlotUtil.getFactionPlot(player.getLocation());
-        Faction defenders = factionUtil.getFaction(factionPlot.getFactionID());
-        raidUtil.updateRaidToRaiding(raidID, defenders.getId());
-        raidUtil.getRaidScheduler().cancelScoutingRaid(raidID);
-        raidUtil.getRaidScheduler().startRaidingRaid(raidID, 30 * 60);
+        raidUtil.raidFaction(raid);
     }
 
     @IMCommand(
@@ -306,42 +296,26 @@ public class RaidCommand {
         int raidID = raidUtil.getActiveRaidID(faction.getId());
         Raid raid = raidUtil.getRaid(raidID);
         ArrayList<FactionMember> team = raidUtil.getRaidTeam(raidID);
-        raidUtil.getRaidTeams().remove(raid, factionMember);
+        raidUtil.memberLeaveRaid(factionMember, raid);
 
+        if (!raid.getRaidState().equals(RaidState.PREPARING)) {
+            player.teleport(factionPlotUtil.getFactionPlot(faction.getId()).getHome());
+            player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
+        }
         if (team.size() == 1) {
             player.sendMessage(ChatColor.GREEN + "You left the Raid. It isn't active anymore");
-            player.teleport(factionPlotUtil.getFactionPlot(faction.getId()).getHome());
-            scoreboard.setScoreboard(player);
-            if (raid.getRaidState().equals(RaidState.PREPARING)) {
-                for (Player member : factionMemberUtil.getOnlineMembers(faction.getId())) {
-                    member.sendMessage(ChatColor.RED + "The Raid got canceled");
-                }
-                raidUtil.getRaidScheduler().cancelPreparingRaid(raidID);
-                raidUtil.deleteRaid(raid);
-                return;
-            }
-            Faction raided = factionUtil.getFaction(raid.getFactionIdDefenders());
-            raided.setGettingRaided(false);
-            if (raid.getRaidState().equals(RaidState.SCOUTING)) {
-                raidUtil.getRaidScheduler().cancelScoutingRaid(raidID);
-                raid.setRaidState(RaidState.DONE);
-                return;
-            }
-            if (raid.getRaidState().equals(RaidState.RAIDING)) {
-                raidUtil.getRaidScheduler().cancelRaidingRaid(raidID);
-                raid.setRaidState(RaidState.DONE);
-                raided.setRaidProtection(System.currentTimeMillis() + 1000 * 60);
-                return;
-            }
+            raidUtil.endRaid(raid);
+            return;
         }
         player.sendMessage(ChatColor.GREEN + "You left the Raid");
-        player.teleport(factionPlotUtil.getFactionPlot(faction.getId()).getHome());
-        player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
         for (Player member : factionMemberUtil.getOnlineMembers(faction.getId())) {
-            if (member != factionMember)
+            if (member != Bukkit.getPlayer(factionMember.getUuid()))
                 member.sendMessage(ChatColor.YELLOW + player.getName() + ChatColor.RED + " left the Raid");
         }
         scoreboard.setScoreboard(player);
+        for (FactionMember member : raidUtil.getRaidTeam(raidID)) {
+            scoreboard.setRaidScoreboard(Bukkit.getPlayer(member.getUuid()), raid);
+        }
     }
 
     @IMCommand(

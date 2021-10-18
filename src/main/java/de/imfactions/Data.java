@@ -1,7 +1,6 @@
 package de.imfactions;
 
 import de.imfactions.commands.spawn.SpawnScheduler;
-import de.imfactions.functions.Scheduler;
 import de.imfactions.functions.Scoreboard;
 import de.imfactions.functions.Tablist;
 import de.imfactions.functions.faction.FactionHomeScheduler;
@@ -42,7 +41,6 @@ public class Data {
     private Location FactionPlots_worldSpawn;
 
     //Scheduler
-    private Scheduler scheduler;
     private SpawnScheduler spawnScheduler;
     private FactionHomeScheduler factionHomeScheduler;
     private RaidScheduler raidScheduler;
@@ -114,7 +112,6 @@ public class Data {
     }
 
     public void loadScheduler() {
-        scheduler = new Scheduler(imFactions);
         spawnScheduler = new SpawnScheduler(imFactions);
         factionHomeScheduler = new FactionHomeScheduler(this);
         raidScheduler = new RaidScheduler(this);
@@ -194,10 +191,6 @@ public class Data {
 
     public MySQL getMySQL() {
         return mysql;
-    }
-
-    public Scheduler getScheduler() {
-        return scheduler;
     }
 
     public SpawnScheduler getSpawnScheduler(){

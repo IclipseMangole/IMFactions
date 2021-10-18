@@ -63,10 +63,6 @@ public class Scoreboard {
                 return;
             }
             FactionMember factionMember = factionMemberUtil.getFactionMember(uuid);
-            if (!raidUtil.isFactionRaiding(factionMember.getFactionID())) {
-                updateNormalScoreboard(onlinePlayer);
-                return;
-            }
             int raidID = raidUtil.getActiveRaidID(factionMember.getFactionID());
             Raid raid = raidUtil.getRaid(raidID);
             if (!raidUtil.isFactionMemberJoinedRaid(factionMember)) {

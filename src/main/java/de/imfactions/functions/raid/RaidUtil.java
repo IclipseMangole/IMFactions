@@ -2,7 +2,7 @@ package de.imfactions.functions.raid;
 
 import de.imfactions.Data;
 import de.imfactions.IMFactions;
-import de.imfactions.functions.Scheduler;
+import de.imfactions.functions.Scoreboard;
 import de.imfactions.functions.faction.Faction;
 import de.imfactions.functions.faction.FactionUtil;
 import de.imfactions.functions.factionMember.FactionMember;
@@ -11,7 +11,7 @@ import de.imfactions.functions.factionPlot.FactionPlot;
 import de.imfactions.functions.factionPlot.FactionPlotUtil;
 import de.imfactions.util.UUIDFetcher;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
+import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -25,19 +25,21 @@ public class RaidUtil {
 
     private final IMFactions imFactions;
     private ArrayList<Raid> raids;
-    private HashMap<FactionMember, Raid> raidTeams;
-    private Scheduler scheduler;
+    private final HashMap<FactionMember, Raid> raidTeams;
+    private final HashMap<Faction, Raid> scoutedFactions;
     private FactionMemberUtil factionMemberUtil;
     private FactionUtil factionUtil;
     private RaidTable raidTable;
     private FactionPlotUtil factionPlotUtil;
-    private Data data;
+    private final Data data;
     private RaidScheduler raidScheduler;
+    private Scoreboard scoreboard;
 
     public RaidUtil(Data data) {
         this.data = data;
         imFactions = data.getImFactions();
         raidTeams = new HashMap<>();
+        scoutedFactions = new HashMap<>();
         Bukkit.getScheduler().runTaskTimerAsynchronously(imFactions, new Runnable() {
             @Override
             public void run() {
@@ -47,12 +49,12 @@ public class RaidUtil {
     }
 
     public void loadUtils() {
-        scheduler = data.getScheduler();
         factionMemberUtil = data.getFactionMemberUtil();
         factionUtil = data.getFactionUtil();
         raidTable = new RaidTable(this, data);
         factionPlotUtil = data.getFactionPlotUtil();
         raids = raidTable.getRaids();
+        scoreboard = data.getScoreboard();
     }
 
     public void loadSchedulers() {
@@ -74,45 +76,57 @@ public class RaidUtil {
         return false;
     }
 
-    public ArrayList<Faction> getScoutableFactions(int raidID, int currentlyScouted) {
+    public ArrayList<Faction> getScoutableFactions(Raid raid) {
         ArrayList<Faction> factions = new ArrayList<>();
-        Raid raid = getRaid(raidID);
         for (Faction faction : factionUtil.getRaidableFactions(raid.getFactionIdAttackers())) {
-            if (faction.getId() != currentlyScouted) {
+            if (scoutedFactions.get(faction) == null) {
                 factions.add(faction);
             }
         }
         return factions;
     }
 
-    public Faction getFactionForScout(int raidID, int currentlyScouted) {
+    public Faction getFactionForScout(int raidID) {
         Random random = new Random();
-        if (getScoutableFactions(raidID, currentlyScouted).size() == 0)
+        Raid raid = getRaid(raidID);
+        if (getScoutableFactions(raid).size() == 0)
             return null;
-        ArrayList<Faction> factions = getScoutableFactions(raidID, currentlyScouted);
+        ArrayList<Faction> factions = getScoutableFactions(raid);
         return factions.get(random.nextInt(factions.size()));
     }
 
-    public void createPreparingRaid(int raidID, int factionIDAttackers) {
-        Raid raid = new Raid(raidID, RaidState.PREPARING, factionIDAttackers, -1, Date.from(Instant.now()), 0);
+    public void createPreparingRaid(FactionMember factionMember) {
+        int raidID = getHighestRaidID() + 1;
+        Raid raid = new Raid(raidID, RaidState.PREPARING, factionMember.getFactionID(), -1, Date.from(Instant.now()), 0);
         raids.add(raid);
-        raidTable.createRaid(raidID, raid.getRaidState(), factionIDAttackers, raid.getFactionIdDefenders(), raid.getStart(), raid.getTime());
+        raidTeams.put(factionMember, raid);
+        raidTable.createRaid(raidID, raid.getRaidState(), factionMember.getFactionID(), raid.getFactionIdDefenders(), raid.getStart(), raid.getTime());
+        raidScheduler.startPreparingRaid(raidID, 60);
+        Player player = Bukkit.getPlayer(factionMember.getUuid());
+        scoreboard.setRaidScoreboard(player, raid);
     }
 
-    public void updateRaidToScouting(int raidID) {
+    public void updateRaidToScouting(int raidID, int factionIDDefenders) {
         Raid raid = getRaid(raidID);
         Faction faction = factionUtil.getFaction(raid.getFactionIdAttackers());
         faction.raid();
         raid.setRaidState(RaidState.SCOUTING);
+        raid.setFactionIdDefenders(factionIDDefenders);
+        for (FactionMember member : getRaidTeam(raidID)) {
+            scoreboard.setRaidScoreboard(Bukkit.getPlayer(member.getUuid()), raid);
+        }
     }
 
-    public void updateRaidToRaiding(int raidID, int factionIDDefenders){
+    public void updateRaidToRaiding(int raidID, int factionIDDefenders) {
         Raid raid = getRaid(raidID);
 
         raid.setRaidState(RaidState.RAIDING);
         raid.setTime(0);
         raid.setStart(Date.from(Instant.now()));
         raid.setFactionIdDefenders(factionIDDefenders);
+        for (FactionMember member : getRaidTeam(raidID)) {
+            scoreboard.setRaidScoreboard(Bukkit.getPlayer(member.getUuid()), raid);
+        }
     }
 
     public void updateRaidToDone(int raidID){
@@ -155,40 +169,8 @@ public class RaidUtil {
         return null;
     }
 
-    public int getStartingSecondsLeft(int raidID) {
-        Raid raid = getRaid(raidID);
-
-        for (Map.Entry<FactionMember, Raid> entry : raidTeams.entrySet()) {
-            FactionMember FactionMember = entry.getKey();
-            if (entry.getValue().equals(raid)) {
-                Player player = factionMemberUtil.getPlayer(FactionMember.getUuid());
-                if (scheduler.getCountdowns().containsKey(player)) {
-                    return scheduler.getCountdowns().get(player);
-                }
-            }
-        }
-        return -1;
-    }
-
-
-    public Location getRaidSpawn(int raidID) {
-        Raid raid = getRaid(raidID);
-
-        for (Map.Entry<FactionMember, Raid> entry : raidTeams.entrySet()) {
-            FactionMember FactionMember = entry.getKey();
-            if (entry.getValue().equals(raid)) {
-                Player player = factionMemberUtil.getPlayer(FactionMember.getUuid());
-                return scheduler.getRaids().get(player);
-            }
-        }
-        return null;
-    }
-
     public boolean isFactionMemberJoinedRaid(FactionMember FactionMember){
-        if (raidTeams.containsKey(FactionMember)) {
-            return true;
-        }
-        return false;
+        return raidTeams.containsKey(FactionMember);
     }
 
     public int getActiveRaidID(int factionID){
@@ -220,6 +202,60 @@ public class RaidUtil {
         return false;
     }
 
+    public void memberJoinRaid(FactionMember factionMember, Raid raid) {
+        Player player = Bukkit.getPlayer(factionMember.getUuid());
+        raidTeams.put(factionMember, raid);
+        scoreboard.setRaidScoreboard(player, raid);
+    }
+
+    public void memberLeaveRaid(FactionMember factionMember, Raid raid) {
+        Player player = Bukkit.getPlayer(factionMember.getUuid());
+        raidTeams.remove(factionMember);
+        scoreboard.setScoreboard(player);
+    }
+
+    public void scoutNextFaction(Raid raid) {
+        Faction defenders = getFactionForScout(raid.getRaidID());
+        updateRaidToScouting(raid.getRaidID(), defenders.getId());
+        raidScheduler.cancelPreparingRaid(raid.getRaidID());
+        raidScheduler.startScoutingRaid(raid.getRaidID(), defenders.getId(), 300);
+        scoutedFactions.put(defenders, raid);
+    }
+
+    public void raidFaction(Raid raid) {
+        updateRaidToRaiding(raid.getRaidID(), raid.getFactionIdDefenders());
+        raidScheduler.cancelScoutingRaid(raid.getRaidID());
+        raidScheduler.startRaidingRaid(raid.getRaidID(), 60 * 30);
+        clearScoutedFactions(raid);
+    }
+
+    public void endRaid(Raid raid) {
+        int raidID = raid.getRaidID();
+        if (raid.getRaidState().equals(RaidState.PREPARING)) {
+            for (Player member : factionMemberUtil.getOnlineMembers(raid.getFactionIdAttackers())) {
+                member.sendMessage(ChatColor.RED + "The Raid got canceled");
+            }
+            raidScheduler.cancelPreparingRaid(raidID);
+            deleteRaid(raid);
+        }
+        Faction raided = factionUtil.getFaction(raid.getFactionIdDefenders());
+        raided.setGettingRaided(false);
+        if (raid.getRaidState().equals(RaidState.SCOUTING)) {
+            raidScheduler.cancelScoutingRaid(raidID);
+            updateRaidToDone(raidID);
+            teleportRaidTeamHome(raidID);
+        }
+        if (raid.getRaidState().equals(RaidState.RAIDING)) {
+            raidScheduler.cancelRaidingRaid(raidID);
+            updateRaidToDone(raidID);
+            raided.setRaidProtection(System.currentTimeMillis() + 1000 * 60);
+            teleportRaidTeamHome(raidID);
+        }
+        for (Player member : factionMemberUtil.getOnlineMembers(raid.getFactionIdAttackers())) {
+            scoreboard.setScoreboard(member);
+        }
+    }
+
     public boolean isRaidingOtherFaction(Player player) {
         UUID uuid = UUIDFetcher.getUUID(player);
         World world = player.getWorld();
@@ -243,18 +279,6 @@ public class RaidUtil {
             return false;
         FactionPlot currentPlot = factionPlotUtil.getFactionPlot(player.getLocation());
         return raid.getFactionIdDefenders() == currentPlot.getFactionID();
-    }
-
-    /**
-     * RaidStates:
-     * preparing,
-     * scouting,
-     * raiding,
-     * done
-     */
-    public RaidState getRaidState(int raidID) {
-        Raid raid = getRaid(raidID);
-        return raid.getRaidState();
     }
 
     public void saveRaids() {
@@ -287,11 +311,19 @@ public class RaidUtil {
     }
 
     public HashMap<FactionMember, Raid> getRaidTeams() {
-        return raidTeams;
+        return this.raidTeams;
     }
 
     public RaidScheduler getRaidScheduler() {
         return raidScheduler;
+    }
+
+    public void clearScoutedFactions(Raid raid) {
+        for (Map.Entry<Faction, Raid> entry : scoutedFactions.entrySet()) {
+            if (entry.getValue() == raid) {
+                scoutedFactions.remove(entry.getKey());
+            }
+        }
     }
 
     public ArrayList<Raid> getRaidsFromFaction(int factionID) {

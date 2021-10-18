@@ -179,6 +179,7 @@ public class PVPListener implements Listener {
         Player player = event.getPlayer();
         player.teleport(data.getWorldSpawn());
         player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
+        player.sendTitle(ChatColor.of("#5813BF") + "Lobby", "", 5, 20, 5);
     }
 
     @EventHandler
