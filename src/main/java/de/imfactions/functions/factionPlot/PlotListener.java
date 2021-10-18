@@ -8,6 +8,7 @@ import de.imfactions.functions.factionMember.FactionMemberUtil;
 import de.imfactions.functions.raid.RaidUtil;
 import de.imfactions.util.LocationChecker;
 import de.imfactions.util.UUIDFetcher;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
@@ -121,6 +122,7 @@ public class PlotListener implements Listener {
         for (Block block : event.blockList()) {
             Location blockLocation = block.getLocation();
             if (factionPlotUtil.getFactionPlot(blockLocation) == null) {
+                event.setCancelled(true);
                 return;
             }
             FactionPlot factionPlot = factionPlotUtil.getFactionPlot(blockLocation);
@@ -130,6 +132,7 @@ public class PlotListener implements Listener {
             if (LocationChecker.isLocationInsideCube(blockLocation, raidEdgeLeft, raidEdgeRight))
                 return;
             event.blockList().remove(block);
+            event.setCancelled(true);
         }
     }
 
@@ -168,21 +171,23 @@ public class PlotListener implements Listener {
         Player player = event.getEntity();
         UUID uuid = UUIDFetcher.getUUID(player);
 
-        if (!factionMemberUtil.isFactionMemberExists(uuid)) {
-            player.teleport(data.getWorldSpawn());
-            player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
+        if (!factionMemberUtil.isFactionMemberExists(uuid))
             return;
-        }
         if (!factionPlotUtil.isLocationOnFactionPlot(location))
             return;
 
         FactionMember factionMember = factionMemberUtil.getFactionMember(uuid);
         FactionPlot currentPlot = factionPlotUtil.getFactionPlot(player.getLocation());
         FactionPlot factionPlot = factionPlotUtil.getFactionPlot(factionMember.getFactionID());
-        if (currentPlot == factionPlot) {
-            player.teleport(factionPlot.getHome());
-            player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
-        }
+        if (currentPlot != factionPlot)
+            return;
+        Bukkit.getScheduler().runTaskLater(imFactions, new Runnable() {
+            @Override
+            public void run() {
+                player.teleport(factionPlot.getHome());
+                player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
+            }
+        }, 2);
     }
 
     @EventHandler

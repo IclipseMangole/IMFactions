@@ -116,7 +116,7 @@ public class RaidCommand {
         int raidID = raidUtil.getHighestRaidID() + 1;
         raidUtil.createPreparingRaid(raidID, faction.getId());
         Raid raid = raidUtil.getRaid(raidID);
-        raidUtil.getRaidTeams().put(raid, factionMember);
+        raidUtil.getRaidTeams().put(factionMember, raid);
         raidScheduler.startPreparingRaid(raidID, 60);
 
         for (Player member : factionMemberUtil.getOnlineMembers(faction.getId())) {
@@ -174,7 +174,7 @@ public class RaidCommand {
             Player raidPlayer = Bukkit.getPlayer(raidMember.getUuid());
             raidPlayer.sendMessage(ChatColor.YELLOW + player.getName() + ChatColor.GREEN + " joined the Raid");
         }
-        raidUtil.getRaidTeams().put(raid, factionMember);
+        raidUtil.getRaidTeams().put(factionMember, raid);
         player.sendMessage(ChatColor.GREEN + "You joined the Raid");
         scoreboard.setRaidScoreboard(player, raid);
     }

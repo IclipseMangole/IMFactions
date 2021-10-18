@@ -25,7 +25,7 @@ public class RaidUtil {
 
     private final IMFactions imFactions;
     private ArrayList<Raid> raids;
-    private HashMap<Raid, FactionMember> raidTeams;
+    private HashMap<FactionMember, Raid> raidTeams;
     private Scheduler scheduler;
     private FactionMemberUtil factionMemberUtil;
     private FactionUtil factionUtil;
@@ -122,13 +122,13 @@ public class RaidUtil {
         raid.setTime(System.currentTimeMillis() - raid.getStart().getTime());
     }
 
-    public ArrayList<FactionMember> getRaidTeam(int raidID){
+    public ArrayList<FactionMember> getRaidTeam(int raidID) {
         ArrayList<FactionMember> team = new ArrayList<>();
         Raid raid = getRaid(raidID);
 
-        for(Map.Entry<Raid, FactionMember> entry : raidTeams.entrySet()){
-            if(entry.getKey().equals(raid)){
-                team.add(entry.getValue());
+        for (Map.Entry<FactionMember, Raid> entry : raidTeams.entrySet()) {
+            if (entry.getValue().equals(raid)) {
+                team.add(entry.getKey());
             }
         }
         return team;
@@ -155,14 +155,14 @@ public class RaidUtil {
         return null;
     }
 
-    public int getStartingSecondsLeft(int raidID){
+    public int getStartingSecondsLeft(int raidID) {
         Raid raid = getRaid(raidID);
 
-        for (Map.Entry<Raid, FactionMember> entry : raidTeams.entrySet()) {
-            FactionMember FactionMember = entry.getValue();
-            if (entry.getKey().equals(raid)) {
+        for (Map.Entry<FactionMember, Raid> entry : raidTeams.entrySet()) {
+            FactionMember FactionMember = entry.getKey();
+            if (entry.getValue().equals(raid)) {
                 Player player = factionMemberUtil.getPlayer(FactionMember.getUuid());
-                if(scheduler.getCountdowns().containsKey(player)) {
+                if (scheduler.getCountdowns().containsKey(player)) {
                     return scheduler.getCountdowns().get(player);
                 }
             }
@@ -171,12 +171,12 @@ public class RaidUtil {
     }
 
 
-    public Location getRaidSpawn(int raidID){
-        Raid raid= getRaid(raidID);
+    public Location getRaidSpawn(int raidID) {
+        Raid raid = getRaid(raidID);
 
-        for (Map.Entry<Raid, FactionMember> entry : raidTeams.entrySet()) {
-            FactionMember FactionMember = entry.getValue();
-            if(entry.getKey().equals(raid)){
+        for (Map.Entry<FactionMember, Raid> entry : raidTeams.entrySet()) {
+            FactionMember FactionMember = entry.getKey();
+            if (entry.getValue().equals(raid)) {
                 Player player = factionMemberUtil.getPlayer(FactionMember.getUuid());
                 return scheduler.getRaids().get(player);
             }
@@ -185,7 +185,7 @@ public class RaidUtil {
     }
 
     public boolean isFactionMemberJoinedRaid(FactionMember FactionMember){
-        if(raidTeams.containsValue(FactionMember)){
+        if (raidTeams.containsKey(FactionMember)) {
             return true;
         }
         return false;
@@ -286,7 +286,7 @@ public class RaidUtil {
         }
     }
 
-    public HashMap<Raid, FactionMember> getRaidTeams() {
+    public HashMap<FactionMember, Raid> getRaidTeams() {
         return raidTeams;
     }
 

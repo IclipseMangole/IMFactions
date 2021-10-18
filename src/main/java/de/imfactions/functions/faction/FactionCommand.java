@@ -166,10 +166,6 @@ public class FactionCommand {
             factionUtil.deleteFaction(faction);
             raidUtil.deleteRaidsFromFaction(factionID);
             player.sendMessage(ChatColor.GREEN + "You left the Faction. " + ChatColor.YELLOW + faction.getName() + ChatColor.GREEN + " isn't existing anymore");
-            if (player.getWorld().getName().equalsIgnoreCase("FactionPlots_world")) {
-                player.teleport(data.getWorldSpawn());
-                player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
-            }
             return;
         }
         int rank = factionMember.getRank();
@@ -185,6 +181,10 @@ public class FactionCommand {
             newKing.setRank(3);
             for (FactionMember teamMember : factionMemberUtil.getFactionMembers(factionID))
                 Bukkit.getPlayer(teamMember.getUuid()).sendMessage(ChatColor.YELLOW + Bukkit.getPlayer(newKing.getUuid()).getName() + ChatColor.GREEN + " is the new King of the Faction");
+        }
+        if (player.getWorld().getName().equalsIgnoreCase("FactionPlots_world")) {
+            player.teleport(data.getWorldSpawn());
+            player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
         }
     }
 
@@ -240,11 +240,10 @@ public class FactionCommand {
         Faction faction = factionUtil.getFaction(factionID);
 
         TextComponent message = new TextComponent(ChatColor.GREEN + "You got invited by the Faction " + ChatColor.YELLOW + faction.getName());
-        TextComponent accept = new TextComponent(ChatColor.DARK_GREEN + "[Accept]");
+        TextComponent accept = new TextComponent(ChatColor.DARK_GREEN + " [Accept]");
         accept.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/faction accept3454rv23f6 " + faction.getName()));
         accept.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.YELLOW + "Click to join").create()));
         invited.spigot().sendMessage(new ComponentBuilder().append(message).append(accept).create());
-        invited.spigot().sendMessage(accept);
     }
 
     @IMCommand(
@@ -475,6 +474,8 @@ public class FactionCommand {
         int seconds = totalSecs % 60;
         String timeString = String.format("%02d:%02d:%02d", hours, minutes, seconds);
         message.append(ChatColor.GRAY + "RaidProtection: " + ChatColor.YELLOW + timeString + "\n");
+        //raidEnergy
+        message.append(ChatColor.GRAY + "RaidEnergy: " + ChatColor.YELLOW + faction.getRaidEnergy() + "\n");
         //member amount
         message.append(ChatColor.GRAY + "Members: " + ChatColor.YELLOW + faction.getMemberAmount() + "\n");
         //members

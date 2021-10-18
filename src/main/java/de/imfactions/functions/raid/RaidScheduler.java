@@ -238,7 +238,7 @@ public class RaidScheduler implements Listener {
         int minutes = timer / 60;
         int seconds = timer % 60;
         String time = ChatColor.GRAY + prefix + ChatColor.GOLD + ChatColor.BOLD + String.format("%02d", minutes) + ":" +
-                String.format("%02d", seconds) + ".";
+                String.format("%02d", seconds);
         sendActionBar(player, new StringBuilder(time));
     }
 

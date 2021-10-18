@@ -1,5 +1,6 @@
 package de.imfactions.functions.faction;
 
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Date;
 
@@ -14,6 +15,7 @@ public class Faction {
     private boolean gettingRaided;
     // maxmimale Energie: 10; RaidKosten: 5; +1 Energie pro 2 Stunden
     private int raidEnergy;
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public Faction(int factionID, String name, String shortcut, int memberAmount, Date foundingDate, long raidProtection, int raidEnergy, boolean gettingRaided) {
         this.factionID = factionID;

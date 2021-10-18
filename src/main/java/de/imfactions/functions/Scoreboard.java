@@ -140,13 +140,15 @@ public class Scoreboard {
         for (int rank = 3; rank >= 0; rank--) {
             ArrayList<FactionMember> raidTeam = factionUtil.getMembersWithRank(faction.getId(), rank);
             for (int i = raidTeam.size(); i > 0; i--) {
-                Team raidTeamScore = scoreboard.registerNewTeam("raidTeamScore" + score);
                 FactionMember member = raidTeam.get(i - 1);
-                String memberName = UUIDFetcher.getName(member.getUuid());
-                raidTeamScore.addEntry(ChatColor.AQUA + "" + ChatColor.DARK_AQUA);
-                raidTeamScore.setPrefix(member.getRankColor() + memberName);
-                objective.getScore(ChatColor.AQUA + "" + ChatColor.DARK_AQUA).setScore(score);
-                score--;
+                if (raidUtil.isFactionMemberJoinedRaid(member)) {
+                    String memberName = UUIDFetcher.getName(member.getUuid());
+                    Team raidTeamScore = scoreboard.registerNewTeam(memberName);
+                    raidTeamScore.addEntry(memberName);
+                    raidTeamScore.setPrefix(member.getRankColor() + "");
+                    objective.getScore(memberName).setScore(score);
+                    score--;
+                }
             }
         }
 
@@ -175,14 +177,14 @@ public class Scoreboard {
         scoreboard.getTeam("attackerScore").setPrefix(attackers);
         scoreboard.getTeam("defenderScore").setPrefix(defenders);
 
-        int score = 6;
         for (int rank = 3; rank >= 0; rank--) {
             ArrayList<FactionMember> raidTeam = factionUtil.getMembersWithRank(faction.getId(), rank);
             for (int i = raidTeam.size(); i > 0; i--) {
                 FactionMember member = raidTeam.get(i - 1);
-                String memberName = UUIDFetcher.getName(member.getUuid());
-                scoreboard.getTeam("raidTeamScore" + score).setPrefix(member.getRankColor() + memberName);
-                score--;
+                if (raidUtil.isFactionMemberJoinedRaid(member)) {
+                    String memberName = UUIDFetcher.getName(member.getUuid());
+                    scoreboard.getTeam(memberName).setPrefix(member.getRankColor() + "");
+                }
             }
         }
     }

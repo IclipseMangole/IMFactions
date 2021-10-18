@@ -79,17 +79,7 @@ public class RaidListener implements Listener {
                     player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
                 }
             }, 2);
-            return;
         }
-        FactionMember factionMember = factionMemberUtil.getFactionMember(player.getUniqueId());
-        FactionPlot factionPlot = factionPlotUtil.getFactionPlot(factionMember.getFactionID());
-        Bukkit.getScheduler().runTaskLater(imFactions, new Runnable() {
-            @Override
-            public void run() {
-                player.teleport(factionPlot.getRaidSpawn());
-                player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
-            }
-        }, 2);
     }
 
     @EventHandler
@@ -169,17 +159,21 @@ public class RaidListener implements Listener {
     @EventHandler
     public void onExplosionObisidian(ExplosionPrimeEvent event) {
         World world = event.getEntity().getWorld();
+        System.out.println("ExplosionPrimeEvent");
 
-        if (world.getName().equalsIgnoreCase("FactionPlots_world"))
+        if (!world.getName().equalsIgnoreCase("FactionPlots_world"))
             return;
         Block source = event.getEntity().getLocation().getBlock();
         if (source.isLiquid())
             return;
         for (Block damagedObsidian : getDamagedObsidian(source, event.getRadius())) {
-            if (!obsidian.containsKey(damagedObsidian))
+            System.out.println("Obsidian getroffen");
+            if (!obsidian.containsKey(damagedObsidian)) {
                 obsidian.put(damagedObsidian, 0);
+                return;
+            }
             int damage = obsidian.get(damagedObsidian);
-            obsidian.replace(damagedObsidian, damage, damage + 1);
+            obsidian.replace(damagedObsidian, damage + 1);
             if (obsidian.get(damagedObsidian) >= 2)
                 damagedObsidian.setType(Material.AIR);
             obsidian.remove(damagedObsidian);
@@ -204,7 +198,6 @@ public class RaidListener implements Listener {
                 }
             }
         }
-
         return damagedObsidian;
     }
 }
