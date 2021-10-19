@@ -1,14 +1,6 @@
 package de.imfactions.functions.items;
 
-//   |    ----  |       |   |---  -----  |---
-//   |   |      |       |   |  |  |      |
-//   |   |      |       |   |--   -----  |---
-//   |   |      |       |   |         |  |
-//   |    ----   ----   |   |     -----  |---
 
-/**
- * Created by Iclipse on 20.06.2020
- */
 public class ItemModifier {
     private ItemModifierType itemModifierType;
     private ItemModifierValue itemModifierValue;
@@ -19,7 +11,7 @@ public class ItemModifier {
     }
 
     public ItemModifierType getItemModifierType() {
-        return itemModifierType;
+        return this.itemModifierType;
     }
 
     public void setItemModifierType(ItemModifierType itemModifierType) {
@@ -27,10 +19,12 @@ public class ItemModifier {
     }
 
     public ItemModifierValue getItemModifierValue() {
-        return itemModifierValue;
+        return this.itemModifierValue;
     }
 
     public void setItemModifierValue(ItemModifierValue itemModifierValue) {
         this.itemModifierValue = itemModifierValue;
     }
 }
+
+
