@@ -1,15 +1,5 @@
 package de.imfactions.functions.items;
 
-//   |    ----  |       |   |---  -----  |---
-//   |   |      |       |   |  |  |      |
-//   |   |      |       |   |--   -----  |---
-//   |   |      |       |   |         |  |
-//   |    ----   ----   |   |     -----  |---
+public class FactionItems {}
 
 
-/**
- * Created by Iclipse on 20.06.2020
- */
-public class FactionItems {
-
-}
