@@ -54,11 +54,14 @@ public class RaidUtil {
         raidTable = new RaidTable(this, data);
         factionPlotUtil = data.getFactionPlotUtil();
         raids = raidTable.getRaids();
-        scoreboard = data.getScoreboard();
     }
 
     public void loadSchedulers() {
         raidScheduler = data.getRaidScheduler();
+    }
+
+    public void loadScoreboards() {
+        scoreboard = data.getScoreboard();
     }
 
     public ArrayList<Raid> getRaids() {
@@ -129,11 +132,13 @@ public class RaidUtil {
         }
     }
 
-    public void updateRaidToDone(int raidID){
+    public void updateRaidToDone(int raidID) {
         Raid raid = getRaid(raidID);
 
         raid.setRaidState(RaidState.DONE);
         raid.setTime(System.currentTimeMillis() - raid.getStart().getTime());
+        Faction defenders = factionUtil.getFaction(raid.getFactionIdDefenders());
+        defenders.setGettingRaided(false);
     }
 
     public ArrayList<FactionMember> getRaidTeam(int raidID) {
@@ -208,7 +213,7 @@ public class RaidUtil {
         scoreboard.setRaidScoreboard(player, raid);
     }
 
-    public void memberLeaveRaid(FactionMember factionMember, Raid raid) {
+    public void memberLeaveRaid(FactionMember factionMember) {
         Player player = Bukkit.getPlayer(factionMember.getUuid());
         raidTeams.remove(factionMember);
         scoreboard.setScoreboard(player);
@@ -237,6 +242,10 @@ public class RaidUtil {
             }
             raidScheduler.cancelPreparingRaid(raidID);
             deleteRaid(raid);
+            for (Player member : factionMemberUtil.getOnlineMembers(raid.getFactionIdAttackers())) {
+                scoreboard.setScoreboard(member);
+            }
+            return;
         }
         Faction raided = factionUtil.getFaction(raid.getFactionIdDefenders());
         raided.setGettingRaided(false);

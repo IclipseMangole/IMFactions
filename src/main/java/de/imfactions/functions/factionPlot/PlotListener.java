@@ -17,10 +17,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.world.PortalCreateEvent;
@@ -113,26 +113,23 @@ public class PlotListener implements Listener {
     }
 
     @EventHandler
-    public void onExplosion(BlockExplodeEvent event) {
-        Location location = event.getBlock().getLocation();
-        World world = location.getWorld();
-
-        if (!world.getName().equalsIgnoreCase("FactionPlots_world"))
-            return;
+    public void onExplosion(EntityExplodeEvent event) {
         for (Block block : event.blockList()) {
-            Location blockLocation = block.getLocation();
-            if (factionPlotUtil.getFactionPlot(blockLocation) == null) {
-                event.setCancelled(true);
+            Location location = block.getLocation();
+            World world = location.getWorld();
+
+            if (!world.getName().equalsIgnoreCase("FactionPlots_world"))
                 return;
-            }
-            FactionPlot factionPlot = factionPlotUtil.getFactionPlot(blockLocation);
+
+            if (factionPlotUtil.getFactionPlot(location) == null)
+                return;
+            FactionPlot factionPlot = factionPlotUtil.getFactionPlot(location);
             Location edgeDownFrontLeft = factionPlot.getEdgeDownFrontLeft();
             Location raidEdgeLeft = factionPlotUtil.getRaidEdgeLeft(edgeDownFrontLeft);
             Location raidEdgeRight = factionPlotUtil.getRaidEdgeRight(raidEdgeLeft);
-            if (LocationChecker.isLocationInsideCube(blockLocation, raidEdgeLeft, raidEdgeRight))
+            if (LocationChecker.isLocationInsideCube(location, raidEdgeLeft, raidEdgeRight))
                 return;
             event.blockList().remove(block);
-            event.setCancelled(true);
         }
     }
 

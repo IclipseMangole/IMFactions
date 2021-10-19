@@ -170,12 +170,16 @@ public class RaidListener implements Listener {
             System.out.println("Obsidian getroffen");
             if (!obsidian.containsKey(damagedObsidian)) {
                 obsidian.put(damagedObsidian, 0);
+                System.out.println("neues Obsidian");
                 return;
             }
             int damage = obsidian.get(damagedObsidian);
             obsidian.replace(damagedObsidian, damage + 1);
-            if (obsidian.get(damagedObsidian) >= 2)
+            System.out.println("obsidian " + obsidian.get(damagedObsidian));
+            if (obsidian.get(damagedObsidian) >= 2) {
+                System.out.println("obsidian remove");
                 damagedObsidian.setType(Material.AIR);
+            }
             obsidian.remove(damagedObsidian);
         }
     }

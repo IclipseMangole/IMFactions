@@ -121,6 +121,7 @@ public class Data {
 
     public void loadScoreboards(){
         scoreboard = new Scoreboard(imFactions);
+        raidUtil.loadScoreboards();
     }
 
 

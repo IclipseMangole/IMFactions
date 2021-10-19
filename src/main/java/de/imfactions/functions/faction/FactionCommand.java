@@ -154,6 +154,11 @@ public class FactionCommand {
             player.sendMessage(ChatColor.RED + "You can't leave the Faction while raiding");
             return;
         }
+
+        if (player.getWorld().getName().equalsIgnoreCase("FactionPlots_world")) {
+            player.teleport(data.getWorldSpawn());
+            player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
+        }
         //Last one in Faction
         if (faction.getMemberAmount() == 1) {
             if (faction.isGettingRaided()) {
@@ -181,10 +186,6 @@ public class FactionCommand {
             newKing.setRank(3);
             for (FactionMember teamMember : factionMemberUtil.getFactionMembers(factionID))
                 Bukkit.getPlayer(teamMember.getUuid()).sendMessage(ChatColor.YELLOW + Bukkit.getPlayer(newKing.getUuid()).getName() + ChatColor.GREEN + " is the new King of the Faction");
-        }
-        if (player.getWorld().getName().equalsIgnoreCase("FactionPlots_world")) {
-            player.teleport(data.getWorldSpawn());
-            player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
         }
     }
 

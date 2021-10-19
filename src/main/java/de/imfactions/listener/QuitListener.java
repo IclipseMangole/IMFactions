@@ -60,6 +60,6 @@ public class QuitListener implements Listener {
         FactionMember factionMember = factionMemberUtil.getFactionMember(player.getUniqueId());
         if (!raidUtil.isFactionMemberJoinedRaid(factionMember))
             return;
-        player.chat("/faction leave");
+        raidUtil.memberLeaveRaid(factionMember);
     }
 }

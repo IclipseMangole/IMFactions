@@ -2,7 +2,6 @@ package de.imfactions.functions.raid;
 
 import de.imfactions.Data;
 import de.imfactions.IMFactions;
-import de.imfactions.functions.Scoreboard;
 import de.imfactions.functions.faction.Faction;
 import de.imfactions.functions.faction.FactionUtil;
 import de.imfactions.functions.factionMember.FactionMember;
@@ -29,7 +28,6 @@ public class RaidScheduler implements Listener {
     private final FactionUtil factionUtil;
     private final FactionPlotUtil factionPlotUtil;
     private final FactionMemberUtil factionMemberUtil;
-    private final Scoreboard scoreboard;
     private final HashMap<Integer, BukkitTask> preparingRaids = new HashMap<>();
     private final HashMap<Integer, BukkitTask> scoutingRaids = new HashMap<>();
     private final HashMap<Integer, BukkitTask> raidingRaids = new HashMap<>();
@@ -41,7 +39,6 @@ public class RaidScheduler implements Listener {
         factionUtil = data.getFactionUtil();
         factionPlotUtil = data.getFactionPlotUtil();
         factionMemberUtil = data.getFactionMemberUtil();
-        scoreboard = data.getScoreboard();
     }
 
     public void startPreparingRaid(int raidID, int seconds){
@@ -115,27 +112,31 @@ public class RaidScheduler implements Listener {
         scoutingRaids.put(raidID, Bukkit.getScheduler().runTaskTimer(imFactions, new Runnable() {
 
             int timer = seconds;
-            final ArrayList<Player> members = raidTeam;
+            int ID = raidID;
 
             @Override
             public void run() {
+                ArrayList<Player> raidTeam = new ArrayList<>();
+                for (FactionMember factionMember : raidUtil.getRaidTeam(ID)) {
+                    raidTeam.add(factionMemberUtil.getPlayer(factionMember.getUuid()));
+                }
                 if (timer <= 0) {
-                    raidUtil.raidFaction(raidUtil.getRaid(raidID));
+                    raidUtil.raidFaction(raidUtil.getRaid(ID));
                     return;
                 }
                 if (timer == 10) {
-                    for (Player player : members) {
+                    for (Player player : raidTeam) {
                         player.sendMessage(ChatColor.GREEN + "The Raiding Phase will begin in " + timer + " seconds");
                         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1.0F, 1.0F);
                     }
                 }
                 if (timer <= 5) {
-                    for (Player player : members) {
+                    for (Player player : raidTeam) {
                         player.sendMessage(ChatColor.GREEN + "The Raiding Phase will begin in " + timer + " seconds");
                         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1.0F, 1.0F);
                     }
                 }
-                for (Player player : members)
+                for (Player player : raidTeam)
                     setActionBarTimer(player, timer, "Scouting: ");
                 timer--;
             }
@@ -162,10 +163,13 @@ public class RaidScheduler implements Listener {
         raidingRaids.put(raidID, Bukkit.getScheduler().runTaskTimer(imFactions, new Runnable() {
             int timer = seconds;
             final int ID = raidID;
-            final ArrayList<Player> members = raidTeam;
 
             @Override
             public void run() {
+                ArrayList<Player> raidTeam = new ArrayList<>();
+                for (FactionMember factionMember : raidUtil.getRaidTeam(ID)) {
+                    raidTeam.add(factionMemberUtil.getPlayer(factionMember.getUuid()));
+                }
                 if (timer <= 0) {
                     Raid raid = raidUtil.getRaid(ID);
                     raidUtil.endRaid(raid);
@@ -176,19 +180,19 @@ public class RaidScheduler implements Listener {
                     setActionBarTimer(player, timer, "Raiding: ");
                 }
                 if (timer == 60) {
-                    for (Player player : members) {
+                    for (Player player : raidTeam) {
                         player.sendMessage(ChatColor.GREEN + "The Raiding Phase will end in " + timer + " seconds");
                         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1.0F, 1.0F);
                     }
                 }
                 if (timer == 10) {
-                    for (Player player : members) {
+                    for (Player player : raidTeam) {
                         player.sendMessage(ChatColor.GREEN + "The Raiding Phase will end in " + timer + " seconds");
                         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1.0F, 1.0F);
                     }
                 }
                 if (timer <= 5) {
-                    for (Player player : members) {
+                    for (Player player : raidTeam) {
                         player.sendMessage(ChatColor.GREEN + "The Raiding Phase will end in " + timer + " seconds");
                         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1.0F, 1.0F);
                     }
@@ -216,14 +220,6 @@ public class RaidScheduler implements Listener {
         if (raidingRaids.containsKey(raidID)) {
             raidingRaids.get(raidID).cancel();
             raidingRaids.remove(raidID);
-        }
-        setScoreboard(raidID);
-    }
-
-    private void setScoreboard(int raidID) {
-        for (FactionMember factionMember : raidUtil.getRaidTeam(raidID)) {
-            Player player = factionMemberUtil.getPlayer(factionMember.getUuid());
-            scoreboard.setScoreboard(player);
         }
     }
 

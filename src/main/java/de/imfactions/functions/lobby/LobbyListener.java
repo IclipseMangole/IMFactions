@@ -2,7 +2,6 @@ package de.imfactions.functions.lobby;
 
 import de.imfactions.Data;
 import de.imfactions.IMFactions;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
@@ -131,14 +130,14 @@ public class LobbyListener implements Listener {
 
     @EventHandler
     public void onPortalPlayer(PlayerPortalEvent event) {
-        World world = event.getPlayer().getWorld();
-        if (!world.getName().equalsIgnoreCase("world"))
-            return;
-        event.setCancelled(true);
-        Player player = event.getPlayer();
-        player.teleport(data.getPVP_worldSpawn());
-        player.playSound(data.getPVP_worldSpawn(), Sound.ENTITY_ENDER_DRAGON_GROWL, 1.0F, 1.0F);
-        player.sendTitle(net.md_5.bungee.api.ChatColor.of("#851818") + "PVP", ChatColor.DARK_RED + "ZONE", 5, 20, 5);
+        World world = event.getFrom().getWorld();
+        if (world.getName().equalsIgnoreCase("world")) {
+            event.setCancelled(true);
+            Player player = event.getPlayer();
+            player.teleport(data.getPVP_worldSpawn());
+            player.playSound(data.getPVP_worldSpawn(), Sound.ENTITY_ENDER_DRAGON_GROWL, 1.0F, 1.0F);
+            player.sendTitle(net.md_5.bungee.api.ChatColor.of("#851818") + "PVP", net.md_5.bungee.api.ChatColor.of("#851818") + "ZONE", 5, 20, 5);
+        }
     }
 
     @EventHandler

@@ -60,14 +60,14 @@ public class Scoreboard {
             UUID uuid = UUIDFetcher.getUUID(onlinePlayer);
             if (!factionMemberUtil.isFactionMemberExists(uuid)) {
                 updateNormalScoreboard(onlinePlayer);
-                return;
+                continue;
             }
             FactionMember factionMember = factionMemberUtil.getFactionMember(uuid);
             int raidID = raidUtil.getActiveRaidID(factionMember.getFactionID());
             Raid raid = raidUtil.getRaid(raidID);
             if (!raidUtil.isFactionMemberJoinedRaid(factionMember)) {
                 updateNormalScoreboard(onlinePlayer);
-                return;
+                continue;
             }
             updateRaidScoreboard(onlinePlayer, raid);
         }

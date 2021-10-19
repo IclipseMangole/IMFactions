@@ -296,7 +296,7 @@ public class RaidCommand {
         int raidID = raidUtil.getActiveRaidID(faction.getId());
         Raid raid = raidUtil.getRaid(raidID);
         ArrayList<FactionMember> team = raidUtil.getRaidTeam(raidID);
-        raidUtil.memberLeaveRaid(factionMember, raid);
+        raidUtil.memberLeaveRaid(factionMember);
 
         if (!raid.getRaidState().equals(RaidState.PREPARING)) {
             player.teleport(factionPlotUtil.getFactionPlot(faction.getId()).getHome());
