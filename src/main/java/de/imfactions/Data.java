@@ -8,7 +8,6 @@ import de.imfactions.functions.faction.FactionUtil;
 import de.imfactions.functions.factionMember.FactionMemberUtil;
 import de.imfactions.functions.factionPlot.FactionPlotUtil;
 import de.imfactions.functions.items.ItemUtils;
-import de.imfactions.functions.items.Items;
 import de.imfactions.functions.lobby.lottery.LotteryUtil;
 import de.imfactions.functions.npc.NPCUtil;
 import de.imfactions.functions.raid.RaidScheduler;
@@ -44,6 +43,8 @@ public class Data {
 
     //Scheduler
     private SpawnScheduler spawnScheduler;
+    private FactionHomeScheduler factionHomeScheduler;
+    private RaidScheduler raidScheduler;
 
     //Scoreboard
     private Scoreboard scoreboard;
