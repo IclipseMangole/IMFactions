@@ -1,7 +1,6 @@
 package de.imfactions.functions.lobby.lottery;
 
 import de.imfactions.IMFactions;
-import de.imfactions.functions.npc.entities.Monte;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
