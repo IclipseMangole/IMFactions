@@ -1,4 +1,4 @@
-package de.imfactions.functions.items.api.modifiers;
+package de.imfactions.functions.items.modifiers;
 
 
 public class ItemModifierValue<T> {

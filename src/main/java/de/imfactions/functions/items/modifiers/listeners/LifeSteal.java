@@ -1,8 +1,8 @@
-package de.imfactions.functions.items.api.modifiers.listeners;
+package de.imfactions.functions.items.modifiers.listeners;
 
-import de.imfactions.functions.items.api.Item;
-import de.imfactions.functions.items.api.modifiers.ItemModifierType;
-import de.imfactions.functions.items.api.modifiers.ItemModifierValue;
+import de.imfactions.functions.items.FactionItemStack;
+import de.imfactions.functions.items.modifiers.ItemModifierType;
+import de.imfactions.functions.items.modifiers.ItemModifierValue;
 
 import java.util.HashMap;
 
@@ -23,14 +23,14 @@ public class LifeSteal implements Listener {
             Player player = (Player) event.getDamager();
             ItemStack itemStack = player.getInventory().getItemInMainHand();
             if (itemStack.getType() != Material.AIR &&
-                    Item.isItem(itemStack)) {
-                Item item = Item.of(itemStack);
-                HashMap<ItemModifierType, ItemModifierValue> modifiers = item.getItemModifiers();
+                    FactionItemStack.isItem(itemStack)) {
+                FactionItemStack factionItemStack = FactionItemStack.of(itemStack);
+                HashMap<ItemModifierType, ItemModifierValue> modifiers = factionItemStack.getItemModifiers();
                 if (modifiers.containsKey(ItemModifierType.LIFESTEAL))
-                    if (player.getHealth() + event.getDamage() * ((Double) ((ItemModifierValue) modifiers.get(ItemModifierType.LIFESTEAL)).value).doubleValue() > player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()) {
+                    if (player.getHealth() + event.getDamage() * (Double) modifiers.get(ItemModifierType.LIFESTEAL).value > player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()) {
                         player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
                     } else {
-                        player.setHealth(player.getHealth() + event.getDamage() * ((Double) ((ItemModifierValue) modifiers.get(ItemModifierType.LIFESTEAL)).value).doubleValue());
+                        player.setHealth(player.getHealth() + event.getDamage() * (Double) modifiers.get(ItemModifierType.LIFESTEAL).value);
                     }
             }
         }

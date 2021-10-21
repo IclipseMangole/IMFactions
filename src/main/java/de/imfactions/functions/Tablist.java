@@ -15,7 +15,6 @@ import org.bukkit.entity.Player;
 
 import java.text.DecimalFormat;
 
-import static de.imfactions.util.ColorConverter.toHex;
 import static de.imfactions.util.ColorUtils.rainbowColor;
 
 /**

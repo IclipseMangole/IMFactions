@@ -41,6 +41,7 @@ public class Monte extends NPC implements Listener {
     public void onMove(PlayerMoveEvent event){
         Player player = event.getPlayer();
         Location location = player.getLocation();
+        if(!location.getWorld().equals(lotteryLocation.getWorld())) return;
         if(lotteryLocation.distance(location) > 10) return;
 
         if(player.isSneaking()){

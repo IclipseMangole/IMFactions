@@ -5,6 +5,8 @@ import de.imfactions.IMFactions;
 import de.imfactions.functions.faction.FactionUtil;
 import de.imfactions.functions.factionMember.FactionMemberUtil;
 import de.imfactions.functions.factionPlot.FactionPlotUtil;
+import de.imfactions.functions.items.FactionItem;
+import de.imfactions.functions.items.FactionItemStack;
 import de.imfactions.functions.user.UserUtil;
 import de.imfactions.util.LocationChecker;
 import de.imfactions.util.UUIDFetcher;
@@ -174,6 +176,8 @@ public class PVPListener implements Listener {
         Player player = event.getPlayer();
         player.teleport(data.getWorldSpawn());
         player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
+        player.getInventory().setItem(0, new FactionItemStack(FactionItem.get("Excalibur"), 0, 1).toItemStack());
+        player.getInventory().setItem(1, new FactionItemStack(FactionItem.get("Yew arch"), 0, 1).toItemStack());
     }
 
     @EventHandler

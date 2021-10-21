@@ -1,16 +1,17 @@
 package de.imfactions.functions.items;
 
-import de.imfactions.functions.items.api.ItemStructure;
-import de.imfactions.functions.items.api.modifiers.ItemModifierType;
-import de.imfactions.functions.items.api.modifiers.ItemModifierValue;
 
 import java.util.HashMap;
 
+import de.imfactions.functions.items.modifiers.ItemModifierType;
+import de.imfactions.functions.items.modifiers.ItemModifierValue;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 
 
 public class Items {
+
+
     public Items() {
         createExcalibur();
         createBow();
@@ -29,7 +30,7 @@ public class Items {
             level.replace(ItemModifierType.LIFESTEAL, new ItemModifierValue(Double.valueOf((i + 1) * 0.2D)));
             map.put(Integer.valueOf(i), level);
         }
-        new ItemStructure("Excalibur", ChatColor.of("#66FFFF"), "A perfectly balanced blade", Material.DIAMOND_SWORD, ItemRarity.RARE, map);
+        new FactionItem("Excalibur", ChatColor.of("#66FFFF"), "A perfectly balanced blade", Material.DIAMOND_SWORD, ItemRarity.RARE, map);
     }
 
     public void createBow() {
@@ -42,7 +43,7 @@ public class Items {
             defaultLevel.put(ItemModifierType.DAMAGE, new ItemModifierValue(Double.valueOf(i + 0.5D)));
             map.put(Integer.valueOf(i), level);
         }
-        new ItemStructure("Yew arch", ChatColor.of("#36FFFF"), "Created by Elves", Material.BOW, ItemRarity.EPIC, map);
+        new FactionItem("Yew arch", ChatColor.of("#36FFFF"), "Created by Elves", Material.BOW, ItemRarity.EPIC, map);
     }
 }
 

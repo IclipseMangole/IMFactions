@@ -7,6 +7,8 @@ import de.imfactions.functions.Tablist;
 import de.imfactions.functions.faction.FactionUtil;
 import de.imfactions.functions.factionMember.FactionMemberUtil;
 import de.imfactions.functions.factionPlot.FactionPlotUtil;
+import de.imfactions.functions.items.ItemUtils;
+import de.imfactions.functions.items.Items;
 import de.imfactions.functions.lobby.lottery.LotteryUtil;
 import de.imfactions.functions.npc.NPCUtil;
 import de.imfactions.functions.raid.RaidUtil;
@@ -56,6 +58,7 @@ public class Data {
     private UserUtil userUtil;
     private UserSettingsUtil userSettingsUtil;
     private LotteryUtil lotteryUtil;
+    private ItemUtils itemUtils;
 
     public Data(IMFactions imFactions) {
         this.imFactions = imFactions;
@@ -74,6 +77,7 @@ public class Data {
         userUtil = new UserUtil(this);
         userSettingsUtil = new UserSettingsUtil(this);
         lotteryUtil = new LotteryUtil(imFactions);
+        itemUtils = new ItemUtils(imFactions);
         loadUtils();
     }
 
@@ -234,5 +238,9 @@ public class Data {
 
     public LotteryUtil getLotteryUtil() {
         return lotteryUtil;
+    }
+
+    public ItemUtils getItemUtils() {
+        return itemUtils;
     }
 }

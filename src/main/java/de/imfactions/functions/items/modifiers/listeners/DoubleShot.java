@@ -1,4 +1,4 @@
-package de.imfactions.functions.items.api.modifiers.listeners;
+package de.imfactions.functions.items.modifiers.listeners;
 
 import org.bukkit.event.Listener;
 

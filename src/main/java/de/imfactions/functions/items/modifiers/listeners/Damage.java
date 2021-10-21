@@ -1,8 +1,7 @@
-package de.imfactions.functions.items.api.modifiers.listeners;
+package de.imfactions.functions.items.modifiers.listeners;
 
-import de.imfactions.functions.items.api.Item;
-import de.imfactions.functions.items.api.modifiers.ItemModifierType;
-import de.imfactions.functions.items.api.modifiers.ItemModifierValue;
+import de.imfactions.functions.items.FactionItemStack;
+import de.imfactions.functions.items.modifiers.ItemModifierType;
 import org.bukkit.Material;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Player;
@@ -20,10 +19,10 @@ public class Damage implements Listener {
         System.out.println("EntityDamage by Entity");
         if (event.getDamager() instanceof Player) {
             ItemStack itemStack = ((Player) event.getDamager()).getInventory().getItemInMainHand();
-            if (itemStack.getType() != Material.AIR && Item.isItem(itemStack)) {
-                Item item = Item.of(itemStack);
-                if (item.getItemModifiers().containsKey(ItemModifierType.DAMAGE)) {
-                    event.setDamage(event.getDamage() + (Double) item.getItemModifiers().get(ItemModifierType.DAMAGE).value * 2.0D);
+            if (itemStack.getType() != Material.AIR && FactionItemStack.isItem(itemStack)) {
+                FactionItemStack factionItemStack = FactionItemStack.of(itemStack);
+                if (factionItemStack.getItemModifiers().containsKey(ItemModifierType.DAMAGE)) {
+                    event.setDamage(event.getDamage() + (Double) factionItemStack.getItemModifiers().get(ItemModifierType.DAMAGE).value * 2.0D);
                 }
             }
         }
@@ -37,10 +36,10 @@ public class Damage implements Listener {
             if (projectile.getShooter() instanceof Player) {
                 Player player = (Player) projectile.getShooter();
                 ItemStack itemStack = player.getInventory().getItemInMainHand();
-                if (itemStack.getType() != Material.AIR && Item.isItem(itemStack)) {
-                    Item item = Item.of(itemStack);
-                    if (item.getItemModifiers().containsKey(ItemModifierType.DAMAGE)) {
-                        projectile.setDamage(projectile.getDamage() + (Double) item.getItemModifiers().get(ItemModifierType.DAMAGE).value * 2.0D);
+                if (itemStack.getType() != Material.AIR && FactionItemStack.isItem(itemStack)) {
+                    FactionItemStack factionItemStack = FactionItemStack.of(itemStack);
+                    if (factionItemStack.getItemModifiers().containsKey(ItemModifierType.DAMAGE)) {
+                        projectile.setDamage(projectile.getDamage() + (Double) factionItemStack.getItemModifiers().get(ItemModifierType.DAMAGE).value * 2.0D);
                         projectile.setBounce(true);
                     }
                 }
