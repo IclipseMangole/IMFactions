@@ -24,7 +24,7 @@ import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.player.PlayerPortalEvent;
 
-import static de.imfactions.util.ColorConverter.toHex;
+import static de.imfactions.util.ColorUtils.toHex;
 
 public class PVPListener implements Listener {
 
@@ -130,17 +130,13 @@ public class PVPListener implements Listener {
 
         if (world.equals("FactionPVP_world")) {
             event.setDeathMessage(null);
-
             String health = String.format("%.0f", killer.getHealth() / 2);
             dead.sendMessage("§4You got killed by §c" + killer.getName() + "§7(§c" + health + ChatColor.of(toHex(153, 0, 0)) + "❤§7)");
             killer.sendMessage("§4You killed §c" + dead.getName());
             killer.sendMessage("§4You earned §c10 §4Ether");
-
             userUtil.getUser(killer.getName()).addEther(10);
-
             dead.teleport(data.getWorldSpawn());
             dead.playSound(dead.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
-
             killer.playSound(killer.getLocation(), Sound.ENTITY_WITHER_DEATH, 1, 1);
         }
     }
@@ -148,8 +144,7 @@ public class PVPListener implements Listener {
     @EventHandler
     public void onBurn(BlockBurnEvent event){
         World world = event.getBlock().getWorld();
-        if(!world.getName().equalsIgnoreCase("world"))
-            return;
+        if(!world.getName().equalsIgnoreCase("world")) return;
         event.setCancelled(true);
     }
 
