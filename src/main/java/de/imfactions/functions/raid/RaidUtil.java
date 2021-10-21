@@ -210,12 +210,17 @@ public class RaidUtil {
     public void memberJoinRaid(FactionMember factionMember, Raid raid) {
         Player player = Bukkit.getPlayer(factionMember.getUuid());
         raidTeams.put(factionMember, raid);
-        scoreboard.setRaidScoreboard(player, raid);
+        for (FactionMember member : getRaidTeam(raid.getRaidID())) {
+            scoreboard.setRaidScoreboard(Bukkit.getPlayer(member.getUuid()), raid);
+        }
     }
 
-    public void memberLeaveRaid(FactionMember factionMember) {
+    public void memberLeaveRaid(FactionMember factionMember, Raid raid) {
         Player player = Bukkit.getPlayer(factionMember.getUuid());
         raidTeams.remove(factionMember);
+        for (FactionMember member : getRaidTeam(raid.getRaidID())) {
+            scoreboard.setRaidScoreboard(Bukkit.getPlayer(member.getUuid()), raid);
+        }
         scoreboard.setScoreboard(player);
     }
 
@@ -292,20 +297,7 @@ public class RaidUtil {
 
     public void saveRaids() {
         for (Raid raid : raids) {
-            if (raid.getRaidState().equals(RaidState.PREPARING)) {
-                raidScheduler.cancelPreparingRaid(raid.getRaidID());
-                continue;
-            }
-            if (raid.getRaidState().equals(RaidState.SCOUTING)) {
-                teleportRaidTeamHome(raid.getRaidID());
-                raidScheduler.cancelScoutingRaid(raid.getRaidID());
-                continue;
-            }
-            if (raid.getRaidState().equals(RaidState.RAIDING)) {
-                raid.setRaidState(RaidState.DONE);
-                teleportRaidTeamHome(raid.getRaidID());
-                raidScheduler.cancelRaidingRaid(raid.getRaidID());
-            }
+            endRaid(raid);
             raidTable.saveRaid(raid);
         }
     }

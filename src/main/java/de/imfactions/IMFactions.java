@@ -49,9 +49,9 @@ public class IMFactions extends JavaPlugin {
     @Override
     public void onDisable() {
         data.getUserUtil().saveUsers();
-        data.getMySQL().close();
         data.saveUtils();
         worldManager.savePlots();
+        data.getMySQL().close();
     }
 
     public Data getData() {

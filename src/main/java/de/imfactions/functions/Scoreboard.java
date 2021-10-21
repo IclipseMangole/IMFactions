@@ -139,9 +139,13 @@ public class Scoreboard {
                 FactionMember member = raidTeam.get(i - 1);
                 if (raidUtil.isFactionMemberJoinedRaid(member)) {
                     String memberName = UUIDFetcher.getName(member.getUuid());
+                    player.sendMessage("Team: " + memberName);
+                    player.sendMessage("Exists Team? " + (scoreboard.getTeam(memberName) != null));
                     Team raidTeamScore = scoreboard.registerNewTeam(memberName);
+                    player.sendMessage("Exists Team? " + (scoreboard.getTeam(memberName) != null));
                     raidTeamScore.addEntry(memberName);
-                    raidTeamScore.setPrefix(member.getRankColor() + "");
+                    player.sendMessage("Exists Team? " + (scoreboard.getTeam(memberName).getEntries().contains(memberName)));
+                    raidTeamScore.setColor(member.getRankColor());
                     objective.getScore(memberName).setScore(score);
                     score--;
                 }
@@ -179,7 +183,8 @@ public class Scoreboard {
                 FactionMember member = raidTeam.get(i - 1);
                 if (raidUtil.isFactionMemberJoinedRaid(member)) {
                     String memberName = UUIDFetcher.getName(member.getUuid());
-                    scoreboard.getTeam(memberName).setPrefix(member.getRankColor() + "");
+                    player.sendMessage("Team: " + memberName);
+                    scoreboard.getTeam(memberName).setColor(member.getRankColor());
                 }
             }
         }

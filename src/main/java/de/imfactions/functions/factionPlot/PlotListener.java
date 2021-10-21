@@ -114,23 +114,29 @@ public class PlotListener implements Listener {
 
     @EventHandler
     public void onExplosion(EntityExplodeEvent event) {
+        ArrayList<Block> damagedBlocks = new ArrayList<>();
         for (Block block : event.blockList()) {
+            System.out.println("Explodierender Block: " + block.toString());
             Location location = block.getLocation();
             World world = location.getWorld();
 
             if (!world.getName().equalsIgnoreCase("FactionPlots_world"))
                 return;
-
+            System.out.println("Plot world");
             if (factionPlotUtil.getFactionPlot(location) == null)
                 return;
+            System.out.println("Auf Plot");
             FactionPlot factionPlot = factionPlotUtil.getFactionPlot(location);
             Location edgeDownFrontLeft = factionPlot.getEdgeDownFrontLeft();
             Location raidEdgeLeft = factionPlotUtil.getRaidEdgeLeft(edgeDownFrontLeft);
             Location raidEdgeRight = factionPlotUtil.getRaidEdgeRight(raidEdgeLeft);
             if (LocationChecker.isLocationInsideCube(location, raidEdgeLeft, raidEdgeRight))
-                return;
-            event.blockList().remove(block);
+                continue;
+            System.out.println("Nicht im roten Bereich");
+            damagedBlocks.add(block);
         }
+        for (Block block : damagedBlocks)
+            event.blockList().remove(block);
     }
 
     //kein PVP für die Faction Mitglieder

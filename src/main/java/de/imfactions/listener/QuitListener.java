@@ -11,6 +11,7 @@ import de.imfactions.IMFactions;
 import de.imfactions.functions.faction.FactionUtil;
 import de.imfactions.functions.factionMember.FactionMember;
 import de.imfactions.functions.factionMember.FactionMemberUtil;
+import de.imfactions.functions.raid.Raid;
 import de.imfactions.functions.raid.RaidUtil;
 import de.imfactions.functions.user.User;
 import de.imfactions.functions.user.UserUtil;
@@ -60,6 +61,8 @@ public class QuitListener implements Listener {
         FactionMember factionMember = factionMemberUtil.getFactionMember(player.getUniqueId());
         if (!raidUtil.isFactionMemberJoinedRaid(factionMember))
             return;
-        raidUtil.memberLeaveRaid(factionMember);
+        int raidID = raidUtil.getActiveRaidID(factionMember.getFactionID());
+        Raid raid = raidUtil.getRaid(raidID);
+        raidUtil.memberLeaveRaid(factionMember, raid);
     }
 }

@@ -159,28 +159,23 @@ public class RaidListener implements Listener {
     @EventHandler
     public void onExplosionObisidian(ExplosionPrimeEvent event) {
         World world = event.getEntity().getWorld();
-        System.out.println("ExplosionPrimeEvent");
 
         if (!world.getName().equalsIgnoreCase("FactionPlots_world"))
             return;
         Block source = event.getEntity().getLocation().getBlock();
         if (source.isLiquid())
             return;
-        for (Block damagedObsidian : getDamagedObsidian(source, event.getRadius())) {
-            System.out.println("Obsidian getroffen");
+        for (Block damagedObsidian : getDamagedObsidian(source, 2.0F)) {
             if (!obsidian.containsKey(damagedObsidian)) {
                 obsidian.put(damagedObsidian, 0);
-                System.out.println("neues Obsidian");
-                return;
+                continue;
             }
             int damage = obsidian.get(damagedObsidian);
             obsidian.replace(damagedObsidian, damage + 1);
-            System.out.println("obsidian " + obsidian.get(damagedObsidian));
             if (obsidian.get(damagedObsidian) >= 2) {
-                System.out.println("obsidian remove");
                 damagedObsidian.setType(Material.AIR);
+                obsidian.remove(damagedObsidian);
             }
-            obsidian.remove(damagedObsidian);
         }
     }
 

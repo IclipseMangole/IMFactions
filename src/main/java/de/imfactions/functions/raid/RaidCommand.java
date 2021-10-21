@@ -171,9 +171,6 @@ public class RaidCommand {
 
         raidUtil.memberJoinRaid(factionMember, raid);
         player.sendMessage(ChatColor.GREEN + "You joined the Raid");
-        for (FactionMember member : raidUtil.getRaidTeam(raidID)) {
-            scoreboard.setRaidScoreboard(Bukkit.getPlayer(member.getUuid()), raid);
-        }
     }
 
     @IMCommand(
@@ -296,7 +293,7 @@ public class RaidCommand {
         int raidID = raidUtil.getActiveRaidID(faction.getId());
         Raid raid = raidUtil.getRaid(raidID);
         ArrayList<FactionMember> team = raidUtil.getRaidTeam(raidID);
-        raidUtil.memberLeaveRaid(factionMember);
+        raidUtil.memberLeaveRaid(factionMember, raid);
 
         if (!raid.getRaidState().equals(RaidState.PREPARING)) {
             player.teleport(factionPlotUtil.getFactionPlot(faction.getId()).getHome());
@@ -313,9 +310,6 @@ public class RaidCommand {
                 member.sendMessage(ChatColor.YELLOW + player.getName() + ChatColor.RED + " left the Raid");
         }
         scoreboard.setScoreboard(player);
-        for (FactionMember member : raidUtil.getRaidTeam(raidID)) {
-            scoreboard.setRaidScoreboard(Bukkit.getPlayer(member.getUuid()), raid);
-        }
     }
 
     @IMCommand(
