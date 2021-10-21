@@ -29,4 +29,23 @@ public class LocationChecker {
         }
         return false;
     }
+
+    public static boolean isLocationInsideSquare(Location location, Location edge1, Location edge2) {
+        int x = location.getBlockX();
+        int z = location.getBlockZ();
+        int x1 = edge1.getBlockX();
+        int z1 = edge1.getBlockZ();
+        int x2 = edge2.getBlockX();
+        int z2 = edge2.getBlockY();
+
+        int minX = Math.min(x1, x2);
+        int maxX = Math.max(x1, x2);
+        int minZ = Math.min(z1, z2);
+        int maxZ = Math.max(z1, z2);
+
+        if (minX <= x && x <= maxX)
+            if (minZ <= z && z <= maxZ)
+                return true;
+        return false;
+    }
 }

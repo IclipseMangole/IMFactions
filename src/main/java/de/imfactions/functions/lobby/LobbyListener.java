@@ -2,7 +2,9 @@ package de.imfactions.functions.lobby;
 
 import de.imfactions.Data;
 import de.imfactions.IMFactions;
-import org.bukkit.*;
+import org.bukkit.Location;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -129,18 +131,13 @@ public class LobbyListener implements Listener {
     @EventHandler
     public void onPortalPlayer(PlayerPortalEvent event) {
         World world = event.getFrom().getWorld();
-        if (!world.getName().equalsIgnoreCase("world"))
-            return;
-        Player player = event.getPlayer();
-        Bukkit.getScheduler().runTaskLater(imFactions, new Runnable() {
-            @Override
-            public void run() {
-                player.teleport(data.getPVP_worldSpawn());
-                player.playSound(data.getPVP_worldSpawn(), Sound.ENTITY_ENDER_DRAGON_GROWL, 1.0F, 1.0F);
-                player.sendTitle(ChatColor.DARK_RED + "PVP", ChatColor.DARK_RED + "ZONE", 5, 20, 5);
-            }
-        }, 1);
-        event.setCancelled(true);
+        if (world.getName().equalsIgnoreCase("world")) {
+            event.setCancelled(true);
+            Player player = event.getPlayer();
+            player.teleport(data.getPVP_worldSpawn());
+            player.playSound(data.getPVP_worldSpawn(), Sound.ENTITY_ENDER_DRAGON_GROWL, 1.0F, 1.0F);
+            player.sendTitle(net.md_5.bungee.api.ChatColor.of("#851818") + "PVP", net.md_5.bungee.api.ChatColor.of("#851818") + "ZONE", 5, 20, 5);
+        }
     }
 
     @EventHandler

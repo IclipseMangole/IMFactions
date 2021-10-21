@@ -24,7 +24,7 @@ public class Spawn {
             usage = "§c/spawn",
             minArgs = 0,
             maxArgs = 0,
-            permissions = "im.factions.spawn",
+            permissions = "im.imFactions.spawn",
             noConsole = true
     )
     public void spawn(CommandSender sender) {

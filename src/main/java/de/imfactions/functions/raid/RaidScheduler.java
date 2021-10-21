@@ -8,7 +8,8 @@ import de.imfactions.functions.factionMember.FactionMember;
 import de.imfactions.functions.factionMember.FactionMemberUtil;
 import de.imfactions.functions.factionPlot.FactionPlot;
 import de.imfactions.functions.factionPlot.FactionPlotUtil;
-import de.imfactions.util.Actionbar;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
@@ -41,15 +42,17 @@ public class RaidScheduler implements Listener {
     }
 
     public void startPreparingRaid(int raidID, int seconds){
-        if(preparingRaids.containsKey(raidID))
+        if (preparingRaids.containsKey(raidID))
             return;
+
+        Raid raid = raidUtil.getRaid(raidID);
+        raid.setRaidState(RaidState.PREPARING);
 
         preparingRaids.put(raidID, Bukkit.getScheduler().runTaskTimer(imFactions, new Runnable() {
 
             int timer = seconds;
             final int ID = raidID;
             final Raid raid = raidUtil.getRaid(ID);
-            final Faction attackers = factionUtil.getFaction(raid.getFactionIdAttackers());
 
             @Override
             public void run() {
@@ -58,16 +61,13 @@ public class RaidScheduler implements Listener {
                     raidTeam.add(factionMemberUtil.getPlayer(factionMember.getUuid()));
                 }
                 if (timer <= 0) {
-                    if (factionUtil.getRaidableFactions(attackers.getId()).size() == 0) {
+                    if (raidUtil.getScoutableFactions(raid).size() == 0) {
                         for (Player player : raidTeam)
                             player.sendMessage(ChatColor.RED + "Error. Found no Faction to raid");
                         cancelPreparingRaid(ID);
                         return;
                     }
-                    raidUtil.updateRaidToScouting(ID);
-                    Faction defenders = factionUtil.getRandomFactionForRaid(attackers.getId());
-                    startScoutingRaid(ID, defenders.getId(), 300);
-                    cancelPreparingRaid(ID);
+                    raidUtil.scoutNextFaction(raid);
                     return;
                 }
                 if (timer == 10) {
@@ -93,8 +93,11 @@ public class RaidScheduler implements Listener {
         if (scoutingRaids.containsKey(raidID))
             return;
 
+        Raid raid = raidUtil.getRaid(raidID);
+        raid.setRaidState(RaidState.SCOUTING);
         Faction defenders = factionUtil.getFaction(defendersID);
         FactionPlot defendersPlot = factionPlotUtil.getFactionPlot(defendersID);
+        raid.setFactionIdDefenders(defenders.getId());
         defenders.setGettingRaided(true);
         ArrayList<Player> raidTeam = new ArrayList<>();
         for (FactionMember factionMember : raidUtil.getRaidTeam(raidID)) {
@@ -109,31 +112,31 @@ public class RaidScheduler implements Listener {
         scoutingRaids.put(raidID, Bukkit.getScheduler().runTaskTimer(imFactions, new Runnable() {
 
             int timer = seconds;
-            final int ID = raidID;
-            final Faction defenders = factionUtil.getFaction(defendersID);
-            final ArrayList<Player> members = raidTeam;
+            int ID = raidID;
 
             @Override
             public void run() {
+                ArrayList<Player> raidTeam = new ArrayList<>();
+                for (FactionMember factionMember : raidUtil.getRaidTeam(ID)) {
+                    raidTeam.add(factionMemberUtil.getPlayer(factionMember.getUuid()));
+                }
                 if (timer <= 0) {
-                    raidUtil.updateRaidToRaiding(ID, defenders.getId());
-                    startRaidingRaid(ID, 60 * 30);
-                    cancelScoutingRaid(ID);
+                    raidUtil.raidFaction(raidUtil.getRaid(ID));
                     return;
                 }
                 if (timer == 10) {
-                    for (Player player : members) {
+                    for (Player player : raidTeam) {
                         player.sendMessage(ChatColor.GREEN + "The Raiding Phase will begin in " + timer + " seconds");
                         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1.0F, 1.0F);
                     }
                 }
                 if (timer <= 5) {
-                    for (Player player : members) {
+                    for (Player player : raidTeam) {
                         player.sendMessage(ChatColor.GREEN + "The Raiding Phase will begin in " + timer + " seconds");
                         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1.0F, 1.0F);
                     }
                 }
-                for (Player player : members)
+                for (Player player : raidTeam)
                     setActionBarTimer(player, timer, "Scouting: ");
                 timer--;
             }
@@ -160,14 +163,16 @@ public class RaidScheduler implements Listener {
         raidingRaids.put(raidID, Bukkit.getScheduler().runTaskTimer(imFactions, new Runnable() {
             int timer = seconds;
             final int ID = raidID;
-            final ArrayList<Player> members = raidTeam;
 
             @Override
             public void run() {
+                ArrayList<Player> raidTeam = new ArrayList<>();
+                for (FactionMember factionMember : raidUtil.getRaidTeam(ID)) {
+                    raidTeam.add(factionMemberUtil.getPlayer(factionMember.getUuid()));
+                }
                 if (timer <= 0) {
-                    raidUtil.teleportRaidTeamHome(ID);
-                    raidUtil.updateRaidToDone(ID);
-                    cancelRaidingRaid(ID);
+                    Raid raid = raidUtil.getRaid(ID);
+                    raidUtil.endRaid(raid);
                     return;
                 }
                 for (FactionMember factionMember : raidUtil.getRaidTeam(ID)) {
@@ -175,19 +180,19 @@ public class RaidScheduler implements Listener {
                     setActionBarTimer(player, timer, "Raiding: ");
                 }
                 if (timer == 60) {
-                    for (Player player : members) {
+                    for (Player player : raidTeam) {
                         player.sendMessage(ChatColor.GREEN + "The Raiding Phase will end in " + timer + " seconds");
                         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1.0F, 1.0F);
                     }
                 }
                 if (timer == 10) {
-                    for (Player player : members) {
+                    for (Player player : raidTeam) {
                         player.sendMessage(ChatColor.GREEN + "The Raiding Phase will end in " + timer + " seconds");
                         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1.0F, 1.0F);
                     }
                 }
                 if (timer <= 5) {
-                    for (Player player : members) {
+                    for (Player player : raidTeam) {
                         player.sendMessage(ChatColor.GREEN + "The Raiding Phase will end in " + timer + " seconds");
                         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1.0F, 1.0F);
                     }
@@ -222,9 +227,12 @@ public class RaidScheduler implements Listener {
         int minutes = timer / 60;
         int seconds = timer % 60;
         String time = ChatColor.GRAY + prefix + ChatColor.GOLD + ChatColor.BOLD + String.format("%02d", minutes) + ":" +
-                String.format("%02d", seconds) + ".";
-        Actionbar actionbar = new Actionbar();
-        actionbar.send(player, time);
+                String.format("%02d", seconds);
+        sendActionBar(player, new StringBuilder(time));
+    }
+
+    private void sendActionBar(Player player, StringBuilder message) {
+        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(message.toString()));
     }
 
     public HashMap<Integer, BukkitTask> getPreparingRaids() {

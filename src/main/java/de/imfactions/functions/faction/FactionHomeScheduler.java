@@ -16,7 +16,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
@@ -69,10 +68,15 @@ public class FactionHomeScheduler implements Listener {
     @EventHandler
     public void onMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
-        if (activeTasks.containsKey(player)) {
-            cancelTeleport(player);
-            activeTasks.remove(player);
-        }
+        if (!activeTasks.containsKey(player))
+            return;
+        Location to = event.getTo();
+        Location from = event.getFrom();
+        if (from.getBlockX() == to.getBlockX() && from.getBlockY() == to.getBlockY() && from.getBlockZ() == to.getBlockZ())
+            return;
+        cancelTeleport(player);
+        activeTasks.remove(player);
+
     }
 
     @EventHandler

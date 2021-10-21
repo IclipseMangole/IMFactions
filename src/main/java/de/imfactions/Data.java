@@ -1,9 +1,9 @@
 package de.imfactions;
 
 import de.imfactions.commands.spawn.SpawnScheduler;
-import de.imfactions.functions.Scheduler;
 import de.imfactions.functions.Scoreboard;
 import de.imfactions.functions.Tablist;
+import de.imfactions.functions.faction.FactionHomeScheduler;
 import de.imfactions.functions.faction.FactionUtil;
 import de.imfactions.functions.factionMember.FactionMemberUtil;
 import de.imfactions.functions.factionPlot.FactionPlotUtil;
@@ -11,6 +11,7 @@ import de.imfactions.functions.items.ItemUtils;
 import de.imfactions.functions.items.Items;
 import de.imfactions.functions.lobby.lottery.LotteryUtil;
 import de.imfactions.functions.npc.NPCUtil;
+import de.imfactions.functions.raid.RaidScheduler;
 import de.imfactions.functions.raid.RaidUtil;
 import de.imfactions.functions.texture.TextureUtil;
 import de.imfactions.functions.user.UserSettingsUtil;
@@ -42,7 +43,6 @@ public class Data {
     private Location FactionPlots_worldSpawn;
 
     //Scheduler
-    private Scheduler scheduler;
     private SpawnScheduler spawnScheduler;
 
     //Scoreboard
@@ -113,13 +113,17 @@ public class Data {
         FactionPlots_world.setSpawnLocation(FactionPlots_worldSpawn);
     }
 
-    public void loadScheduler(){
-        scheduler = new Scheduler(imFactions);
+    public void loadScheduler() {
         spawnScheduler = new SpawnScheduler(imFactions);
+        factionHomeScheduler = new FactionHomeScheduler(this);
+        raidScheduler = new RaidScheduler(this);
+        factionUtil.loadScheduler();
+        raidUtil.loadSchedulers();
     }
 
     public void loadScoreboards(){
         scoreboard = new Scoreboard(imFactions);
+        raidUtil.loadScoreboards();
     }
 
 
@@ -192,10 +196,6 @@ public class Data {
         return mysql;
     }
 
-    public Scheduler getScheduler() {
-        return scheduler;
-    }
-
     public SpawnScheduler getSpawnScheduler(){
         return spawnScheduler;
     }
@@ -242,5 +242,13 @@ public class Data {
 
     public ItemUtils getItemUtils() {
         return itemUtils;
+    }
+
+    public FactionHomeScheduler getFactionHomeScheduler() {
+        return factionHomeScheduler;
+    }
+
+    public RaidScheduler getRaidScheduler() {
+        return raidScheduler;
     }
 }

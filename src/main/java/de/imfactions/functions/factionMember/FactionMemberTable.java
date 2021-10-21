@@ -26,15 +26,13 @@ public class FactionMemberTable {
     }
 
     public void createFactionMember(UUID uuid, int factionId, int rank) {
-        if (!factionMemberUtil.isFactionMemberExists(uuid)) {
-            mySQL.update("INSERT INTO factionMembers (`uuid`, `factionId`, `rank`) VALUES ('" + uuid + "', " + factionId + ", " + rank + ")");
-        }
+            mySQL.update("INSERT INTO `factionMembers` (`uuid`, `factionId`, `rank`) VALUES ('" + uuid + "', " + factionId + ", " + rank + ")");
     }
 
     public ArrayList<FactionMember> getFactionMembers() {
         ArrayList<FactionMember> factionMembers = new ArrayList<>(); 
         try {
-            ResultSet rs = mySQL.querry("SELECT `uuid`, `factionId`, `rank` FROM factionMembers WHERE 1");
+            ResultSet rs = mySQL.querry("SELECT `uuid`, `factionId`, `rank` FROM `factionMembers` WHERE 1");
             while (rs.next()) {
                 factionMembers.add(new FactionMember(UUID.fromString(rs.getString("uuid")), rs.getInt("factionId"), rs.getInt("rank")));
             }
@@ -45,10 +43,10 @@ public class FactionMemberTable {
     }
 
     public void saveFactionMember(FactionMember factionMember) {
-        mySQL.update("UPDATE factionMembers SET `factionId` = " + factionMember.getFactionID() + ", `rank` = " + factionMember.getRank() + " WHERE `uuid` = '" + factionMember.getUuid().toString() + "'");
+        mySQL.update("UPDATE `factionMembers` SET `factionId` = " + factionMember.getFactionID() + ", `rank` = " + factionMember.getRank() + " WHERE `uuid` = '" + factionMember.getUuid().toString() + "'");
     }
 
     public void deleteFactionMember(FactionMember factionMember) {
-        mySQL.update("DELETE FROM factionMembers WHERE `uuid` = '" + factionMember.getUuid().toString() + "'");
+        mySQL.update("DELETE FROM `factionMembers` WHERE `uuid` = '" + factionMember.getUuid().toString() + "'");
     }
 }

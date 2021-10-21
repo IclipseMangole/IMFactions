@@ -107,21 +107,32 @@ public class FactionPlotUtil {
         return new Location(Bukkit.getWorld("FactionPlots_world"), RaidEdgeLeft.getX() + 118, RaidEdgeLeft.getY() + 128, RaidEdgeLeft.getZ() + 118);
     }
 
-    public Location getCompleteEdgeLeft(Location edgeDownFrontLeft){
-        return new Location(Bukkit.getWorld("FactionPlots_world"), edgeDownFrontLeft.getX() - 55, edgeDownFrontLeft.getY(), edgeDownFrontLeft.getZ() - 55);
+    public Location getCompleteEdgeLeft(Location edgeDownFrontLeft) {
+        return new Location(Bukkit.getWorld("FactionPlots_world"), edgeDownFrontLeft.getX() - 55, 0, edgeDownFrontLeft.getZ() - 55);
     }
 
-    public Location getCompleteEdgeRight(Location CompleteEdgeLeft){
+    public Location getCompleteEdgeRight(Location CompleteEdgeLeft) {
         return new Location(Bukkit.getWorld("FactionPlots_world"), CompleteEdgeLeft.getX() + 189, CompleteEdgeLeft.getY() + 128, CompleteEdgeLeft.getZ() + 189);
     }
 
-    public FactionPlot getFactionPlot(Location location){
-
-        for (FactionPlot factionPlot : factionPlots){
+    public boolean isLocationOnFactionPlot(Location location) {
+        for (FactionPlot factionPlot : factionPlots) {
             Location CompletEdgeLeft = getCompleteEdgeLeft(factionPlot.getEdgeDownFrontLeft());
             Location CompleteEdgeRight = getCompleteEdgeRight(CompletEdgeLeft);
 
-            if(LocationChecker.isLocationInsideCube(location, CompletEdgeLeft, CompleteEdgeRight)){
+            if (LocationChecker.isLocationInsideSquare(location, CompletEdgeLeft, CompleteEdgeRight)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public FactionPlot getFactionPlot(Location location) {
+        for (FactionPlot factionPlot : factionPlots) {
+            Location CompletEdgeLeft = getCompleteEdgeLeft(factionPlot.getEdgeDownFrontLeft());
+            Location CompleteEdgeRight = getCompleteEdgeRight(CompletEdgeLeft);
+
+            if (LocationChecker.isLocationInsideSquare(location, CompletEdgeLeft, CompleteEdgeRight)) {
                 return factionPlot;
             }
         }

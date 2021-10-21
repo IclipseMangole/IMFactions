@@ -6,8 +6,6 @@ import de.imfactions.util.UUIDFetcher;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -51,6 +49,7 @@ public class UserUtil {
     public User createUser(UUID uuid) {
         User user = new User(uuid);
         users.add(user);
+        userTable.createUser(user.getUUID(), user.getEther(), user.getOnlinetime(), user.getFirstJoin(), user.getLastSeen());
         return user;
     }
 

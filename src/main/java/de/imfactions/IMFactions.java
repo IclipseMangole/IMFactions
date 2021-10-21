@@ -16,8 +16,6 @@ import de.imfactions.listener.QuitListener;
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
 import org.bukkit.GameRule;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class IMFactions extends JavaPlugin {
@@ -37,24 +35,23 @@ public class IMFactions extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        updateGamerules();
         data = new Data(this);
-        data.createUtils();
         data.loadWorlds();
+        data.createUtils();
         data.loadScheduler();
         data.loadScoreboards();
         worldManager.loadManagers();
         registerCommands();
         registerListener();
+        updateGamerules();
     }
 
     @Override
     public void onDisable() {
         data.getUserUtil().saveUsers();
-        data.getMySQL().close();
-        data.getScheduler().stopSchedulers();
         data.saveUtils();
         worldManager.savePlots();
+        data.getMySQL().close();
     }
 
     public Data getData() {

@@ -44,11 +44,14 @@ public class FactionUtil {
         }, 20 * 60, 10 * 60 * 20);
     }
 
-    public void loadUtils(){
+    public void loadUtils() {
         factionTable = new FactionTable(this, data);
         factionMemberUtil = data.getFactionMemberUtil();
-        factionHomeScheduler = new FactionHomeScheduler(data);
         factions = factionTable.getFactions();
+    }
+
+    public void loadScheduler() {
+        factionHomeScheduler = data.getFactionHomeScheduler();
     }
 
     public ArrayList<Faction> getRaidableFactions(int factionID) {
@@ -74,6 +77,15 @@ public class FactionUtil {
             }
         }
         return null;
+    }
+
+    public ArrayList<FactionMember> getMembersWithRank(int factionID, int rank) {
+        ArrayList<FactionMember> members = new ArrayList<>();
+        for (FactionMember factionMember : factionMemberUtil.getFactionMembers(factionID)) {
+            if (factionMember.getRank() == rank)
+                members.add(factionMember);
+        }
+        return members;
     }
 
     public Faction getFaction(String name) {
@@ -104,14 +116,22 @@ public class FactionUtil {
     }
 
     public int getHighestFactionID(){
-        return factionTable.getHighestFactionID();
+        int highest = 0;
+
+        for (Faction faction : factions) {
+            if (faction.getId() > highest)
+                highest = faction.getId();
+        }
+        return highest;
     }
 
     public Faction getRandomFactionForRaid(int factionID) {
         Random random = new Random();
 
         ArrayList<Faction> raidableFactions = getRaidableFactions(factionID);
-        return raidableFactions.get(random.nextInt(factions.size()));
+        if (raidableFactions.size() == 0)
+            return null;
+        return raidableFactions.get(random.nextInt(raidableFactions.size()));
     }
 
     public boolean isFactionExists(int factionID) {
@@ -144,6 +164,7 @@ public class FactionUtil {
 
     public void deleteFaction(Faction faction){
         factionTable.deleteFaction(faction);
+        factions.remove(faction);
     }
 
     public FactionMember getKing(Faction faction){

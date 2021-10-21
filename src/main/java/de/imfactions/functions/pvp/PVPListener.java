@@ -139,6 +139,7 @@ public class PVPListener implements Listener {
             userUtil.getUser(killer.getName()).addEther(10);
             dead.teleport(data.getWorldSpawn());
             dead.playSound(dead.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
+
             killer.playSound(killer.getLocation(), Sound.ENTITY_WITHER_DEATH, 1, 1);
         }
     }
@@ -169,13 +170,14 @@ public class PVPListener implements Listener {
 
     @EventHandler
     public void onPortalPlayer(PlayerPortalEvent event) {
-        World world = event.getPlayer().getWorld();
+        World world = event.getFrom().getWorld();
         if (!world.getName().equalsIgnoreCase("FactionPVP_world"))
             return;
         event.setCancelled(true);
         Player player = event.getPlayer();
         player.teleport(data.getWorldSpawn());
         player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
+        player.sendTitle(ChatColor.of("#5813BF") + "Lobby", "", 5, 20, 5);
         player.getInventory().setItem(0, new FactionItemStack(FactionItem.get("Excalibur"), 0, 1).toItemStack());
         player.getInventory().setItem(1, new FactionItemStack(FactionItem.get("Yew arch"), 0, 1).toItemStack());
     }

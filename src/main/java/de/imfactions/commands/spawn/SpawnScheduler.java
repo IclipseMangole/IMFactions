@@ -4,6 +4,7 @@ import de.imfactions.Data;
 import de.imfactions.IMFactions;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -58,10 +59,15 @@ public class SpawnScheduler implements Listener {
     @EventHandler
     public void onMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
-        if (activeTasks.containsKey(player)) {
-            cancelTeleport(player);
-            activeTasks.remove(player);
-        }
+        if (!activeTasks.containsKey(player))
+            return;
+        Location to = event.getTo();
+        Location from = event.getFrom();
+        if (from.getBlockX() == to.getBlockX() && from.getBlockY() == to.getBlockY() && from.getBlockZ() == to.getBlockZ())
+            return;
+        cancelTeleport(player);
+        activeTasks.remove(player);
+
     }
 
     @EventHandler
