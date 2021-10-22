@@ -1,5 +1,6 @@
-package de.imfactions.functions.pvp.mobs;
+package de.imfactions.functions.pvp.mobs.attributes;
 
+import de.imfactions.functions.pvp.mobs.CustomMob;
 import org.bukkit.ChatColor;
 
 import java.util.Random;

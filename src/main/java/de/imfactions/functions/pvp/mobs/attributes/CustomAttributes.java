@@ -1,4 +1,4 @@
-package de.imfactions.functions.pvp.mobs.abilities;
+package de.imfactions.functions.pvp.mobs.attributes;
 
 import de.imfactions.functions.pvp.mobs.CustomMob;
 import net.minecraft.world.entity.ai.attributes.GenericAttributes;

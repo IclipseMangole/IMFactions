@@ -173,7 +173,7 @@ public class RaidListener implements Listener {
             int damage = obsidian.get(damagedObsidian);
             obsidian.replace(damagedObsidian, damage + 1);
             if (obsidian.get(damagedObsidian) >= 2) {
-                damagedObsidian.setType(Material.AIR);
+                damagedObsidian.breakNaturally();
                 obsidian.remove(damagedObsidian);
             }
         }
