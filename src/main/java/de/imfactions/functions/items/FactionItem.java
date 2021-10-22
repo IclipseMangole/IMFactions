@@ -13,16 +13,16 @@ import org.bukkit.inventory.ItemStack;
 public class FactionItem {
     private static ArrayList<FactionItem> factionItems = new ArrayList<>();
 
+    private String name;
     private String displayName;
-    private ChatColor chatColor;
     private String subtitle;
     private Material material;
     private ItemRarity rarity;
     private HashMap<Integer, HashMap<ItemModifierType, ItemModifierValue>> modifiersPerLevel;
 
-    public FactionItem(String displayName, ChatColor chatColor, String subtitle, Material material, ItemRarity rarity, HashMap<Integer, HashMap<ItemModifierType, ItemModifierValue>> modifiersPerLevel) {
+    public FactionItem(String name, String displayName, String subtitle, Material material, ItemRarity rarity, HashMap<Integer, HashMap<ItemModifierType, ItemModifierValue>> modifiersPerLevel) {
+        this.name = name;
         this.displayName = displayName;
-        this.chatColor = chatColor;
         this.subtitle = subtitle;
         this.material = material;
         this.rarity = rarity;
@@ -30,12 +30,20 @@ public class FactionItem {
         factionItems.add(this);
     }
 
-    public String getDisplayName() {
-        return this.displayName;
+    public FactionItem(String name, ChatColor prefix, String subtitle, Material material, ItemRarity rarity, HashMap<Integer, HashMap<ItemModifierType, ItemModifierValue>> modifiersPerLevel) {
+        this(name, prefix + name, subtitle, material, rarity, modifiersPerLevel);
     }
 
-    public ChatColor getChatColor() {
-        return chatColor;
+    public FactionItem(String name, String subtitle, Material material, ItemRarity rarity, HashMap<Integer, HashMap<ItemModifierType, ItemModifierValue>> modifiersPerLevel) {
+        this(name, rarity.getColor() + name, subtitle, material, rarity, modifiersPerLevel);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDisplayName() {
+        return this.displayName;
     }
 
     public String getSubtitle() {
@@ -62,13 +70,13 @@ public class FactionItem {
         return factionItems;
     }
 
-    public static FactionItem get(String displayName) {
+    public static FactionItem get(String name) {
         for (FactionItem factionItem : factionItems) {
-            if (factionItem.getDisplayName().equals(displayName)) {
+            if (factionItem.getName().equals(name)) {
                 return factionItem;
             }
         }
-        throw new NullPointerException("Item " + displayName + " not existing");
+        throw new NullPointerException("Item " + name + " not existing");
     }
 
     public static FactionItem of(ItemStack itemStack, ItemRarity rarity) {

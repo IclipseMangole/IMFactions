@@ -57,6 +57,7 @@ public class Monte extends NPC implements Listener {
     public void say(Location location, String sound){
         rotate(location);
         if(System.currentTimeMillis() - 7500 < lastSound) return;
+        lastSound = System.currentTimeMillis();
         Bukkit.getScheduler().runTaskLater(factions, new Runnable() {
             @Override
             public void run() {

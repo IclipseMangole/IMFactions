@@ -14,19 +14,6 @@ import org.bukkit.inventory.ItemStack;
 
 
 public class Damage implements Listener {
-    @EventHandler(priority = EventPriority.NORMAL)
-    public void onDamage(EntityDamageByEntityEvent event) {
-        System.out.println("EntityDamage by Entity");
-        if (event.getDamager() instanceof Player) {
-            ItemStack itemStack = ((Player) event.getDamager()).getInventory().getItemInMainHand();
-            if (itemStack.getType() != Material.AIR && FactionItemStack.isItem(itemStack)) {
-                FactionItemStack factionItemStack = FactionItemStack.of(itemStack);
-                if (factionItemStack.getItemModifiers().containsKey(ItemModifierType.DAMAGE)) {
-                    event.setDamage(event.getDamage() + (Double) factionItemStack.getItemModifiers().get(ItemModifierType.DAMAGE).value * 2.0D);
-                }
-            }
-        }
-    }
 
 
     @EventHandler(priority = EventPriority.NORMAL)

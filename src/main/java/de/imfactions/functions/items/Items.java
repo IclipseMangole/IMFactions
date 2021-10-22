@@ -31,16 +31,16 @@ public class Items {
         HashMap<Integer, HashMap<ItemModifierType, ItemModifierValue>> map = new HashMap<>();
         HashMap<ItemModifierType, ItemModifierValue> defaultLevel = new HashMap<>();
         defaultLevel.put(ItemModifierType.ATTACK_SPEED, new ItemModifierValue(Double.valueOf(1.0D)));
-        for (int i = 0; i < 5; i++) {
+        for (int i = 1; i <= 5; i++) {
             HashMap<ItemModifierType, ItemModifierValue> level = (HashMap<ItemModifierType, ItemModifierValue>) defaultLevel.clone();
-            if (i != 4) {
+            if (i != 5) {
                 level.put(ItemModifierType.DAMAGE, new ItemModifierValue(2.0D + i));
             } else {
                 level.put(ItemModifierType.DAMAGE, new ItemModifierValue(7.0D));
             }
             map.put(Integer.valueOf(i), level);
         }
-        new FactionItem("Stone Club", ChatColor.of("#363636"), "Booga Booga", Material.STONE_HOE, ItemRarity.COMMON, map);
+        new FactionItem("Stone Club", "Booga Booga", Material.STONE_HOE, ItemRarity.COMMON, map);
     }
 
     public void createHeadCutter() {
@@ -48,31 +48,31 @@ public class Items {
         HashMap<ItemModifierType, ItemModifierValue> defaultLevel = new HashMap<>();
         defaultLevel.put(ItemModifierType.DAMAGE, new ItemModifierValue(Double.valueOf(8.0D)));
         defaultLevel.put(ItemModifierType.ATTACK_SPEED, new ItemModifierValue(Double.valueOf(0.25D)));
-        for (int i = 0; i < 5; i++) {
+        for (int i = 1; i <= 5; i++) {
             HashMap<ItemModifierType, ItemModifierValue> level = (HashMap<ItemModifierType, ItemModifierValue>) defaultLevel.clone();
-            if (i != 4) {
+            if (i != 5) {
                 level.put(ItemModifierType.ATTACK_SPEED, new ItemModifierValue(0.25D + i * 0.1875));
             } else {
                 level.put(ItemModifierType.ATTACK_SPEED, new ItemModifierValue(0.875D));
             }
             map.put(Integer.valueOf(i), level);
         }
-        new FactionItem("Head Cutter", ChatColor.of("#363636"), "On the neck!", Material.STONE_SWORD, ItemRarity.COMMON, map);
+        new FactionItem("Head Cutter", "On the neck!", Material.STONE_SWORD, ItemRarity.COMMON, map);
     }
 
     public void createFaramirsBow() {
         HashMap<Integer, HashMap<ItemModifierType, ItemModifierValue>> map = new HashMap<>();
         HashMap<ItemModifierType, ItemModifierValue> defaultLevel = new HashMap<>();
-        for (int i = 0; i < 5; i++) {
+        for (int i = 1; i <= 5; i++) {
             HashMap<ItemModifierType, ItemModifierValue> level = (HashMap<ItemModifierType, ItemModifierValue>) defaultLevel.clone();
-            if (i != 4) {
+            if (i != 5) {
                 level.put(ItemModifierType.DAMAGE, new ItemModifierValue(2.0D + i));
             } else {
                 level.put(ItemModifierType.DAMAGE, new ItemModifierValue(7.0D));
             }
             map.put(Integer.valueOf(i), level);
         }
-        new FactionItem("Faramir's Bow", ChatColor.of("#363636"), "Did you drink enough Zielwasser?", Material.BOW, ItemRarity.COMMON, map);
+        new FactionItem("Faramir's Bow", "Did you drink enough Zielwasser?", Material.BOW, ItemRarity.COMMON, map);
     }
 
     //UNCOMMON
@@ -83,9 +83,9 @@ public class Items {
         HashMap<Integer, HashMap<ItemModifierType, ItemModifierValue>> map = new HashMap<>();
         HashMap<ItemModifierType, ItemModifierValue> defaultLevel = new HashMap<>();
         defaultLevel.put(ItemModifierType.ATTACK_SPEED, new ItemModifierValue(Double.valueOf(1.0D)));
-        for (int i = 0; i < 5; i++) {
+        for (int i = 1; i <= 5; i++) {
             HashMap<ItemModifierType, ItemModifierValue> level = (HashMap<ItemModifierType, ItemModifierValue>) defaultLevel.clone();
-            if (i != 4) {
+            if (i != 5) {
                 level.put(ItemModifierType.DAMAGE, new ItemModifierValue(Double.valueOf(4.0D + i)));
                 level.put(ItemModifierType.FIRE_ASPECT, new ItemModifierValue(Integer.valueOf(1)));
             } else {
@@ -94,7 +94,7 @@ public class Items {
             }
             map.put(Integer.valueOf(i), level);
         }
-        new FactionItem("Excalibur", ChatColor.of("#66FFFF"), "A perfectly balanced blade", Material.DIAMOND_SWORD, ItemRarity.RARE, map);
+        new FactionItem("Excalibur", "A perfectly balanced blade", Material.DIAMOND_SWORD, ItemRarity.RARE, map);
     }
 
     //EPIC
@@ -102,16 +102,16 @@ public class Items {
     public void createBow() {
         HashMap<Integer, HashMap<ItemModifierType, ItemModifierValue>> map = new HashMap<>();
         HashMap<ItemModifierType, ItemModifierValue> defaultLevel = new HashMap<>();
-        for (int i = 0; i < 5; i++) {
+        for (int i = 1; i <= 5; i++) {
             HashMap<ItemModifierType, ItemModifierValue> level = (HashMap<ItemModifierType, ItemModifierValue>) defaultLevel.clone();
-            if (i != 4) {
+            if (i != 5) {
                 level.put(ItemModifierType.DAMAGE, new ItemModifierValue(Double.valueOf(8.0D + i)));
             } else {
                 level.put(ItemModifierType.DAMAGE, new ItemModifierValue(Double.valueOf(13.0D)));
             }
             map.put(Integer.valueOf(i), level);
         }
-        new FactionItem("Yew arch", ChatColor.of("#36FFFF"), "Created by Elves", Material.BOW, ItemRarity.EPIC, map);
+        new FactionItem("Yew arch", ChatColor.of("#8C19FF"), "Created by Elves", Material.BOW, ItemRarity.EPIC, map);
     }
 
     //LEGENDARY
