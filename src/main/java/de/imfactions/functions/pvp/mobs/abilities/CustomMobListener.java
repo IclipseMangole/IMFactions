@@ -37,9 +37,4 @@ public class CustomMobListener implements Listener {
         CustomMob customMob = (CustomMob) event.getEntity();
         customMob.setName((float) (customMob.getHealth() - event.getFinalDamage()));
     }
-
-    @EventHandler
-    public void onSun() {
-
-    }
 }
