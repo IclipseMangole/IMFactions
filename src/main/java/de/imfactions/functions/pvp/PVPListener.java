@@ -178,8 +178,6 @@ public class PVPListener implements Listener {
         player.teleport(data.getWorldSpawn());
         player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
         player.sendTitle(ChatColor.of("#5813BF") + "Lobby", "", 5, 20, 5);
-        player.getInventory().setItem(0, new FactionItemStack(FactionItem.get("Excalibur"), 0, 1).toItemStack());
-        player.getInventory().setItem(1, new FactionItemStack(FactionItem.get("Yew arch"), 0, 1).toItemStack());
     }
 
     @EventHandler

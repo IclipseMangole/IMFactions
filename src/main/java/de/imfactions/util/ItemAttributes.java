@@ -29,12 +29,7 @@ public class ItemAttributes {
             return 1.0D;
         if (material == Material.CROSSBOW)
             return 1.25D;
-        Item item = null;
-        try {
-            item = (Item) Items.class.getField(material.name()).get(new String());
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        Item item = CraftItemStack.asNMSCopy(new ItemStack(material)).getItem();
         Iterator iterator = item.a(EnumItemSlot.a).get(GenericAttributes.h).iterator();
         Object object = new Object();
         while (iterator.hasNext())

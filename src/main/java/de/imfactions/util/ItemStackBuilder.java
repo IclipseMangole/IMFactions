@@ -12,9 +12,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
+
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -213,6 +218,21 @@ public class ItemStackBuilder {
         if (this.itemFlags != null && !this.itemFlags.isEmpty()) {
             itemMeta.addItemFlags((ItemFlag[])this.itemFlags.toArray(new ItemFlag[this.itemFlags.size()]));
         }
+
+        if(attackSpeed != -1.0){
+            AttributeModifier modifier = new AttributeModifier("generic.attack_speed", attackSpeed, AttributeModifier.Operation.ADD_NUMBER);
+            itemMeta.removeAttributeModifier(Attribute.GENERIC_ATTACK_SPEED);
+            itemMeta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        }
+
+
+
+        if(damage != -1.0){
+            AttributeModifier modifier = new AttributeModifier("generic.attack_damage", damage - 1, AttributeModifier.Operation.ADD_NUMBER);
+            itemMeta.removeAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE);
+            itemMeta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier);
+        }
+
 
         if (this.unbreakable) {
             itemMeta.setUnbreakable(true);
