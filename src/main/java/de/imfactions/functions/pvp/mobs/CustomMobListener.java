@@ -4,6 +4,7 @@ import de.imfactions.Data;
 import de.imfactions.IMFactions;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
+import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -26,13 +27,17 @@ public class CustomMobListener implements Listener {
     }
 
     @EventHandler
-    public void onZombieSpawnEgg(CreatureSpawnEvent event) {
+    public void onSpawnEgg(CreatureSpawnEvent event) {
         if (!event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.SPAWNER_EGG))
             return;
-        if (!(event.getEntity() instanceof Zombie))
-            return;
-        event.setCancelled(true);
-        new Orc(event.getLocation());
+        if (!(event.getEntity() instanceof Zombie)) {
+            new Orc(event.getLocation());
+            event.setCancelled(true);
+        }
+        if (!(event.getEntity() instanceof Skeleton)) {
+            new Undead(event.getLocation());
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler

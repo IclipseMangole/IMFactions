@@ -34,7 +34,7 @@ public class Items {
         for (int i = 1; i <= 5; i++) {
             HashMap<ItemModifierType, ItemModifierValue> level = (HashMap<ItemModifierType, ItemModifierValue>) defaultLevel.clone();
             if (i != 5) {
-                level.put(ItemModifierType.DAMAGE, new ItemModifierValue(2.0D + i));
+                level.put(ItemModifierType.DAMAGE, new ItemModifierValue(2.0D + i - 1));
             } else {
                 level.put(ItemModifierType.DAMAGE, new ItemModifierValue(7.0D));
             }
@@ -47,11 +47,10 @@ public class Items {
         HashMap<Integer, HashMap<ItemModifierType, ItemModifierValue>> map = new HashMap<>();
         HashMap<ItemModifierType, ItemModifierValue> defaultLevel = new HashMap<>();
         defaultLevel.put(ItemModifierType.DAMAGE, new ItemModifierValue(Double.valueOf(8.0D)));
-        defaultLevel.put(ItemModifierType.ATTACK_SPEED, new ItemModifierValue(Double.valueOf(0.25D)));
         for (int i = 1; i <= 5; i++) {
             HashMap<ItemModifierType, ItemModifierValue> level = (HashMap<ItemModifierType, ItemModifierValue>) defaultLevel.clone();
             if (i != 5) {
-                level.put(ItemModifierType.ATTACK_SPEED, new ItemModifierValue(0.25D + i * 0.1875));
+                level.put(ItemModifierType.ATTACK_SPEED, new ItemModifierValue(0.25D + (i - 1) * 0.1875));
             } else {
                 level.put(ItemModifierType.ATTACK_SPEED, new ItemModifierValue(0.875D));
             }
@@ -66,7 +65,7 @@ public class Items {
         for (int i = 1; i <= 5; i++) {
             HashMap<ItemModifierType, ItemModifierValue> level = (HashMap<ItemModifierType, ItemModifierValue>) defaultLevel.clone();
             if (i != 5) {
-                level.put(ItemModifierType.DAMAGE, new ItemModifierValue(2.0D + i));
+                level.put(ItemModifierType.DAMAGE, new ItemModifierValue(2.0D + i - 1));
             } else {
                 level.put(ItemModifierType.DAMAGE, new ItemModifierValue(7.0D));
             }
@@ -86,7 +85,7 @@ public class Items {
         for (int i = 1; i <= 5; i++) {
             HashMap<ItemModifierType, ItemModifierValue> level = (HashMap<ItemModifierType, ItemModifierValue>) defaultLevel.clone();
             if (i != 5) {
-                level.put(ItemModifierType.DAMAGE, new ItemModifierValue(Double.valueOf(4.0D + i)));
+                level.put(ItemModifierType.DAMAGE, new ItemModifierValue(Double.valueOf(4.0D + i - 1)));
                 level.put(ItemModifierType.FIRE_ASPECT, new ItemModifierValue(Integer.valueOf(1)));
             } else {
                 level.put(ItemModifierType.DAMAGE, new ItemModifierValue(Double.valueOf(7.0D)));
@@ -105,7 +104,7 @@ public class Items {
         for (int i = 1; i <= 5; i++) {
             HashMap<ItemModifierType, ItemModifierValue> level = (HashMap<ItemModifierType, ItemModifierValue>) defaultLevel.clone();
             if (i != 5) {
-                level.put(ItemModifierType.DAMAGE, new ItemModifierValue(Double.valueOf(8.0D + i)));
+                level.put(ItemModifierType.DAMAGE, new ItemModifierValue(Double.valueOf(8.0D + i) - 1));
             } else {
                 level.put(ItemModifierType.DAMAGE, new ItemModifierValue(Double.valueOf(13.0D)));
             }

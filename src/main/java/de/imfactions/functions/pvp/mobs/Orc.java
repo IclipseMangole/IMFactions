@@ -25,7 +25,7 @@ public class Orc extends CustomMob {
     }
 
     private void setDrops() {
-
+        
     }
 
     private void setAttributes() {
