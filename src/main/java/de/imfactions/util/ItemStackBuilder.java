@@ -220,7 +220,7 @@ public class ItemStackBuilder {
         }
 
         if(attackSpeed != -1.0){
-            AttributeModifier modifier = new AttributeModifier("generic.attack_speed", attackSpeed, AttributeModifier.Operation.ADD_NUMBER);
+            AttributeModifier modifier = new AttributeModifier("generic.attack_speed", attackSpeed - 4, AttributeModifier.Operation.ADD_NUMBER);
             itemMeta.removeAttributeModifier(Attribute.GENERIC_ATTACK_SPEED);
             itemMeta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
         }
