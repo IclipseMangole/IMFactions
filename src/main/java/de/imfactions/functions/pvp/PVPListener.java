@@ -5,8 +5,6 @@ import de.imfactions.IMFactions;
 import de.imfactions.functions.faction.FactionUtil;
 import de.imfactions.functions.factionMember.FactionMemberUtil;
 import de.imfactions.functions.factionPlot.FactionPlotUtil;
-import de.imfactions.functions.items.FactionItem;
-import de.imfactions.functions.items.FactionItemStack;
 import de.imfactions.functions.user.UserUtil;
 import de.imfactions.util.LocationChecker;
 import de.imfactions.util.UUIDFetcher;
@@ -75,8 +73,8 @@ public class PVPListener implements Listener {
         String world = location.getWorld().getName();
 
         if (world.equals("FactionPVP_world")) {
-            Location edgeDownFrontLeft = new Location(Bukkit.getWorld("FactionPVP_world"), 29, 69, 1245);
-            Location edgeUpBackRight = new Location(Bukkit.getWorld("FactionPVP_world"), 97, 99, 1279);
+            Location edgeDownFrontLeft = new Location(Bukkit.getWorld("FactionPVP_world"), -1, 77, 382);
+            Location edgeUpBackRight = new Location(Bukkit.getWorld("FactionPVP_world"), 108, 88, 361);
 
             if (event.getDamager() instanceof Player && event.getEntity() instanceof Player) {
                 Player damager = (Player) event.getDamager();
@@ -110,11 +108,11 @@ public class PVPListener implements Listener {
         String world = location.getWorld().getName();
 
         if (world.equals("FactionPVP_world")) {
-            Location edgeDownFrontLeft = new Location(Bukkit.getWorld("FactionPVP_world"), 29, 69, 1245);
-            Location edgeUpBackRight = new Location(Bukkit.getWorld("FactionPVP_world"), 97, 99, 1279);
-            if(event.getEntity() instanceof Player){
+            Location edgeDownFrontLeft = new Location(Bukkit.getWorld("FactionPVP_world"), -1, 77, 382);
+            Location edgeUpBackRight = new Location(Bukkit.getWorld("FactionPVP_world"), 108, 88, 361);
+            if (event.getEntity() instanceof Player) {
                 Player player = (Player) event.getEntity();
-                if(LocationChecker.isLocationInsideCube(player.getLocation(), edgeDownFrontLeft, edgeUpBackRight)){
+                if (LocationChecker.isLocationInsideCube(player.getLocation(), edgeDownFrontLeft, edgeUpBackRight)) {
                     event.setCancelled(true);
                 }
             }

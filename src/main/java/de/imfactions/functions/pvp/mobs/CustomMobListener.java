@@ -30,11 +30,12 @@ public class CustomMobListener implements Listener {
     public void onSpawnEgg(CreatureSpawnEvent event) {
         if (!event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.SPAWNER_EGG))
             return;
-        if (!(event.getEntity() instanceof Zombie)) {
+        if (event.getEntity() instanceof Zombie) {
             new Orc(event.getLocation());
             event.setCancelled(true);
+            return;
         }
-        if (!(event.getEntity() instanceof Skeleton)) {
+        if (event.getEntity() instanceof Skeleton) {
             new Undead(event.getLocation());
             event.setCancelled(true);
         }
@@ -52,6 +53,7 @@ public class CustomMobListener implements Listener {
     public void onDropLoot(EntityDeathEvent event) {
         if (!(((CraftEntity) event.getEntity()).getHandle() instanceof CustomMob))
             return;
+        event.getDrops().clear();
         CustomMob customMob = (CustomMob) ((CraftEntity) event.getEntity()).getHandle();
         World world = event.getEntity().getWorld();
         Random random = new Random();

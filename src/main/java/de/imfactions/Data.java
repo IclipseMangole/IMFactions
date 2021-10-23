@@ -107,7 +107,7 @@ public class Data {
         }
         imFactions.getWorldManager().startAutoSave();
         worldSpawn = new Location(world, 0.5, 31, -17.5);
-        PVP_worldSpawn = new Location(PVP_world, 63.5, 80.5, 1265.5, -180, 0);
+        PVP_worldSpawn = new Location(PVP_world, 54.0, 78.0, 372.0, 180, 0);
         FactionPlots_worldSpawn = new Location(FactionPlots_world, 0, 17, 0);
         world.setSpawnLocation(worldSpawn);
         PVP_world.setSpawnLocation(PVP_worldSpawn);
