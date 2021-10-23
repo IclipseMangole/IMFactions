@@ -1,9 +1,8 @@
-package de.imfactions.functions.pvp.mobs;
+package de.imfactions.functions.pvp.mobs.custommob;
 
 import de.imfactions.Data;
 import de.imfactions.IMFactions;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
@@ -20,10 +19,12 @@ public class CustomMobListener implements Listener {
 
     private IMFactions imFactions;
     private Data data;
+    private CustomMobUtil customMobUtil;
 
     public CustomMobListener(IMFactions imFactions) {
         this.imFactions = imFactions;
         data = imFactions.getData();
+        customMobUtil = data.getCustomMobUtil();
     }
 
     @EventHandler
@@ -31,33 +32,34 @@ public class CustomMobListener implements Listener {
         if (!event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.SPAWNER_EGG))
             return;
         if (event.getEntity() instanceof Zombie) {
-            new Orc(event.getLocation());
+            System.out.println("neuer Ork");
             event.setCancelled(true);
+            customMobUtil.createOrc(event.getLocation());
             return;
         }
         if (event.getEntity() instanceof Skeleton) {
-            new Undead(event.getLocation());
             event.setCancelled(true);
+            customMobUtil.createUndead(event.getLocation());
         }
     }
 
     @EventHandler
     public void onNameChange(EntityDamageEvent event) {
-        if (!(((CraftEntity) event.getEntity()).getHandle() instanceof CustomMob))
+        if (!customMobUtil.isEntityCustom(event.getEntity()))
             return;
-        CustomMob customMob = (CustomMob) ((CraftEntity) event.getEntity()).getHandle();
-        customMob.setName((float) (customMob.getHealth() - event.getDamage()));
+        CustomMobInsentient customMobInsentient = customMobUtil.getCustomMob(event.getEntity());
+        customMobInsentient.setName((float) (customMobInsentient.getHealth() - event.getDamage()));
     }
 
     @EventHandler
     public void onDropLoot(EntityDeathEvent event) {
-        if (!(((CraftEntity) event.getEntity()).getHandle() instanceof CustomMob))
+        if (!customMobUtil.isEntityCustom(event.getEntity()))
             return;
         event.getDrops().clear();
-        CustomMob customMob = (CustomMob) ((CraftEntity) event.getEntity()).getHandle();
+        CustomMobInsentient customMobInsentient = customMobUtil.getCustomMob(event.getEntity());
         World world = event.getEntity().getWorld();
         Random random = new Random();
-        for (Map.Entry<ItemStack, Integer> drops : customMob.drops.entrySet()) {
+        for (Map.Entry<ItemStack, Integer> drops : customMobInsentient.drops.entrySet()) {
             if (random.nextInt(100) < drops.getValue())
                 world.dropItemNaturally(event.getEntity().getLocation(), drops.getKey());
         }

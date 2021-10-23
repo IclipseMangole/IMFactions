@@ -8,7 +8,7 @@ import de.imfactions.functions.factionPlot.FactionPlotCommand;
 import de.imfactions.functions.factionPlot.PlotListener;
 import de.imfactions.functions.lobby.LobbyListener;
 import de.imfactions.functions.pvp.PVPListener;
-import de.imfactions.functions.pvp.mobs.CustomMobListener;
+import de.imfactions.functions.pvp.mobs.custommob.CustomMobListener;
 import de.imfactions.functions.raid.RaidCommand;
 import de.imfactions.functions.raid.RaidListener;
 import de.imfactions.listener.JoinListener;

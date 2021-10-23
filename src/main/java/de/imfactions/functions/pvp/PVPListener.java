@@ -159,11 +159,7 @@ public class PVPListener implements Listener {
 
     @EventHandler
     public void onPortal(EntityPortalEvent event) {
-        World world = event.getEntity().getWorld();
-        if (!world.getName().equalsIgnoreCase("FactionPVP_world"))
-            return;
-        if (!(event.getEntity() instanceof Player))
-            event.setCancelled(true);
+        event.setCancelled(true);
     }
 
     @EventHandler

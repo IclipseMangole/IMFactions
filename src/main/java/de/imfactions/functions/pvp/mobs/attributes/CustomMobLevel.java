@@ -1,17 +1,17 @@
 package de.imfactions.functions.pvp.mobs.attributes;
 
-import de.imfactions.functions.pvp.mobs.CustomMob;
+import de.imfactions.functions.pvp.mobs.custommob.CustomMobInsentient;
 import org.bukkit.ChatColor;
 
 import java.util.Random;
 
 public class CustomMobLevel {
 
-    private final CustomMob customMob;
+    private final CustomMobInsentient customMobInsentient;
     private final Random random = new Random();
 
-    public CustomMobLevel(CustomMob customMob) {
-        this.customMob = customMob;
+    public CustomMobLevel(CustomMobInsentient customMobInsentient) {
+        this.customMobInsentient = customMobInsentient;
     }
 
     public int getRandomLevel() {
@@ -45,26 +45,26 @@ public class CustomMobLevel {
     public String getLevelString() {
         String levelString;
         String legendaryString = ChatColor.BOLD + "" + ChatColor.DARK_RED + " Legendary";
-        switch (customMob.level) {
+        switch (customMobInsentient.level) {
             case 1:
             case 2:
             case 3:
             case 4:
             case 5:
-                levelString = ChatColor.GREEN + " Level " + customMob.level;
+                levelString = ChatColor.GREEN + " Level " + customMobInsentient.level;
                 break;
             case 6:
             case 7:
-                levelString = ChatColor.BLUE + " Level " + customMob.level;
+                levelString = ChatColor.BLUE + " Level " + customMobInsentient.level;
                 break;
             case 8:
             case 9:
-                levelString = ChatColor.BOLD + "" + ChatColor.DARK_PURPLE + " Level " + customMob.level;
+                levelString = ChatColor.BOLD + "" + ChatColor.DARK_PURPLE + " Level " + customMobInsentient.level;
                 break;
             default:
-                levelString = ChatColor.BOLD + "" + ChatColor.GOLD + " Level " + customMob.level;
+                levelString = ChatColor.BOLD + "" + ChatColor.GOLD + " Level " + customMobInsentient.level;
         }
-        if (customMob.legendary)
+        if (customMobInsentient.legendary)
             return legendaryString + levelString + " ";
         return levelString;
     }

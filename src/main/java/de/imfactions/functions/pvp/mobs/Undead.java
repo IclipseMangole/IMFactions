@@ -1,5 +1,6 @@
 package de.imfactions.functions.pvp.mobs;
 
+import de.imfactions.functions.pvp.mobs.custommob.CustomMobMonster;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.ai.goal.PathfinderGoalMeleeAttack;
 import net.minecraft.world.entity.ai.goal.PathfinderGoalRandomLookaround;
@@ -7,16 +8,19 @@ import net.minecraft.world.entity.ai.goal.PathfinderGoalRandomStrollLand;
 import net.minecraft.world.entity.ai.goal.PathfinderGoalRestrictSun;
 import net.minecraft.world.entity.ai.goal.target.PathfinderGoalHurtByTarget;
 import net.minecraft.world.entity.ai.goal.target.PathfinderGoalNearestAttackableTarget;
+import net.minecraft.world.entity.monster.EntitySkeleton;
 import net.minecraft.world.entity.player.EntityHuman;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
 
-public class Undead extends CustomMob {
+public class Undead extends CustomMobMonster {
 
+    EntitySkeleton skeleton;
 
     public Undead(Location location) {
-        super(EntityTypes.aB, location, ChatColor.WHITE + "Undead");
+        super(new EntitySkeleton(EntityTypes.aB, ((CraftWorld) location.getWorld()).getHandle()), location, ChatColor.WHITE + "Undead");
+        skeleton = (EntitySkeleton) entityMonster;
         level = customMobLevel.getRandomLevel();
         legendary = customMobLevel.getRandomLegendary();
         setAttributes();
@@ -24,7 +28,7 @@ public class Undead extends CustomMob {
         initPathfinder();
         this.setName(getHealth());
         net.minecraft.world.level.World worldServer = ((CraftWorld) location.getWorld()).getHandle();
-        worldServer.addEntity(this);
+        worldServer.addEntity(skeleton);
     }
 
     private void setDrops() {
@@ -37,13 +41,12 @@ public class Undead extends CustomMob {
             customAttributes.setMaxHealth(getMaxHealth() + 30);
     }
 
-    @Override
-    protected void initPathfinder() {
-        this.bP.a(0, new PathfinderGoalMeleeAttack(this, 1.5, true));
-        this.bP.a(1, new PathfinderGoalRestrictSun(this));
-        this.bP.a(3, new PathfinderGoalRandomStrollLand(this, 1.0));
-        this.bP.a(4, new PathfinderGoalRandomLookaround(this));
-        this.bQ.a(0, new PathfinderGoalHurtByTarget(this));
-        this.bQ.a(1, new PathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true));
+    private void initPathfinder() {
+        skeleton.bP.a(0, new PathfinderGoalMeleeAttack(skeleton, 1.5, true));
+        skeleton.bP.a(1, new PathfinderGoalRestrictSun(skeleton));
+        skeleton.bP.a(3, new PathfinderGoalRandomStrollLand(skeleton, 1.0));
+        skeleton.bP.a(4, new PathfinderGoalRandomLookaround(skeleton));
+        skeleton.bQ.a(0, new PathfinderGoalHurtByTarget(skeleton));
+        skeleton.bQ.a(1, new PathfinderGoalNearestAttackableTarget<>(skeleton, EntityHuman.class, true));
     }
 }

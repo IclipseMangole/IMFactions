@@ -10,6 +10,7 @@ import de.imfactions.functions.factionPlot.FactionPlotUtil;
 import de.imfactions.functions.items.ItemUtils;
 import de.imfactions.functions.lobby.lottery.LotteryUtil;
 import de.imfactions.functions.npc.NPCUtil;
+import de.imfactions.functions.pvp.mobs.custommob.CustomMobUtil;
 import de.imfactions.functions.raid.RaidScheduler;
 import de.imfactions.functions.raid.RaidUtil;
 import de.imfactions.functions.texture.TextureUtil;
@@ -60,6 +61,7 @@ public class Data {
     private UserSettingsUtil userSettingsUtil;
     private LotteryUtil lotteryUtil;
     private ItemUtils itemUtils;
+    private CustomMobUtil customMobUtil;
 
     public Data(IMFactions imFactions) {
         this.imFactions = imFactions;
@@ -79,6 +81,7 @@ public class Data {
         userSettingsUtil = new UserSettingsUtil(this);
         lotteryUtil = new LotteryUtil(imFactions);
         itemUtils = new ItemUtils(imFactions);
+        customMobUtil = new CustomMobUtil();
         loadUtils();
     }
 
@@ -95,6 +98,7 @@ public class Data {
         factionMemberUtil.saveFactionMembers();
         raidUtil.saveRaids();
         userUtil.saveUsers();
+        customMobUtil.deleteCustomMobs();
     }
 
     public void loadWorlds() {
@@ -251,5 +255,9 @@ public class Data {
 
     public RaidScheduler getRaidScheduler() {
         return raidScheduler;
+    }
+
+    public CustomMobUtil getCustomMobUtil() {
+        return customMobUtil;
     }
 }

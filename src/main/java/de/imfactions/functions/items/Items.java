@@ -110,7 +110,7 @@ public class Items {
             }
             map.put(Integer.valueOf(i), level);
         }
-        new FactionItem("Yew arch", ChatColor.of("#8C19FF"), "Created by Elves", Material.BOW, ItemRarity.EPIC, map);
+        new FactionItem("Yew Arch", ChatColor.of("#8C19FF"), "Created by Elves", Material.BOW, ItemRarity.EPIC, map);
     }
 
     //LEGENDARY

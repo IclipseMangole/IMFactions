@@ -1,50 +1,53 @@
 package de.imfactions.functions.pvp.mobs.attributes;
 
-import de.imfactions.functions.pvp.mobs.CustomMob;
+import de.imfactions.functions.pvp.mobs.custommob.CustomMobInsentient;
+import net.minecraft.world.entity.EntityInsentient;
 import net.minecraft.world.entity.ai.attributes.GenericAttributes;
 
 public class CustomAttributes {
 
-    private CustomMob customMob;
+    private final CustomMobInsentient customMobInsentient;
+    private final EntityInsentient insentient;
 
-    public CustomAttributes(CustomMob customMob) {
-        this.customMob = customMob;
+    public CustomAttributes(CustomMobInsentient customMobInsentient) {
+        this.customMobInsentient = customMobInsentient;
+        insentient = customMobInsentient.entityInsentient;
     }
 
     public void setMaxHealth(double health) {
-        customMob.getAttributeInstance(GenericAttributes.a).setValue(health);
-        customMob.setHealth(customMob.getMaxHealth());
+        insentient.getAttributeInstance(GenericAttributes.a).setValue(health);
+        insentient.setHealth(insentient.getMaxHealth());
     }
 
     public void setFollowRange(double range) {
-        customMob.getAttributeInstance(GenericAttributes.b).setValue(range);
+        insentient.getAttributeInstance(GenericAttributes.b).setValue(range);
     }
 
     public void setKnockbackResistance(double resistance) {
-        customMob.getAttributeInstance(GenericAttributes.c).setValue(resistance);
+        insentient.getAttributeInstance(GenericAttributes.c).setValue(resistance);
     }
 
     public void setSpeed(double speed) {
-        customMob.getAttributeInstance(GenericAttributes.d).setValue(speed);
+        insentient.getAttributeInstance(GenericAttributes.d).setValue(speed);
     }
 
     public void setAttackDamage(double damage) {
-        customMob.getAttributeInstance(GenericAttributes.f).setValue(damage);
+        insentient.getAttributeInstance(GenericAttributes.f).setValue(damage);
     }
 
     public void setAttackKnockback(double knockback) {
-        customMob.getAttributeInstance(GenericAttributes.g).setValue(knockback);
+        insentient.getAttributeInstance(GenericAttributes.g).setValue(knockback);
     }
 
     public void setAttackSpeed(double attackSpeed) {
-        customMob.getAttributeInstance(GenericAttributes.h).setValue(attackSpeed);
+        insentient.getAttributeInstance(GenericAttributes.h).setValue(attackSpeed);
     }
 
     public void setArmor(double armor) {
-        customMob.getAttributeInstance(GenericAttributes.i).setValue(armor);
+        insentient.getAttributeInstance(GenericAttributes.i).setValue(armor);
     }
 
     public void setArmorToughness(double armorToughness) {
-        customMob.getAttributeInstance(GenericAttributes.j).setValue(armorToughness);
+        insentient.getAttributeInstance(GenericAttributes.j).setValue(armorToughness);
     }
 }
