@@ -28,7 +28,6 @@ public class CustomMobInsentient {
         entityInsentient.setInvisible(false);
         setLocation(location);
         this.name = name;
-        System.out.println("new Custom Mob");
     }
 
     public void setName(float health) {

@@ -112,7 +112,7 @@ public class RaidScheduler implements Listener {
         scoutingRaids.put(raidID, Bukkit.getScheduler().runTaskTimer(imFactions, new Runnable() {
 
             int timer = seconds;
-            int ID = raidID;
+            final int ID = raidID;
 
             @Override
             public void run() {

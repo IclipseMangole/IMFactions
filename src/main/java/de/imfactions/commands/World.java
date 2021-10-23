@@ -15,9 +15,9 @@ import org.bukkit.entity.Player;
 
 public class World {
 
-    private IMFactions imFactions;
-    private  StringBuilder builder;
-    private Data data;
+    private final IMFactions imFactions;
+    private StringBuilder builder;
+    private final Data data;
 
     public World(IMFactions imFactions){
         this.imFactions = imFactions;

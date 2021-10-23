@@ -25,7 +25,7 @@ public class FactionHomeScheduler implements Listener {
     private final IMFactions imFactions;
     private final Data data;
     private final FactionPlotUtil factionPlotUtil;
-    private HashMap<Player, BukkitTask> activeTasks = new HashMap<>();
+    private final HashMap<Player, BukkitTask> activeTasks = new HashMap<>();
 
     public FactionHomeScheduler(Data data) {
         this.data = data;

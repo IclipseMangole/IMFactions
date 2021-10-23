@@ -14,7 +14,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class PopupMenuAPI implements Listener {
 
-    private IMFactions factions;
+    private final IMFactions factions;
 
     public PopupMenuAPI(IMFactions factions) {
         this.factions = factions;

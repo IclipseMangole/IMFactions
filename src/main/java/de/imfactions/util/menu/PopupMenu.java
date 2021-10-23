@@ -12,10 +12,10 @@ import java.util.HashMap;
 
 public class PopupMenu implements InventoryHolder {
 
-    private HashMap<Integer, MenuItem> items = new HashMap<>();
+    private final HashMap<Integer, MenuItem> items = new HashMap<>();
     private Inventory inventory;
-    private String title;
-    private int rows;
+    private final String title;
+    private final int rows;
     private boolean exitOnClickOutside = true;
     private MenuCloseBehaviour menuCloseBehaviour;
 
@@ -167,7 +167,7 @@ public class PopupMenu implements InventoryHolder {
      */
     public void openMenu(Player player) {
         if (getInventory().getViewers().contains(player)) {
-            throw new IllegalArgumentException(player.getName() + " is already viewing " + getInventory().toString());
+            throw new IllegalArgumentException(player.getName() + " is already viewing " + getInventory());
         }
         player.openInventory(getInventory());
     }

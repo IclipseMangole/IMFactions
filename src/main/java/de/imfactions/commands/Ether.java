@@ -21,9 +21,9 @@ import org.bukkit.entity.Player;
  */
 public class Ether {
     private StringBuilder builder;
-    private IMFactions imFactions;
-    private Data data;
-    private UserUtil userUtil;
+    private final IMFactions imFactions;
+    private final Data data;
+    private final UserUtil userUtil;
 
     public Ether(IMFactions imFactions) {
         this.imFactions = imFactions;

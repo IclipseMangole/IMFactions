@@ -1,7 +1,6 @@
 package de.imfactions.functions.user;
 
 import de.imfactions.Data;
-import de.imfactions.functions.factionPlot.FactionPlotUtil;
 import de.imfactions.util.MySQL;
 
 import java.sql.ResultSet;
@@ -13,18 +12,18 @@ import java.util.UUID;
 
 public class UserTable {
 
-    private Data data;
-    private MySQL mySQL;
-    private UserUtil userUtil;
+    private final Data data;
+    private final MySQL mySQL;
+    private final UserUtil userUtil;
 
-    public UserTable(UserUtil userUtil, Data data){
+    public UserTable(UserUtil userUtil, Data data) {
         this.data = data;
         this.userUtil = userUtil;
         mySQL = data.getMySQL();
         createUserTable();
     }
-    
-    private void createUserTable(){
+
+    private void createUserTable() {
         mySQL.update("CREATE TABLE IF NOT EXISTS user (uuid VARCHAR(60), ether INT(10), onlinetime BIGINT, firstJoin DATETIME, lastSeen BIGINT, PRIMARY KEY(uuid))");
     }
 

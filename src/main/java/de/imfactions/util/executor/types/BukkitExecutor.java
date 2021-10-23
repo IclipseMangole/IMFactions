@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 public class BukkitExecutor extends IExecutor {
-    private IMFactions factions;
+    private final IMFactions factions;
 
 
     public BukkitExecutor(IMFactions factions) {

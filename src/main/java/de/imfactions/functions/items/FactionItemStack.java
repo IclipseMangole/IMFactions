@@ -5,11 +5,6 @@ import de.imfactions.functions.items.modifiers.ItemModifierValue;
 import de.imfactions.util.ColorUtils;
 import de.imfactions.util.ItemAttributes;
 import de.imfactions.util.ItemStackBuilder;
-
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -18,10 +13,14 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 
 public class FactionItemStack {
-    private FactionItem factionItem;
-    private int itemsStacked;
+    private final FactionItem factionItem;
+    private final int itemsStacked;
     private short durability;
 
     public FactionItemStack(FactionItem factionItem, int itemsStacked, short durability) {
@@ -136,7 +135,7 @@ public class FactionItemStack {
 
 
     public ItemStack toItemStack() {
-        ItemStack stack = (new ItemStackBuilder(this.factionItem.getMaterial())).withName(factionItem.getDisplayName()).withCustomModelData(this.factionItem.getRarity().getId() * 100 + this.itemsStacked).withItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DESTROYS, ItemFlag.HIDE_PLACED_ON, ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_UNBREAKABLE}).withLore(getLore()).withAttackSpeed(getAttackSpeed()).withDamage(getAttackDamage()).buildStack();
+        ItemStack stack = (new ItemStackBuilder(this.factionItem.getMaterial())).withName(factionItem.getDisplayName()).withCustomModelData(this.factionItem.getRarity().getId() * 100 + this.itemsStacked).withItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DESTROYS, ItemFlag.HIDE_PLACED_ON, ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_UNBREAKABLE).withLore(getLore()).withAttackSpeed(getAttackSpeed()).withDamage(getAttackDamage()).buildStack();
         if (this.factionItem.getRarity() == de.imfactions.functions.items.ItemRarity.LEGENDARY) {
             if (this.factionItem.getMaterial() == Material.BOW) {
                 stack.addUnsafeEnchantment(Enchantment.OXYGEN, 1);

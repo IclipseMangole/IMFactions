@@ -208,7 +208,7 @@ public class ReflectionUtil {
             }
         }
 
-        throw new ReflectionException("Could not find constructor with args " + (String) Arrays.stream(args).map(Object::getClass).map(Class::getSimpleName).collect(Collectors.joining(", ")) + " in " + clazz.getSimpleName());
+        throw new ReflectionException("Could not find constructor with args " + Arrays.stream(args).map(Object::getClass).map(Class::getSimpleName).collect(Collectors.joining(", ")) + " in " + clazz.getSimpleName());
     }
 
     private static boolean isAssignable(Class<?> clazz, Object obj) {
@@ -223,12 +223,12 @@ public class ReflectionUtil {
     }
 
     private static Class<?> convertToPrimitive(Class<?> clazz) {
-        return (Class)builtInMap.getOrDefault(clazz, clazz);
+        return builtInMap.getOrDefault(clazz, clazz);
     }
 
     public static Object invokeMethod(Class<?> clazz, Object obj, String method) throws ReflectionException {
         try {
-            return ((Method) Objects.requireNonNull(getMethod(clazz, method))).invoke(obj);
+            return Objects.requireNonNull(getMethod(clazz, method)).invoke(obj);
         } catch (Exception var4) {
             throw new ReflectionException(var4);
         }
@@ -236,7 +236,7 @@ public class ReflectionUtil {
 
     public static Object invokeMethod(Class<?> clazz, Object obj, String method, Class<?>[] args, Object... initArgs) throws ReflectionException {
         try {
-            return ((Method)Objects.requireNonNull(getMethod(clazz, method, args))).invoke(obj, initArgs);
+            return Objects.requireNonNull(getMethod(clazz, method, args)).invoke(obj, initArgs);
         } catch (Exception var6) {
             throw new ReflectionException(var6);
         }
@@ -244,7 +244,7 @@ public class ReflectionUtil {
 
     public static Object invokeMethod(Class<?> clazz, Object obj, String method, Object... initArgs) throws ReflectionException {
         try {
-            return ((Method)Objects.requireNonNull(getMethod(clazz, method))).invoke(obj, initArgs);
+            return Objects.requireNonNull(getMethod(clazz, method)).invoke(obj, initArgs);
         } catch (Exception var5) {
             throw new ReflectionException(var5);
         }
@@ -252,7 +252,7 @@ public class ReflectionUtil {
 
     public static Object invokeMethod(Object obj, String method) throws ReflectionException {
         try {
-            return ((Method)Objects.requireNonNull(getMethod(obj.getClass(), method))).invoke(obj);
+            return Objects.requireNonNull(getMethod(obj.getClass(), method)).invoke(obj);
         } catch (Exception var3) {
             throw new ReflectionException(var3);
         }
@@ -260,7 +260,7 @@ public class ReflectionUtil {
 
     public static Object invokeMethod(Object obj, String method, Object[] initArgs) throws ReflectionException {
         try {
-            return ((Method)Objects.requireNonNull(getMethod(obj.getClass(), method))).invoke(obj, initArgs);
+            return Objects.requireNonNull(getMethod(obj.getClass(), method)).invoke(obj, initArgs);
         } catch (Exception var4) {
             throw new ReflectionException(var4);
         }

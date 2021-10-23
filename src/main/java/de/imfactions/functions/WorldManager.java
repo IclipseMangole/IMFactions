@@ -41,7 +41,7 @@ import java.util.zip.ZipOutputStream;
  * Created by Iclipse on 21.06.2020
  */
 public class WorldManager {
-    private IMFactions imFactions;
+    private final IMFactions imFactions;
     private FactionPlotUtil factionPlotUtil;
 
     public WorldManager(IMFactions imFactions) {
@@ -174,7 +174,7 @@ public class WorldManager {
                 @Override
                 public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs) throws IOException {
                     if(!sourcePath.equals(dir)){
-                        zos.putNextEntry(new ZipEntry(sourcePath.relativize(dir).toString() + "/"));
+                        zos.putNextEntry(new ZipEntry(sourcePath.relativize(dir) + "/"));
                         zos.closeEntry();
                     }
                     return FileVisitResult.CONTINUE;

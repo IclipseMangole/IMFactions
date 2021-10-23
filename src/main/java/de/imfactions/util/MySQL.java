@@ -1,12 +1,9 @@
 package de.imfactions.util;
 
-import de.imfactions.IMFactions;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,8 +17,8 @@ import java.util.logging.Logger;
  */
 public class MySQL {
 
-    private JavaPlugin plugin;
-    private Logger logger;
+    private final JavaPlugin plugin;
+    private final Logger logger;
 
     private String HOST;
     private String DATABASE;

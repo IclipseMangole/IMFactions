@@ -1,15 +1,14 @@
 package de.imfactions.functions.user;
 
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Date;
 import java.util.UUID;
 
 public class User {
-    private UUID uuid;
+    private final UUID uuid;
     private int ether;
     private long onlinetime;
-    private Date firstJoin;
+    private final Date firstJoin;
     private long lastSeen;
 
     public User(UUID uuid, int ether, long onlinetime, Date firstJoin, long lastSeen) {

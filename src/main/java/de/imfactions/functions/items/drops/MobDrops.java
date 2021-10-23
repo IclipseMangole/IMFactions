@@ -25,21 +25,18 @@ public class MobDrops {
     private final ItemStack excalibur = new FactionItemStack(FactionItem.get("Excalibur"), 1).toItemStack();
     private final ItemStack yewArch = new FactionItemStack(FactionItem.get("Yew Arch"), 1).toItemStack();
 
-    private final ArrayList<ItemStack> commonDrops;
-    private final ArrayList<ItemStack> uncommonDrops;
-    private final ArrayList<ItemStack> rareDrops;
-    private final ArrayList<ItemStack> epicDrops;
-    private final ArrayList<ItemStack> legendaryDrops;
+    private static final ArrayList<ItemStack> commonDrops = new ArrayList<>();
+    private static final ArrayList<ItemStack> uncommonDrops = new ArrayList<>();
+    private static final ArrayList<ItemStack> rareDrops = new ArrayList<>();
+    private static final ArrayList<ItemStack> epicDrops = new ArrayList<>();
+    private static final ArrayList<ItemStack> legendaryDrops = new ArrayList<>();
 
     public MobDrops() {
-        commonDrops = new ArrayList<>();
-        uncommonDrops = new ArrayList<>();
-        rareDrops = new ArrayList<>();
-        epicDrops = new ArrayList<>();
-        legendaryDrops = new ArrayList<>();
-
         setCommonDrops();
         setUncommonDrops();
+        setRareDrops();
+        setEpicDrops();
+        setLegendaryDrops();
     }
 
     private void setCommonDrops() {
@@ -70,34 +67,53 @@ public class MobDrops {
     }
 
     private void setRareDrops() {
-
+        ironIngot.setAmount(3);
+        goldIngot.setAmount(2);
+        rareDrops.add(excalibur);
+        rareDrops.add(headCutter);
+        rareDrops.add(faramirsBow);
+        rareDrops.add(ironIngot);
+        rareDrops.add(goldIngot);
     }
 
     private void setEpicDrops() {
-
+        ironIngot.setAmount(5);
+        goldIngot.setAmount(4);
+        diamond.setAmount(32);
+        epicDrops.add(yewArch);
+        epicDrops.add(excalibur);
+        epicDrops.add(ironIngot);
+        epicDrops.add(goldIngot);
+        epicDrops.add(diamond);
     }
 
     private void setLegendaryDrops() {
-
+        diamond.setAmount(64);
+        goldIngot.setAmount(64);
+        ironIngot.setAmount(64);
+        legendaryDrops.add(diamond);
+        legendaryDrops.add(yewArch);
+        legendaryDrops.add(goldIngot);
+        legendaryDrops.add(ironIngot);
     }
 
-    public ArrayList<ItemStack> getCommonDrops() {
+    public static ArrayList<ItemStack> getCommonDrops() {
         return commonDrops;
     }
 
-    public ArrayList<ItemStack> getUncommonDrops() {
+    public static ArrayList<ItemStack> getUncommonDrops() {
         return uncommonDrops;
     }
 
-    public ArrayList<ItemStack> getRareDrops() {
+    public static ArrayList<ItemStack> getRareDrops() {
         return rareDrops;
     }
 
-    public ArrayList<ItemStack> getLegendaryDrops() {
+    public static ArrayList<ItemStack> getLegendaryDrops() {
         return legendaryDrops;
     }
 
-    public ArrayList<ItemStack> getEpicDrops() {
+    public static ArrayList<ItemStack> getEpicDrops() {
         return epicDrops;
     }
 }

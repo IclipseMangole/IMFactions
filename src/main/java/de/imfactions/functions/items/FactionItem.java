@@ -1,24 +1,24 @@
 package de.imfactions.functions.items;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import de.imfactions.functions.items.modifiers.ItemModifierType;
 import de.imfactions.functions.items.modifiers.ItemModifierValue;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 
 public class FactionItem {
-    private static ArrayList<FactionItem> factionItems = new ArrayList<>();
+    private static final ArrayList<FactionItem> factionItems = new ArrayList<>();
 
-    private String name;
-    private String displayName;
-    private String subtitle;
-    private Material material;
-    private ItemRarity rarity;
-    private HashMap<Integer, HashMap<ItemModifierType, ItemModifierValue>> modifiersPerLevel;
+    private final String name;
+    private final String displayName;
+    private final String subtitle;
+    private final Material material;
+    private final ItemRarity rarity;
+    private final HashMap<Integer, HashMap<ItemModifierType, ItemModifierValue>> modifiersPerLevel;
 
     public FactionItem(String name, String displayName, String subtitle, Material material, ItemRarity rarity, HashMap<Integer, HashMap<ItemModifierType, ItemModifierValue>> modifiersPerLevel) {
         this.name = name;

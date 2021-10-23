@@ -12,10 +12,10 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 public class BukkitCommand extends Command implements CommandExecutor {
-    private JavaPlugin plugin;
-    private Object function;
-    private IMCommand command;
-    private GlobalCommand<CommandSender> processor;
+    private final JavaPlugin plugin;
+    private final Object function;
+    private final IMCommand command;
+    private final GlobalCommand<CommandSender> processor;
 
     public BukkitCommand(IMFactions factions, Object function, Method method, IMCommand baseCommand) {
         super(baseCommand.name(), baseCommand.description(), baseCommand.usage(), Arrays.asList(baseCommand.aliases()));

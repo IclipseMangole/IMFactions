@@ -80,7 +80,7 @@ public class Fireworkgenerator {
     public void spawn() {
         this.firework = (Firework) this.location.getWorld().spawnEntity(this.location, EntityType.FIREWORK);
         this.spawnlocation = this.location;
-        this.fireworkmeta = (FireworkMeta) this.firework.getFireworkMeta();
+        this.fireworkmeta = this.firework.getFireworkMeta();
         if (this.fireworkeffect != null) {
             this.fireworkmeta.addEffect(this.fireworkeffect);
         }

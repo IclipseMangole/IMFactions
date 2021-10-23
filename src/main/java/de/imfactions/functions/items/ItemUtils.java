@@ -1,6 +1,7 @@
 package de.imfactions.functions.items;
 
 import de.imfactions.IMFactions;
+import de.imfactions.functions.items.drops.MobDrops;
 import de.imfactions.functions.items.modifiers.listeners.Damage;
 import de.imfactions.functions.items.modifiers.listeners.FireAspect;
 import de.imfactions.functions.items.modifiers.listeners.LifeSteal;
@@ -11,7 +12,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
@@ -25,6 +25,7 @@ public class ItemUtils implements Listener{
         this.lastSwing = System.currentTimeMillis();
         registerListener();
         new Items();
+        new MobDrops();
     }
 
 
@@ -58,7 +59,7 @@ public class ItemUtils implements Listener{
     public void onJoin(PlayerJoinEvent event){
         Player player = event.getPlayer();
         player.getInventory().setItem(0, new FactionItemStack(FactionItem.get("Excalibur"), 16).toItemStack());
-        player.getInventory().setItem(1, new FactionItemStack(FactionItem.get("Yew arch"), 3).toItemStack());
+        player.getInventory().setItem(1, new FactionItemStack(FactionItem.get("Yew Arch"), 3).toItemStack());
         player.getInventory().setItem(2, new FactionItemStack(FactionItem.get("Stone Club"), 4).toItemStack());
         player.getInventory().setItem(3, new FactionItemStack(FactionItem.get("Head Cutter"), 0).toItemStack());
         player.getInventory().setItem(4, new FactionItemStack(FactionItem.get("Faramir's Bow"), 2).toItemStack());

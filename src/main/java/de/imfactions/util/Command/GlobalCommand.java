@@ -7,9 +7,9 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 public abstract class GlobalCommand<S> {
-    private IMFactions factions;
-    private CommandSubMap<S> commandMap;
-    private Class playerClass;
+    private final IMFactions factions;
+    private final CommandSubMap<S> commandMap;
+    private final Class playerClass;
 
     public GlobalCommand(IMFactions factions, IMCommand command, Object function, Method method, Class playerClass) {
         this.factions = factions;

@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 public class CommandRegistration {
-    private IMFactions factions;
+    private final IMFactions factions;
 
     public CommandRegistration(IMFactions factions) {
         this.factions = factions;
@@ -58,8 +58,8 @@ public class CommandRegistration {
         }
     }
 
-    private Map<String, Command> commandMap = new HashMap<>();
-    private List<Object[]> unavailableSubcommands = new ArrayList<>();
+    private final Map<String, Command> commandMap = new HashMap<>();
+    private final List<Object[]> unavailableSubcommands = new ArrayList<>();
 
     private void registerCommand(Object function, Method method, JavaPlugin plugin) {
         IMCommand cmd = method.getAnnotation(IMCommand.class);

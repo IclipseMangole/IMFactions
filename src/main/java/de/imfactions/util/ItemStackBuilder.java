@@ -6,16 +6,6 @@
 package de.imfactions.util;
 
 import com.mojang.authlib.GameProfile;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.stream.Collectors;
-
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -25,6 +15,9 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ItemStackBuilder {
     private Material material;
@@ -177,7 +170,7 @@ public class ItemStackBuilder {
     }
 
     public ItemStackBuilder withItemFlags(ItemFlag... flags) {
-        return this.withItemFlags((Set)(new HashSet(Arrays.asList(flags))));
+        return this.withItemFlags(new HashSet(Arrays.asList(flags)));
     }
 
     public ItemStackBuilder withProfile(GameProfile profile) {
@@ -202,7 +195,7 @@ public class ItemStackBuilder {
         }
 
         if (this.lore != null && !this.lore.isEmpty()) {
-            itemMeta.setLore((List)this.lore.stream().map(ItemStackBuilder::parseColor).collect(Collectors.toList()));
+            itemMeta.setLore(this.lore.stream().map(ItemStackBuilder::parseColor).collect(Collectors.toList()));
         }
 
         if (this.customModelData != 0) {
@@ -216,7 +209,7 @@ public class ItemStackBuilder {
         }
 
         if (this.itemFlags != null && !this.itemFlags.isEmpty()) {
-            itemMeta.addItemFlags((ItemFlag[])this.itemFlags.toArray(new ItemFlag[this.itemFlags.size()]));
+            itemMeta.addItemFlags(this.itemFlags.toArray(new ItemFlag[this.itemFlags.size()]));
         }
 
         if(attackSpeed != -1.0){
@@ -247,7 +240,7 @@ public class ItemStackBuilder {
     }
 
     public class SkullBuilder {
-        private ItemStackBuilder stackBuilder;
+        private final ItemStackBuilder stackBuilder;
         private String owner;
 
         private SkullBuilder(ItemStackBuilder stackBuilder) {

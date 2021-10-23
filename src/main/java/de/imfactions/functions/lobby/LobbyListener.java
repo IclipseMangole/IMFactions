@@ -14,8 +14,8 @@ import org.bukkit.event.player.PlayerPortalEvent;
 
 public class LobbyListener implements Listener {
 
-    private IMFactions imFactions;
-    private Data data;
+    private final IMFactions imFactions;
+    private final Data data;
 
     public LobbyListener(IMFactions imFactions) {
         this.imFactions = imFactions;

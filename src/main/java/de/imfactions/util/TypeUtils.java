@@ -72,7 +72,7 @@ public class TypeUtils {
         }
     }
 
-    private static Pattern unicode = Pattern.compile("(\\\\u\\p{XDigit}{4})");
+    private static final Pattern unicode = Pattern.compile("(\\\\u\\p{XDigit}{4})");
 
     /**
      * Konvertiert einen String mit ausgeschriebenen Unicode-Escapes in einen String mit den entsprechenden Zeichen.
@@ -91,11 +91,11 @@ public class TypeUtils {
         StringBuilder output = new StringBuilder();
         int index = 0;
         while (match.find()) {
-            output.append(input.substring(index, match.start()));
+            output.append(input, index, match.start());
             output.append((char) Integer.parseInt(match.group().substring(2), 16));
             index = match.end();
         }
-        output.append(input.substring(index, input.length()));
+        output.append(input.substring(index));
         return output.toString();
     }
 

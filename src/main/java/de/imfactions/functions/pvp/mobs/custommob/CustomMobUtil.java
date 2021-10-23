@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class CustomMobUtil {
 
-    private ArrayList<CustomMobInsentient> customMobs;
+    private final ArrayList<CustomMobInsentient> customMobs;
 
     public CustomMobUtil() {
         customMobs = new ArrayList<>();
@@ -41,15 +41,13 @@ public class CustomMobUtil {
 
     public void deleteCustomMobs() {
         ArrayList<CustomMobInsentient> customMobInsentients = new ArrayList<>();
-        for (CustomMobInsentient customMob : customMobs) {
-            customMob.kill();
-            customMobInsentients.add(customMob);
-        }
+        customMobInsentients.addAll(customMobs);
         for (CustomMobInsentient customMobInsentient : customMobInsentients)
             deleteCustomMob(customMobInsentient);
     }
 
     private void deleteCustomMob(CustomMobInsentient customMob) {
+        customMob.kill();
         customMobs.remove(customMob);
     }
 }

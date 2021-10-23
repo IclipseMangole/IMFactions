@@ -22,7 +22,7 @@ import static de.imfactions.util.ColorUtils.rainbowColor;
  */
 public class Tablist {
 
-    private IMFactions factions;
+    private final IMFactions factions;
 
     public Tablist(IMFactions factions) {
         this.factions = factions;

@@ -25,8 +25,8 @@ import java.util.UUID;
  */
 public class JoinListener implements Listener {
 
-    private IMFactions factions;
-    private UserUtil userUtil;
+    private final IMFactions factions;
+    private final UserUtil userUtil;
 
 
     public JoinListener(IMFactions factions) {

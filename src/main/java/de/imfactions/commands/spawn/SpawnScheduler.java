@@ -21,7 +21,7 @@ public class SpawnScheduler implements Listener {
 
     private final IMFactions imFactions;
     private final Data data;
-    private HashMap<Player, BukkitTask> activeTasks = new HashMap<>();
+    private final HashMap<Player, BukkitTask> activeTasks = new HashMap<>();
 
     public SpawnScheduler(IMFactions imFactions) {
         this.imFactions = imFactions;

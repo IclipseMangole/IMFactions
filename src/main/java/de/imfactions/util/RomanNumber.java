@@ -22,9 +22,9 @@ public class RomanNumber {
     }
 
     public static final String toRoman(int number) {
-        int l = ((Integer)map.floorKey(Integer.valueOf(number))).intValue();
+        int l = map.floorKey(Integer.valueOf(number)).intValue();
         if (number == l)
             return map.get(Integer.valueOf(number));
-        return (String)map.get(Integer.valueOf(l)) + toRoman(number - l);
+        return map.get(Integer.valueOf(l)) + toRoman(number - l);
     }
 }

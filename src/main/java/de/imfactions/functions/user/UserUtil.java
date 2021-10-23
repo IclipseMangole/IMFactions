@@ -11,10 +11,10 @@ import java.util.UUID;
 
 public class UserUtil {
 
-    private IMFactions imFactions;
-    private Data data;
-    private ArrayList<User> users;
-    private UserTable userTable;
+    private final IMFactions imFactions;
+    private final Data data;
+    private final ArrayList<User> users;
+    private final UserTable userTable;
 
     public UserUtil(Data data) {
         this.data = data;

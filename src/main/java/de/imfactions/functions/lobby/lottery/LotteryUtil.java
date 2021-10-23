@@ -5,8 +5,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 public class LotteryUtil {
-    private IMFactions factions;
-    private Monte monte;
+    private final IMFactions factions;
+    private final Monte monte;
 
     public LotteryUtil(IMFactions factions) {
         this.factions = factions;

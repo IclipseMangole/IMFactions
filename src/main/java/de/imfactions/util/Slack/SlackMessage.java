@@ -20,7 +20,7 @@ public class SlackMessage {
     private List<SlackAttachment> attach;
     private String channel;
     private String icon;
-    private JsonObject slackMessage;
+    private final JsonObject slackMessage;
     private String text;
     private String username;
     private boolean unfurlMedia;
@@ -38,11 +38,11 @@ public class SlackMessage {
     }
 
     public SlackMessage(String text) {
-        this((String) null, (String) null, text);
+        this(null, null, text);
     }
 
     public SlackMessage(String username, String text) {
-        this((String) null, username, text);
+        this(null, username, text);
     }
 
     public SlackMessage(String channel, String username, String text) {

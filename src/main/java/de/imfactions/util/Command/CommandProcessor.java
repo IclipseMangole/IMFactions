@@ -18,12 +18,12 @@ import java.util.stream.Collectors;
 
 
 public class CommandProcessor<S> {
-    private IMFactions factions;
-    private GlobalCommand<S> masterCommand;
-    private IMCommand command;
-    private Object function;
-    private Method method;
-    private Class[] methodParameters;
+    private final IMFactions factions;
+    private final GlobalCommand<S> masterCommand;
+    private final IMCommand command;
+    private final Object function;
+    private final Method method;
+    private final Class[] methodParameters;
 
     public CommandProcessor(IMFactions factions, GlobalCommand<S> masterCommand, IMCommand command, Object function, Method method) {
         this.factions = factions;

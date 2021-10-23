@@ -26,12 +26,12 @@ import org.bukkit.event.player.PlayerQuitEvent;
  */
 public class QuitListener implements Listener {
 
-    private IMFactions factions;
-    private Data data;
-    private UserUtil userUtil;
-    private FactionMemberUtil factionMemberUtil;
-    private FactionUtil factionUtil;
-    private RaidUtil raidUtil;
+    private final IMFactions factions;
+    private final Data data;
+    private final UserUtil userUtil;
+    private final FactionMemberUtil factionMemberUtil;
+    private final FactionUtil factionUtil;
+    private final RaidUtil raidUtil;
 
     public QuitListener(IMFactions factions) {
         this.factions = factions;

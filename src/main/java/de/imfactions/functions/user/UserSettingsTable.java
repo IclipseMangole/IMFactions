@@ -10,10 +10,10 @@ import java.util.UUID;
 
 public class UserSettingsTable {
 
-    private IMFactions imFactions;
-    private Data data;
-    private MySQL mySQL;
-    private UserSettingsUtil userSettingsUtil;
+    private final IMFactions imFactions;
+    private final Data data;
+    private final MySQL mySQL;
+    private final UserSettingsUtil userSettingsUtil;
 
     public UserSettingsTable(UserSettingsUtil userSettingsUtil, Data data) {
         this.data = data;

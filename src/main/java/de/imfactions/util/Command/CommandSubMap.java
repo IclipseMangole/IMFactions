@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class CommandSubMap<S> {
 
-    private Map<String, Entry> subcommands;
+    private final Map<String, Entry> subcommands;
 
     public CommandSubMap() {
         subcommands = new HashMap<>();

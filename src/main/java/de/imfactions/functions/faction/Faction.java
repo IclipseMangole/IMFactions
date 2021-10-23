@@ -66,9 +66,7 @@ public class Faction {
     }
 
     public boolean isRaidable(){
-        if(System.currentTimeMillis() >= raidProtection && !isGettingRaided())
-            return true;
-        return false;
+        return System.currentTimeMillis() >= raidProtection && !isGettingRaided();
     }
 
     public void setShortcut(String shortcut) {

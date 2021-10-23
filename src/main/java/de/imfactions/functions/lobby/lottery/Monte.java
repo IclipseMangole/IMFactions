@@ -13,11 +13,9 @@ import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Random;
 
-import static de.imfactions.util.ColorUtils.rainbowColor;
-
 public class Monte extends NPC implements Listener {
-    private IMFactions factions;
-    private Location lotteryLocation;
+    private final IMFactions factions;
+    private final Location lotteryLocation;
     private BukkitTask task;
     private double lastSound = 0;
 

@@ -8,7 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class TextureTable {
-    private MySQL mySQL;
+    private final MySQL mySQL;
 
     public TextureTable(IMFactions factions) {
         this.mySQL = factions.getData().getMySQL();

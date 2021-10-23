@@ -28,12 +28,12 @@ import static de.imfactions.util.ColorUtils.toHex;
 
 public class PVPListener implements Listener {
 
-    private IMFactions imFactions;
-    private FactionUtil factionUtil;
-    private Data data;
-    private UserUtil userUtil;
-    private FactionMemberUtil factionMemberUtil;
-    private FactionPlotUtil factionPlotUtil;
+    private final IMFactions imFactions;
+    private final FactionUtil factionUtil;
+    private final Data data;
+    private final UserUtil userUtil;
+    private final FactionMemberUtil factionMemberUtil;
+    private final FactionPlotUtil factionPlotUtil;
 
     public PVPListener(IMFactions imFactions) {
         this.imFactions = imFactions;

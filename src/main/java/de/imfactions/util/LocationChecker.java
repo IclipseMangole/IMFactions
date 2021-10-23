@@ -44,8 +44,7 @@ public class LocationChecker {
         int maxZ = Math.max(z1, z2);
 
         if (minX <= x && x <= maxX)
-            if (minZ <= z && z <= maxZ)
-                return true;
+            return minZ <= z && z <= maxZ;
         return false;
     }
 }

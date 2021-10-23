@@ -9,19 +9,19 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 public class FactionMemberTable {
-    
-    private Data data;
-    private MySQL mySQL;
-    private FactionMemberUtil factionMemberUtil;
-    
-    public FactionMemberTable(FactionMemberUtil factionMemberUtil, Data data){
+
+    private final Data data;
+    private final MySQL mySQL;
+    private final FactionMemberUtil factionMemberUtil;
+
+    public FactionMemberTable(FactionMemberUtil factionMemberUtil, Data data) {
         this.data = data;
         this.factionMemberUtil = factionMemberUtil;
         mySQL = data.getMySQL();
         createFactionMemberTable();
     }
-    
-    private void createFactionMemberTable(){
+
+    private void createFactionMemberTable() {
         mySQL.update("CREATE TABLE IF NOT EXISTS `factionMembers` (`uuid` VARCHAR(64), `factionId` INT(10), `rank` INT(10), PRIMARY KEY(`uuid`))");
     }
 

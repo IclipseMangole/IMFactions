@@ -25,10 +25,7 @@ public class PageUtils {
      * @return Returns if the list has entrys for this page
      */
     public static boolean hasPage(ArrayList list, int anzPerPage, int page) {
-        if ((double) list.size() / (double) anzPerPage > page && page >= 0) {
-            return true;
-        }
-        return false;
+        return (double) list.size() / (double) anzPerPage > page && page >= 0;
     }
 
     /**

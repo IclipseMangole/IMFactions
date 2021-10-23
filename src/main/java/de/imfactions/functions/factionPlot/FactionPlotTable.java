@@ -11,18 +11,18 @@ import java.util.ArrayList;
 
 public class FactionPlotTable {
 
-    private Data data;
-    private MySQL mySQL;
-    private FactionPlotUtil factionPlotUtil;
+    private final Data data;
+    private final MySQL mySQL;
+    private final FactionPlotUtil factionPlotUtil;
 
-    public FactionPlotTable(FactionPlotUtil factionPlotUtil, Data data){
+    public FactionPlotTable(FactionPlotUtil factionPlotUtil, Data data) {
         this.data = data;
         this.factionPlotUtil = factionPlotUtil;
         mySQL = data.getMySQL();
         createFactionPlotTable();
     }
-    
-    private void createFactionPlotTable(){
+
+    private void createFactionPlotTable() {
         mySQL.update("CREATE TABLE IF NOT EXISTS `factionPlots` (`factionID` INT(10), `edgeDownFrontLeft` VARCHAR(100), `edgeUpBackRight` VARCHAR(100), `home` VARCHAR(100), `loading` BOOLEAN, `position` INT(10), PRIMARY KEY(`factionID`))");
     }
 

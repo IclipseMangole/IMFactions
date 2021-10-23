@@ -17,9 +17,9 @@ import java.util.Random;
 
 public class CustomMobListener implements Listener {
 
-    private IMFactions imFactions;
-    private Data data;
-    private CustomMobUtil customMobUtil;
+    private final IMFactions imFactions;
+    private final Data data;
+    private final CustomMobUtil customMobUtil;
 
     public CustomMobListener(IMFactions imFactions) {
         this.imFactions = imFactions;
@@ -32,7 +32,6 @@ public class CustomMobListener implements Listener {
         if (!event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.SPAWNER_EGG))
             return;
         if (event.getEntity() instanceof Zombie) {
-            System.out.println("neuer Ork");
             event.setCancelled(true);
             customMobUtil.createOrc(event.getLocation());
             return;

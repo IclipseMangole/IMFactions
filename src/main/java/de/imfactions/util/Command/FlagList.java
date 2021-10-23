@@ -5,7 +5,7 @@ import com.google.common.collect.Lists;
 import java.util.List;
 
 public class FlagList {
-    private List<String> flags;
+    private final List<String> flags;
 
     public FlagList(String... flags) {
         this.flags = Lists.newArrayList(flags);

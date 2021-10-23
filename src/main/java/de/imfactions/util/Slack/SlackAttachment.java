@@ -37,7 +37,7 @@ public class SlackAttachment {
     private String titleLink;
     private String imageUrl;
     private String thumbUrl;
-    private Set<String> markdownAttributes = new HashSet();
+    private final Set<String> markdownAttributes = new HashSet();
     private List<SlackField> fields = new ArrayList();
 
     public SlackAttachment() {

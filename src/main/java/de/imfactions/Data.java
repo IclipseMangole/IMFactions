@@ -28,7 +28,7 @@ import org.bukkit.WorldCreator;
 import java.io.File;
 
 public class Data {
-    private IMFactions imFactions;
+    private final IMFactions imFactions;
 
     private final CommandRegistration registration;
     private final MySQL mysql;

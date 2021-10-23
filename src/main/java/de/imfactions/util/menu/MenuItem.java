@@ -10,9 +10,9 @@ import java.util.List;
 
 public abstract class MenuItem {
     private PopupMenu menu;
-    private int number;
-    private ItemStack icon;
-    private String text;
+    private final int number;
+    private final ItemStack icon;
+    private final String text;
     private String lore = "";
 
     /**

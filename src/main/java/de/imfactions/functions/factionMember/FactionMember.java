@@ -72,11 +72,7 @@ public class FactionMember {
     }
 
     public boolean isHigherRank(int rank) {
-        if (this.rank > rank) {
-            return true;
-        } else {
-            return false;
-        }
+        return this.rank > rank;
     }
 
     public void promote(){

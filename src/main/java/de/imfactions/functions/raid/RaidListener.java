@@ -33,7 +33,7 @@ public class RaidListener implements Listener {
     private final FactionPlotUtil factionPlotUtil;
     private final FactionMemberUtil factionMemberUtil;
     private final FactionUtil factionUtil;
-    private HashMap<Block, Integer> obsidian = new HashMap<>();
+    private final HashMap<Block, Integer> obsidian = new HashMap<>();
 
     public RaidListener(IMFactions imFactions) {
         this.imFactions = imFactions;

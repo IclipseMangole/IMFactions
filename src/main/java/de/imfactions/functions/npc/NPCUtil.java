@@ -15,8 +15,8 @@ import org.bukkit.scoreboard.Team;
 
 public class NPCUtil implements Listener {
 
-    private IMFactions factions;
-    private PacketReader reader;
+    private final IMFactions factions;
+    private final PacketReader reader;
 
     public NPCUtil(IMFactions factions) {
         this.factions = factions;

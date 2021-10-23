@@ -6,9 +6,9 @@ import de.imfactions.IMFactions;
 import java.util.UUID;
 
 public class TextureUtil {
-    private IMFactions factions;
-    private TextureTable textureTable;
-    private TextureFetcher textureFetcher;
+    private final IMFactions factions;
+    private final TextureTable textureTable;
+    private final TextureFetcher textureFetcher;
 
     public TextureUtil(IMFactions factions) {
         this.factions = factions;
@@ -16,7 +16,7 @@ public class TextureUtil {
         textureFetcher = new TextureFetcher(textureTable);
     }
 
-    public Property getSkin(UUID uuid){
+    public Property getSkin(UUID uuid) {
         return textureFetcher.getSkin(uuid);
     }
 

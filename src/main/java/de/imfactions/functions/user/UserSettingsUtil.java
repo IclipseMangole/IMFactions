@@ -8,10 +8,10 @@ import java.util.UUID;
 
 public class UserSettingsUtil {
 
-    private IMFactions imFactions;
-    private Data data;
-    private UserSettingsTable userSettingsTable;
-    private HashMap<String, Object> userSettings;
+    private final IMFactions imFactions;
+    private final Data data;
+    private final UserSettingsTable userSettingsTable;
+    private final HashMap<String, Object> userSettings;
 
     public UserSettingsUtil(Data data) {
         this.data = data;
