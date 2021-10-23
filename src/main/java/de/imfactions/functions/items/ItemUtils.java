@@ -60,15 +60,8 @@ public class ItemUtils implements Listener{
         player.getInventory().setItem(0, new FactionItemStack(FactionItem.get("Excalibur"), 16).toItemStack());
         player.getInventory().setItem(1, new FactionItemStack(FactionItem.get("Yew arch"), 3).toItemStack());
         player.getInventory().setItem(2, new FactionItemStack(FactionItem.get("Stone Club"), 4).toItemStack());
-        player.getInventory().setItem(3, new FactionItemStack(FactionItem.get("Head Cutter"), 15).toItemStack());
+        player.getInventory().setItem(3, new FactionItemStack(FactionItem.get("Head Cutter"), 0).toItemStack());
         player.getInventory().setItem(4, new FactionItemStack(FactionItem.get("Faramir's Bow"), 2).toItemStack());
-    }
-
-    @EventHandler
-    public void attackSpeedTest(PlayerInteractEvent event){
-        double delay = (double) (System.currentTimeMillis() - lastSwing);
-        event.getPlayer().sendMessage("Delay: " + delay + ", Attack Speed: " + (1000.0 / delay));
-        lastSwing = System.currentTimeMillis();
     }
 
 }
