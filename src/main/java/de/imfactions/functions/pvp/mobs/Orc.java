@@ -5,10 +5,12 @@ import de.imfactions.functions.pvp.mobs.custommob.CustomMobMonster;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.PathfinderGoalHurtByTarget;
 import net.minecraft.world.entity.ai.goal.target.PathfinderGoalNearestAttackableTarget;
+import net.minecraft.world.entity.animal.EntityPig;
 import net.minecraft.world.entity.monster.EntityZombie;
 import net.minecraft.world.entity.player.EntityHuman;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
 import org.bukkit.inventory.ItemStack;
 
@@ -67,15 +69,19 @@ public class Orc extends CustomMobMonster {
         customAttributes.setMaxHealth(8.2898 * (Math.pow(Math.E, 0.2983 * level)));
         if (legendary)
             customAttributes.setMaxHealth(getMaxHealth() + 30);
+        customAttributes.setEquip(Material.IRON_HELMET);
     }
 
     private void initPathfinder() {
-        zombie.bP.a(0, new PathfinderGoalZombieAttack(zombie, 1.5, true));
+        zombie.bP.a();
+        zombie.bQ.a();
+        zombie.bP.a(0, new PathfinderGoalZombieAttack(zombie, 1.7, true));
         zombie.bP.a(1, new PathfinderGoalRestrictSun(zombie));
         zombie.bP.a(2, new PathfinderGoalFleeSun(zombie, 1.2));
         zombie.bP.a(3, new PathfinderGoalRandomStrollLand(zombie, 1.0));
         zombie.bP.a(4, new PathfinderGoalRandomLookaround(zombie));
         zombie.bQ.a(0, new PathfinderGoalHurtByTarget(zombie));
         zombie.bQ.a(1, new PathfinderGoalNearestAttackableTarget<>(zombie, EntityHuman.class, true));
+        zombie.bQ.a(2, new PathfinderGoalNearestAttackableTarget<>(zombie, EntityPig.class, true));
     }
 }

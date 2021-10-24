@@ -3,6 +3,7 @@ package de.imfactions.functions.pvp.mobs.custommob;
 import de.imfactions.Data;
 import de.imfactions.IMFactions;
 import org.bukkit.World;
+import org.bukkit.entity.Bat;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
@@ -39,23 +40,28 @@ public class CustomMobListener implements Listener {
         if (event.getEntity() instanceof Skeleton) {
             event.setCancelled(true);
             customMobUtil.createUndead(event.getLocation());
+            return;
+        }
+        if (event.getEntity() instanceof Bat) {
+            event.setCancelled(true);
+            customMobUtil.createWarBat(event.getLocation());
         }
     }
 
     @EventHandler
     public void onNameChange(EntityDamageEvent event) {
-        if (!customMobUtil.isEntityCustom(event.getEntity()))
+        if (!CustomMobUtil.isEntityCustom(event.getEntity()))
             return;
-        CustomMobInsentient customMobInsentient = customMobUtil.getCustomMob(event.getEntity());
+        CustomMobInsentient customMobInsentient = CustomMobUtil.getCustomMob(event.getEntity());
         customMobInsentient.setName((float) (customMobInsentient.getHealth() - event.getDamage()));
     }
 
     @EventHandler
     public void onDropLoot(EntityDeathEvent event) {
-        if (!customMobUtil.isEntityCustom(event.getEntity()))
+        if (!CustomMobUtil.isEntityCustom(event.getEntity()))
             return;
         event.getDrops().clear();
-        CustomMobInsentient customMobInsentient = customMobUtil.getCustomMob(event.getEntity());
+        CustomMobInsentient customMobInsentient = CustomMobUtil.getCustomMob(event.getEntity());
         World world = event.getEntity().getWorld();
         Random random = new Random();
         for (Map.Entry<ItemStack, Integer> drops : customMobInsentient.drops.entrySet()) {

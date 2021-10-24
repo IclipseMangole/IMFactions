@@ -2,6 +2,7 @@ package de.imfactions.functions.pvp.mobs.custommob;
 
 import de.imfactions.functions.pvp.mobs.Orc;
 import de.imfactions.functions.pvp.mobs.Undead;
+import de.imfactions.functions.pvp.mobs.WarBat;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 
@@ -9,10 +10,9 @@ import java.util.ArrayList;
 
 public class CustomMobUtil {
 
-    private final ArrayList<CustomMobInsentient> customMobs;
+    private static final ArrayList<CustomMobInsentient> customMobs = new ArrayList<>();
 
     public CustomMobUtil() {
-        customMobs = new ArrayList<>();
     }
 
     public void createOrc(Location location) {
@@ -23,7 +23,11 @@ public class CustomMobUtil {
         customMobs.add(new Undead(location));
     }
 
-    public boolean isEntityCustom(Entity entity) {
+    public void createWarBat(Location location) {
+        customMobs.add(new WarBat(location));
+    }
+
+    public static boolean isEntityCustom(Entity entity) {
         for (CustomMobInsentient customMobInsentient : customMobs) {
             if (customMobInsentient.getEntity().equals(entity))
                 return true;
@@ -31,7 +35,7 @@ public class CustomMobUtil {
         return false;
     }
 
-    public CustomMobInsentient getCustomMob(Entity entity) {
+    public static CustomMobInsentient getCustomMob(Entity entity) {
         for (CustomMobInsentient customMobInsentient : customMobs) {
             if (customMobInsentient.getEntity().equals(entity))
                 return customMobInsentient;
