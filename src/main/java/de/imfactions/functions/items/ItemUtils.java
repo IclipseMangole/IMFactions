@@ -59,10 +59,13 @@ public class ItemUtils implements Listener{
     public void onJoin(PlayerJoinEvent event){
         Player player = event.getPlayer();
         player.getInventory().setItem(0, new FactionItemStack(FactionItem.get("Excalibur"), 16).toItemStack());
-        player.getInventory().setItem(1, new FactionItemStack(FactionItem.get("Yew Arch"), 3).toItemStack());
-        player.getInventory().setItem(2, new FactionItemStack(FactionItem.get("Stone Club"), 4).toItemStack());
-        player.getInventory().setItem(3, new FactionItemStack(FactionItem.get("Head Cutter"), 0).toItemStack());
-        player.getInventory().setItem(4, new FactionItemStack(FactionItem.get("Faramir's Bow"), 2).toItemStack());
+        player.getInventory().setItem(1, new FactionItemStack(FactionItem.get("Yew Arch"), 16).toItemStack());
+        player.getInventory().setItem(2, new FactionItemStack(FactionItem.get("Stone Club"), 16).toItemStack());
+        player.getInventory().setItem(3, new FactionItemStack(FactionItem.get("Head Cutter"), 16).toItemStack());
+        player.getInventory().setItem(4, new FactionItemStack(FactionItem.get("Faramir's Bow"), 16).toItemStack());
+        player.getInventory().setItem(5, new FactionItemStack(FactionItem.get("Tim's Crossbow"), 16).toItemStack());
+        player.getInventory().setItem(6, new FactionItemStack(FactionItem.get("Dagger"), 16).toItemStack());
+        player.getInventory().setItem(7, new FactionItemStack(FactionItem.get("Gimli's Axe"), 16).toItemStack());
     }
 
 }

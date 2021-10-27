@@ -18,6 +18,9 @@ public class Items {
         createHeadCutter();
         createFaramirsBow();
         //UNCOMMON
+        createGimlisAxe();
+        createDagger();
+        createTimsCrossbow();
         //RARE
         createExcalibur();
         //EPIC
@@ -75,6 +78,56 @@ public class Items {
     }
 
     //UNCOMMON
+
+    public void createGimlisAxe() {
+        HashMap<Integer, HashMap<ItemModifierType, ItemModifierValue>> map = new HashMap<>();
+        HashMap<ItemModifierType, ItemModifierValue> defaultLevel = new HashMap<>();
+        defaultLevel.put(ItemModifierType.ATTACK_SPEED, new ItemModifierValue(Double.valueOf(0.5D)));
+        for (int i = 1; i <= 5; i++) {
+            HashMap<ItemModifierType, ItemModifierValue> level = (HashMap<ItemModifierType, ItemModifierValue>) defaultLevel.clone();
+            if (i != 5) {
+                level.put(ItemModifierType.DAMAGE, new ItemModifierValue(6.0D + i * 2));
+            } else {
+                level.put(ItemModifierType.DAMAGE, new ItemModifierValue(18.0D));
+            }
+            map.put(Integer.valueOf(i), level);
+        }
+        new FactionItem("Gimli's Axe", "Make Moria great again", Material.GOLDEN_AXE, ItemRarity.UNCOMMON, map);
+    }
+
+    public void createDagger() {
+        HashMap<Integer, HashMap<ItemModifierType, ItemModifierValue>> map = new HashMap<>();
+        HashMap<ItemModifierType, ItemModifierValue> defaultLevel = new HashMap<>();
+        defaultLevel.put(ItemModifierType.ATTACK_SPEED, new ItemModifierValue(Double.valueOf(2.0D)));
+        for (int i = 1; i <= 5; i++) {
+            HashMap<ItemModifierType, ItemModifierValue> level = (HashMap<ItemModifierType, ItemModifierValue>) defaultLevel.clone();
+            if (i != 5) {
+                level.put(ItemModifierType.DAMAGE, new ItemModifierValue(1.5D + i * 0.5));
+            } else {
+                level.put(ItemModifierType.DAMAGE, new ItemModifierValue(4.5));
+            }
+            map.put(Integer.valueOf(i), level);
+        }
+        new FactionItem("Dagger", "Fast as Fuck", Material.IRON_SWORD, ItemRarity.UNCOMMON, map);
+    }
+
+    public void createTimsCrossbow() {
+        HashMap<Integer, HashMap<ItemModifierType, ItemModifierValue>> map = new HashMap<>();
+        HashMap<ItemModifierType, ItemModifierValue> defaultLevel = new HashMap<>();
+        defaultLevel.put(ItemModifierType.ATTACK_SPEED, new ItemModifierValue(Double.valueOf(1.0D)));
+        for (int i = 1; i <= 5; i++) {
+            HashMap<ItemModifierType, ItemModifierValue> level = (HashMap<ItemModifierType, ItemModifierValue>) defaultLevel.clone();
+            if (i != 5) {
+                level.put(ItemModifierType.DAMAGE, new ItemModifierValue(1.0D + i));
+                level.put(ItemModifierType.POISON, new ItemModifierValue(Integer.valueOf(1)));
+            } else {
+                level.put(ItemModifierType.DAMAGE, new ItemModifierValue(5.0D));
+                level.put(ItemModifierType.POISON, new ItemModifierValue(Integer.valueOf(2)));
+            }
+            map.put(Integer.valueOf(i), level);
+        }
+        new FactionItem("Tim's Crossbow", "Shoots poison arrows", Material.CROSSBOW, ItemRarity.UNCOMMON, map);
+    }
 
     //RARE
 

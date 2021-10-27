@@ -39,9 +39,9 @@ public class PathfinderGoalBatAttack extends PathfinderGoal {
             return false;
         }
         Location t = target.getBukkitEntity().getLocation();
-        if (bat.distance(t) < 1.1)
+        if (bat.distance(t) < 1.05)
             return true;
-        Vector vector = t.add(0, 1, 0).subtract(bat).toVector();
+        Vector vector = t.add(0, 1, 0).subtract(bat).toVector().multiply(0.5);
         entityBat.move(EnumMoveType.a, new Vec3D(vector.getX(), vector.getY(), vector.getZ()));
         return false;
     }
