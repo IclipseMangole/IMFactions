@@ -1,5 +1,6 @@
 package de.imfactions.functions.pvp.mobs;
 
+import de.imfactions.functions.pvp.PVPZone;
 import de.imfactions.functions.pvp.mobs.custommob.CustomMobMonster;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.ai.goal.PathfinderGoalBowShoot;
@@ -9,7 +10,6 @@ import net.minecraft.world.entity.ai.goal.PathfinderGoalRestrictSun;
 import net.minecraft.world.entity.ai.goal.target.PathfinderGoalHurtByTarget;
 import net.minecraft.world.entity.ai.goal.target.PathfinderGoalNearestAttackableTarget;
 import net.minecraft.world.entity.monster.EntitySkeleton;
-import net.minecraft.world.entity.monster.EntityZombie;
 import net.minecraft.world.entity.player.EntityHuman;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -20,10 +20,10 @@ public class Undead extends CustomMobMonster {
 
     EntitySkeleton skeleton;
 
-    public Undead(Location location) {
+    public Undead(Location location, PVPZone pvpZone) {
         super(new EntitySkeleton(EntityTypes.aB, ((CraftWorld) location.getWorld()).getHandle()), location, ChatColor.WHITE + "Undead");
         skeleton = (EntitySkeleton) entityMonster;
-        level = customMobLevel.getRandomLevel();
+        level = customMobLevel.getZoneLevel(pvpZone);
         legendary = customMobLevel.getRandomLegendary();
         setAttributes();
         setDrops();
@@ -54,6 +54,5 @@ public class Undead extends CustomMobMonster {
         skeleton.bP.a(4, new PathfinderGoalRandomLookaround(skeleton));
         skeleton.bQ.a(0, new PathfinderGoalHurtByTarget(skeleton));
         skeleton.bQ.a(1, new PathfinderGoalNearestAttackableTarget<>(skeleton, EntityHuman.class, true));
-        skeleton.bQ.a(1, new PathfinderGoalNearestAttackableTarget<>(skeleton, EntityZombie.class, true));
     }
 }

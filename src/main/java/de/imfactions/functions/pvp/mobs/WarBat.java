@@ -1,5 +1,6 @@
 package de.imfactions.functions.pvp.mobs;
 
+import de.imfactions.functions.pvp.PVPZone;
 import de.imfactions.functions.pvp.mobs.attributes.pathfinders.PathfinderGoalBatAttack;
 import de.imfactions.functions.pvp.mobs.custommob.CustomMobAmbient;
 import de.imfactions.util.reflection.ReflectionException;
@@ -10,7 +11,6 @@ import net.minecraft.world.entity.ai.goal.PathfinderGoalFollowEntity;
 import net.minecraft.world.entity.ai.goal.target.PathfinderGoalNearestAttackableTarget;
 import net.minecraft.world.entity.ai.targeting.PathfinderTargetCondition;
 import net.minecraft.world.entity.ambient.EntityBat;
-import net.minecraft.world.entity.monster.EntityZombie;
 import net.minecraft.world.entity.player.EntityHuman;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -21,7 +21,7 @@ public class WarBat extends CustomMobAmbient {
     private final EntityBat bat;
     PathfinderTargetCondition bT;
 
-    public WarBat(Location location) {
+    public WarBat(Location location, PVPZone pvpZone) {
         super(new EntityBat(EntityTypes.f, ((CraftWorld) location.getWorld()).getHandle()), location, ChatColor.DARK_GRAY + "War Bat");
         bat = (EntityBat) entityAmbient;
         try {
@@ -29,7 +29,7 @@ public class WarBat extends CustomMobAmbient {
         } catch (ReflectionException e) {
             e.printStackTrace();
         }
-        level = customMobLevel.getRandomLevel();
+        level = customMobLevel.getZoneLevel(pvpZone);
         legendary = customMobLevel.getRandomLegendary();
         setAttributes();
         setDrops();
@@ -57,7 +57,6 @@ public class WarBat extends CustomMobAmbient {
         bat.bQ.a();
         bat.bP.a(0, new PathfinderGoalBatAttack(bat, 2));
         bat.bP.a(0, new PathfinderGoalFollowEntity(bat, 1.5D, 10.0F, 10.0F));
-        bat.bQ.a(1, new PathfinderGoalNearestAttackableTarget<>(bat, EntityZombie.class, true));
         bat.bQ.a(0, new PathfinderGoalNearestAttackableTarget<>(bat, EntityHuman.class, true));
         bat.bQ.a(0, new PathfinderGoalNearestAttackableTarget<>(bat, EntityPlayer.class, true));
     }

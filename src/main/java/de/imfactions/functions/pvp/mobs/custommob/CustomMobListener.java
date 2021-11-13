@@ -2,6 +2,8 @@ package de.imfactions.functions.pvp.mobs.custommob;
 
 import de.imfactions.Data;
 import de.imfactions.IMFactions;
+import de.imfactions.functions.pvp.PVPZone;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Bat;
 import org.bukkit.entity.Skeleton;
@@ -32,19 +34,20 @@ public class CustomMobListener implements Listener {
     public void onSpawnEgg(CreatureSpawnEvent event) {
         if (!event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.SPAWNER_EGG))
             return;
+        Location location = event.getLocation();
         if (event.getEntity() instanceof Zombie) {
             event.setCancelled(true);
-            customMobUtil.createOrc(event.getLocation());
+            customMobUtil.createOrc(location, PVPZone.getZone(location));
             return;
         }
         if (event.getEntity() instanceof Skeleton) {
             event.setCancelled(true);
-            customMobUtil.createUndead(event.getLocation());
+            customMobUtil.createUndead(location, PVPZone.getZone(location));
             return;
         }
         if (event.getEntity() instanceof Bat) {
             event.setCancelled(true);
-            customMobUtil.createWarBat(event.getLocation());
+            customMobUtil.createWarBat(location, PVPZone.getZone(location));
         }
     }
 

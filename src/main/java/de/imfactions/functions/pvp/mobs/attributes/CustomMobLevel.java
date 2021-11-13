@@ -1,5 +1,6 @@
 package de.imfactions.functions.pvp.mobs.attributes;
 
+import de.imfactions.functions.pvp.PVPZone;
 import de.imfactions.functions.pvp.mobs.custommob.CustomMobInsentient;
 import org.bukkit.ChatColor;
 
@@ -40,6 +41,25 @@ public class CustomMobLevel {
     public boolean getRandomLegendary() {
         int r = random.nextInt(100);
         return r < 1;
+    }
+
+    public int getZoneLevel(PVPZone pvpZone) {
+        Random random = new Random();
+        switch (pvpZone) {
+            case SAFE:
+            case PEACEFULLY:
+                return 1 + random.nextInt(2);
+            case EASY:
+                return 2 + random.nextInt(2);
+            case MEDIUM:
+                return 3 + random.nextInt(2);
+            case HARD:
+                return 4 + random.nextInt(3);
+            case EPIC:
+                return 6 + random.nextInt(3);
+            default:
+                return 8 + random.nextInt(3);
+        }
     }
 
     public String getLevelString() {

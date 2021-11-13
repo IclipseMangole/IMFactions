@@ -1,11 +1,11 @@
 package de.imfactions.functions.pvp.mobs;
 
 import de.imfactions.functions.items.drops.MobDrops;
+import de.imfactions.functions.pvp.PVPZone;
 import de.imfactions.functions.pvp.mobs.custommob.CustomMobMonster;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.PathfinderGoalHurtByTarget;
 import net.minecraft.world.entity.ai.goal.target.PathfinderGoalNearestAttackableTarget;
-import net.minecraft.world.entity.animal.EntityPig;
 import net.minecraft.world.entity.monster.EntityZombie;
 import net.minecraft.world.entity.player.EntityHuman;
 import org.bukkit.ChatColor;
@@ -21,10 +21,10 @@ public class Orc extends CustomMobMonster {
 
     EntityZombie zombie;
 
-    public Orc(Location location) {
+    public Orc(Location location, PVPZone pvpZone) {
         super(new EntityZombie(((CraftWorld) location.getWorld()).getHandle()), location, ChatColor.DARK_GREEN + "Orc");
         zombie = (EntityZombie) entityMonster;
-        level = customMobLevel.getRandomLevel();
+        level = customMobLevel.getZoneLevel(pvpZone);
         legendary = customMobLevel.getRandomLegendary();
         setAttributes();
         setDrops();
@@ -82,6 +82,5 @@ public class Orc extends CustomMobMonster {
         zombie.bP.a(4, new PathfinderGoalRandomLookaround(zombie));
         zombie.bQ.a(0, new PathfinderGoalHurtByTarget(zombie));
         zombie.bQ.a(1, new PathfinderGoalNearestAttackableTarget<>(zombie, EntityHuman.class, true));
-        zombie.bQ.a(2, new PathfinderGoalNearestAttackableTarget<>(zombie, EntityPig.class, true));
     }
 }
